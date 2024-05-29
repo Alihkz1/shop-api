@@ -69,6 +69,4 @@ public class CategoryService {
             return ResponseEntity.ok(response);
         }
     }
-
-
 }

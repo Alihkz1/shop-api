@@ -2,17 +2,16 @@ package com.shop.controller;
 
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
+import com.shop.model.User;
 import com.shop.service.UserService;
 import com.shop.shared.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("api/v1/user")
+@CrossOrigin(origins = "*")
 public class UserController {
     private final UserService userService;
 
@@ -27,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping(path = "login")
-    public ResponseEntity<Response> login(@RequestBody UserLoginCommand command) {
+    public ResponseEntity<Response<User>> login(@RequestBody UserLoginCommand command) {
         return userService.login(command);
     }
 }

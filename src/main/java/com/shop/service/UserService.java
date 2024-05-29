@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -33,6 +34,9 @@ public class UserService {
             } else {
                 userRepository.save(command.toEntity());
                 response.setSuccess(true);
+                HashMap<String, User> data = new HashMap();
+                data.put("user", userRepository.findByEmail(command.getEmail()).get());
+                response.setData(data);
                 return ResponseEntity.ok(response);
             }
         } catch (Exception e) {
@@ -42,18 +46,21 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<Response> login(UserLoginCommand command) {
+    public ResponseEntity<Response<User>> login(UserLoginCommand command) {
         Response response = new Response();
         Optional<User> exist = userRepository.findByEmail(command.getEmail());
         if (exist.isEmpty()) {
             response.setSuccess(false);
             response.setMessage("incorrect email!");
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.ok(response);
         }
         if (exist.isPresent()) {
             if (exist.get().getPassword().equals(command.getPassword())) {
                 response.setSuccess(true);
                 response.setMessage("logged in!");
+                HashMap<String, User> data = new HashMap();
+                data.put("user", exist.get());
+                response.setData(data);
             } else {
                 response.setSuccess(false);
                 response.setMessage("incorrect password!");

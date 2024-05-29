@@ -1,5 +1,6 @@
 package com.shop.service;
 
+import com.shop.command.UserEditCommand;
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
 import com.shop.model.User;
@@ -67,5 +68,28 @@ public class UserService {
             }
         }
         return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> edit(UserEditCommand command) {
+        Response response = new Response();
+        Optional<User> user = userRepository.findByUserId(command.getUserId());
+
+        if (user.isPresent()) {
+            if (command.getEmail() != null) {
+                user.get().setEmail(command.getEmail());
+            }
+            if (command.getName() != null) {
+                user.get().setName(command.getName());
+            }
+            if (command.getPhone() != null) {
+                user.get().setPhone(command.getPhone());
+            }
+            userRepository.save(user.get());
+            return ResponseEntity.ok(response);
+        } else {
+            response.setMessage("wrong userId");
+            response.setSuccess(false);
+            return ResponseEntity.ok(response);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.shop.controller;
 
+import com.shop.command.UserEditCommand;
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
 import com.shop.model.User;
@@ -28,5 +29,10 @@ public class UserController {
     @PostMapping(path = "login")
     public ResponseEntity<Response<User>> login(@RequestBody UserLoginCommand command) {
         return userService.login(command);
+    }
+
+    @PutMapping(path = "edit")
+    public ResponseEntity<Response> edit(@RequestBody UserEditCommand command) {
+        return userService.edit(command);
     }
 }

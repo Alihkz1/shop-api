@@ -1,17 +1,13 @@
 package com.shop.service;
 
-import com.shop.command.CategoryAddCommand;
-import com.shop.command.CategoryEditCommand;
 import com.shop.command.ProductAddCommand;
 import com.shop.command.ProductEditCommand;
-import com.shop.model.Category;
 import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
 import com.shop.shared.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;

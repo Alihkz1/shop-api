@@ -1,8 +1,92 @@
 package com.shop.service;
 
+import com.shop.command.CategoryAddCommand;
+import com.shop.command.CategoryEditCommand;
+import com.shop.command.ProductAddCommand;
+import com.shop.command.ProductEditCommand;
+import com.shop.model.Category;
+import com.shop.model.Product;
+import com.shop.repository.ProductRepository;
+import com.shop.shared.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ProductService {
+
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public ResponseEntity<Response> getAll() {
+        Response response = new Response();
+        Map<String, List<Product>> map = new HashMap<>();
+        map.put("products", productRepository.findAll());
+        response.setData(map);
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> edit(ProductEditCommand command) {
+        Response response = new Response();
+        Optional<Product> product = productRepository.findByProductId(command.getProductId());
+
+        if (product.isPresent()) {
+            if (command.getTitle() != null) {
+                product.get().setTitle(command.getTitle());
+            }
+            if (command.getPrice() != null) {
+                product.get().setPrice(command.getPrice());
+            }
+            if (command.getAmount() != null) {
+                product.get().setAmount(command.getAmount());
+            }
+            if (command.getImageUrl() != null) {
+                product.get().setImageUrl(command.getImageUrl());
+            }
+            if (command.getCategoryId() != null) {
+                product.get().setCategoryId(command.getCategoryId());
+            }
+            productRepository.save(product.get());
+            return ResponseEntity.ok(response);
+        } else {
+            response.setMessage("wrong productId");
+            response.setSuccess(false);
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    public ResponseEntity<Response> add(ProductAddCommand command) {
+        Response response = new Response();
+        try {
+            productRepository.save(command.toEntity());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    public ResponseEntity<Response> deleteById(Long categoryId) {
+        Response response = new Response();
+        try {
+            productRepository.deleteById(categoryId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
 
 }

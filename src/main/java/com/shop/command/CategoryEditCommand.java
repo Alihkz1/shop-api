@@ -12,6 +12,6 @@ public class CategoryEditCommand {
     @JsonProperty("categoryName")
     private final String categoryName;
 
-    @JsonProperty("id")
+    @JsonProperty("categoryId")
     private final Long categoryId;
 }

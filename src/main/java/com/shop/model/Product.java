@@ -22,7 +22,7 @@ public class Product {
 
     private String title;
 
-    private long amount;
+    private Long amount;
 
     private String imageUrl;
 }

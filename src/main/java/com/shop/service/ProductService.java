@@ -25,6 +25,7 @@ public class ProductService {
     }
 
     public ResponseEntity<Response> getAll() {
+        /*todo: getByCategoryId */
         Response response = new Response();
         Map<String, List<Product>> map = new HashMap<>();
         map.put("products", productRepository.findAll());

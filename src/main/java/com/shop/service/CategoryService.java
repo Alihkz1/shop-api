@@ -4,6 +4,7 @@ import com.shop.command.CategoryAddCommand;
 import com.shop.command.CategoryEditCommand;
 import com.shop.model.Category;
 import com.shop.repository.CategoryRepository;
+import com.shop.repository.ProductRepository;
 import com.shop.shared.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,12 @@ import java.util.Optional;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     public ResponseEntity<Response> getAll() {
@@ -61,6 +64,7 @@ public class CategoryService {
     public ResponseEntity<Response> deleteById(Long categoryId) {
         Response response = new Response();
         try {
+            productRepository.deleteByCategoryId(categoryId);
             categoryRepository.deleteById(categoryId);
             return ResponseEntity.ok(response);
         } catch (Exception e) {

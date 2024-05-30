@@ -2,7 +2,9 @@ package com.shop.service;
 
 import com.shop.command.CategoryAddCommand;
 import com.shop.command.CategoryEditCommand;
+import com.shop.dto.CategoryListDto;
 import com.shop.model.Category;
+import com.shop.model.Product;
 import com.shop.repository.CategoryRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.shared.Response;
@@ -10,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -26,10 +26,35 @@ public class CategoryService {
         this.productRepository = productRepository;
     }
 
-    public ResponseEntity<Response> getAll() {
+    public ResponseEntity<Response> lightList() {
         Response response = new Response();
         Map<String, List<Category>> map = new HashMap<>();
         map.put("categories", categoryRepository.findAll());
+        response.setData(map);
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response<CategoryListDto>> list() {
+        Response response = new Response();
+        List<Product> products = productRepository.findAll();
+        List<CategoryListDto> dtoList = new ArrayList<CategoryListDto>();
+        categoryRepository.findAll().stream().forEach((category -> {
+            CategoryListDto dto = new CategoryListDto();
+            dto.setCategoryId(category.getCategoryId());
+            dto.setCategoryName(category.getCategoryName());
+            dto.setImageUrl(category.getImageUrl());
+            dtoList.add(dto);
+        }));
+        dtoList.stream().forEach(dto -> {
+            dto.setProducts(
+                    products.stream().filter(product ->
+                            product.getCategoryId() == dto.getCategoryId()
+                    ).collect(Collectors.toList())
+            );
+        });
+
+        Map<String, List<CategoryListDto>> map = new HashMap<>();
+        map.put("categories", dtoList);
         response.setData(map);
         return ResponseEntity.ok(response);
     }

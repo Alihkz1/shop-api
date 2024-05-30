@@ -2,6 +2,7 @@ package com.shop.controller;
 
 import com.shop.command.CategoryAddCommand;
 import com.shop.command.CategoryEditCommand;
+import com.shop.dto.CategoryListDto;
 import com.shop.service.CategoryService;
 import com.shop.shared.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,13 @@ public class CategoryController {
     }
 
     @GetMapping(path = "list")
-    public ResponseEntity<Response> getAll() {
-        return categoryService.getAll();
+    public ResponseEntity<Response<CategoryListDto>> list() {
+        return categoryService.list();
+    }
+
+    @GetMapping(path = "light-list")
+    public ResponseEntity<Response> lightList() {
+        return categoryService.lightList();
     }
 
     @PutMapping(path = "edit")

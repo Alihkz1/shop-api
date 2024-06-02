@@ -29,14 +29,14 @@ public class CategoryService {
     public ResponseEntity<Response> lightList() {
         Response response = new Response();
         Map<String, List<Category>> map = new HashMap<>();
-        map.put("categories", categoryRepository.findAll());
+        map.put("categories", categoryRepository.getAll());
         response.setData(map);
         return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response<CategoryListDto>> list() {
         Response response = new Response();
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.getAll();
         List<CategoryListDto> dtoList = new ArrayList<CategoryListDto>();
         categoryRepository.findAll().stream().forEach((category -> {
             CategoryListDto dto = new CategoryListDto();

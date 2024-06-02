@@ -16,6 +16,7 @@ public class CommentAddCommand {
         return Comment.builder()
                 .userId(userId)
                 .message(message)
+                .read(false)
                 .build();
     }
 }

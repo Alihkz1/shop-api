@@ -21,4 +21,6 @@ public class Comment {
 
     private String message;
 
+    private Boolean read;
+
 }

@@ -1,6 +1,7 @@
 package com.shop.controller;
 
 import com.shop.command.CommentAddCommand;
+import com.shop.command.CommentEditCommand;
 import com.shop.service.CommentService;
 import com.shop.shared.Response;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,11 @@ public class CommentController {
     @GetMapping(path = "list")
     public ResponseEntity<Response> getAll() {
         return commentService.getAll();
+    }
+
+    @PutMapping(path = "edit")
+    public ResponseEntity<Response> edit(@RequestBody CommentEditCommand command) {
+        return commentService.edit(command);
     }
 
     @PostMapping(path = "add")

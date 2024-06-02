@@ -53,8 +53,11 @@ public class CategoryService {
             );
         });
 
+        List<CategoryListDto> sorted =  dtoList.stream().sorted(Comparator.comparing(CategoryListDto::getCategoryId))
+                .collect(Collectors.toList());
+
         Map<String, List<CategoryListDto>> map = new HashMap<>();
-        map.put("categories", dtoList);
+        map.put("categories", sorted);
         response.setData(map);
         return ResponseEntity.ok(response);
     }

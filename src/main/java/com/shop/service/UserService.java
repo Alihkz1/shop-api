@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -91,5 +93,28 @@ public class UserService {
             response.setSuccess(false);
             return ResponseEntity.ok(response);
         }
+    }
+
+    public ResponseEntity<Response> getAll() {
+        /*todo: create dto*/
+        Response response = new Response();
+        Map<String, List<User>> map = new HashMap<>();
+        map.put("users", userRepository.findAll());
+        response.setData(map);
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> getById(Long userId) {
+        /*todo: create dto*/
+        Response response = new Response();
+        Map<String, User> map = new HashMap<>();
+        Optional<User> user = userRepository.findByUserId(userId);
+        if (user.isPresent()) {
+            map.put("user", user.get());
+            response.setData(map);
+        } else {
+            response.setMessage("user not found! wrong userId.");
+        }
+        return ResponseEntity.ok(response);
     }
 }

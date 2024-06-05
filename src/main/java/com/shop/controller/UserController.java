@@ -35,4 +35,14 @@ public class UserController {
     public ResponseEntity<Response> edit(@RequestBody UserEditCommand command) {
         return userService.edit(command);
     }
+
+    @GetMapping(path = "list")
+    public ResponseEntity<Response> getAll() {
+        return userService.getAll();
+    }
+
+    @GetMapping(path = "retrieve/{userId}")
+    public ResponseEntity<Response> getById(@PathVariable Long userId) {
+        return userService.getById(userId);
+    }    ;
 }

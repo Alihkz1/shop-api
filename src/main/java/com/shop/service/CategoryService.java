@@ -55,7 +55,7 @@ public class CategoryService {
         });
 
         List<CategoryListDto> sorted = dtoList.stream()
-                .filter(categoryListDto -> !categoryListDto.getProducts().isEmpty())
+//                .filter(categoryListDto -> !categoryListDto.getProducts().isEmpty())
                 .sorted(Comparator.comparing(CategoryListDto::getCategoryId))
                 .collect(Collectors.toList());
 
@@ -70,7 +70,12 @@ public class CategoryService {
         Optional<Category> category = categoryRepository.findByCategoryId(command.getCategoryId());
 
         if (category.isPresent()) {
-            category.get().setCategoryName(command.getCategoryName());
+            if (command.getCategoryName() != null) {
+                category.get().setCategoryName(command.getCategoryName());
+            }
+            if (command.getImageUrl() != null) {
+                category.get().setImageUrl(command.getImageUrl());
+            }
             categoryRepository.save(category.get());
             return ResponseEntity.ok(response);
         } else {

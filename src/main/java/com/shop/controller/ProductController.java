@@ -19,9 +19,9 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping(path = "list")
-    public ResponseEntity<Response> getAll() {
-        return productService.getAll();
+    @GetMapping(path = "list/{categoryId}")
+    public ResponseEntity<Response> getAll(@PathVariable Long categoryId) {
+        return productService.getAll(categoryId);
     }
 
     @PutMapping(path = "edit")

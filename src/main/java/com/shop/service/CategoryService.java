@@ -36,15 +36,16 @@ public class CategoryService {
 
     public ResponseEntity<Response<CategoryListDto>> list() {
         Response response = new Response();
-        List<Product> products = productRepository.getAll();
+        List<Product> products = productRepository.findAll();
         List<CategoryListDto> dtoList = new ArrayList<CategoryListDto>();
-        categoryRepository.findAll().stream().forEach((category -> {
-            CategoryListDto dto = new CategoryListDto();
-            dto.setCategoryId(category.getCategoryId());
-            dto.setCategoryName(category.getCategoryName());
-            dto.setImageUrl(category.getImageUrl());
-            dtoList.add(dto);
-        }));
+        categoryRepository.findAll().stream()
+                .forEach((category -> {
+                    CategoryListDto dto = new CategoryListDto();
+                    dto.setCategoryId(category.getCategoryId());
+                    dto.setCategoryName(category.getCategoryName());
+                    dto.setImageUrl(category.getImageUrl());
+                    dtoList.add(dto);
+                }));
         dtoList.stream().forEach(dto -> {
             dto.setProducts(
                     products.stream().filter(product ->
@@ -53,7 +54,9 @@ public class CategoryService {
             );
         });
 
-        List<CategoryListDto> sorted =  dtoList.stream().sorted(Comparator.comparing(CategoryListDto::getCategoryId))
+        List<CategoryListDto> sorted = dtoList.stream()
+                .filter(categoryListDto -> !categoryListDto.getProducts().isEmpty())
+                .sorted(Comparator.comparing(CategoryListDto::getCategoryId))
                 .collect(Collectors.toList());
 
         Map<String, List<CategoryListDto>> map = new HashMap<>();

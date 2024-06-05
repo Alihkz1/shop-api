@@ -24,11 +24,11 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ResponseEntity<Response> getAll() {
+    public ResponseEntity<Response> getAll(Long categoryId) {
         /*todo: getByCategoryId */
         Response response = new Response();
         Map<String, List<Product>> map = new HashMap<>();
-        map.put("products", productRepository.getAll());
+        map.put("products", productRepository.getAll(categoryId));
         response.setData(map);
         return ResponseEntity.ok(response);
     }

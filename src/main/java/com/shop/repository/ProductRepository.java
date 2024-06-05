@@ -13,11 +13,14 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByProductId(Long productId);
+
     @Modifying
     @Transactional
     @Query(value = "delete from product where category_id = :categoryId", nativeQuery = true)
     void deleteByCategoryId(Long categoryId);
 
-    @Query(value = "select * from product order by product_id asc", nativeQuery = true)
-    List<Product> getAll();
+    @Query(value = "select * from product" +
+            " where category_id = :categoryId" +
+            " order by product_id asc", nativeQuery = true)
+    List<Product> getAll(Long categoryId);
 }

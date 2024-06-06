@@ -26,7 +26,8 @@ public class SecurityConfig {
                                 "/api/v1/user/signup",
                                 "/api/v1/category/list",
                                 "/api/v1/category/light-list",
-                                "/api/v1/product/list/**"
+                                "/api/v1/product/list/**",
+                                "/api/v1/comment/add"
                                 )
                         .permitAll()
                         .anyRequest().authenticated()

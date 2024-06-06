@@ -3,11 +3,17 @@ package com.shop.service;
 import com.shop.command.UserEditCommand;
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
+import com.shop.config.JWTService;
+import com.shop.dto.AuthDto;
 import com.shop.model.User;
 import com.shop.repository.UserRepository;
 import com.shop.shared.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,10 +26,18 @@ public class UserService {
 
 
     private final UserRepository userRepository;
+    private final JWTService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(
+            JWTService jwtService,
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder
+    ) {
+        this.jwtService = jwtService;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public ResponseEntity<Response> signUp(UserSignUpCommand command) {
@@ -35,7 +49,7 @@ public class UserService {
                 response.setMessage("email already taken!");
                 return ResponseEntity.badRequest().body(response);
             } else {
-                userRepository.save(command.toEntity());
+                userRepository.save(command.toEntity(passwordEncoder.encode(command.getPassword())));
                 response.setSuccess(true);
                 HashMap<String, User> data = new HashMap();
                 data.put("user", userRepository.findByEmail(command.getEmail()).get());
@@ -49,26 +63,31 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<Response<User>> login(UserLoginCommand command) {
+    public ResponseEntity<Response<AuthDto>> login(UserLoginCommand command) {
         Response response = new Response();
-        Optional<User> exist = userRepository.findByEmail(command.getEmail());
-        if (exist.isEmpty()) {
+        User userInDB = userRepository.login(command.getEmail());
+
+        if (userInDB == null) {
             response.setSuccess(false);
             response.setMessage("incorrect email!");
             return ResponseEntity.ok(response);
-        }
-        if (exist.isPresent()) {
-            if (exist.get().getPassword().equals(command.getPassword())) {
-                response.setSuccess(true);
-                response.setMessage("logged in!");
-                HashMap<String, User> data = new HashMap();
-                data.put("user", exist.get());
-                response.setData(data);
+        } else {
+            boolean passwordMatches = passwordEncoder.matches(command.getPassword(), userInDB.getPassword());
+
+            if (passwordMatches) {
+                var token = jwtService.generateToken(userInDB);
+                AuthDto authDto = AuthDto
+                        .builder()
+                        .token(token)
+                        .user(userInDB)
+                        .build();
+                response.setData(authDto);
             } else {
                 response.setSuccess(false);
                 response.setMessage("incorrect password!");
             }
         }
+
         return ResponseEntity.ok(response);
     }
 

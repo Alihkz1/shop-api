@@ -3,7 +3,7 @@ package com.shop.controller;
 import com.shop.command.UserEditCommand;
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
-import com.shop.model.User;
+import com.shop.dto.AuthDto;
 import com.shop.service.UserService;
 import com.shop.shared.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping(path = "login")
-    public ResponseEntity<Response<User>> login(@RequestBody UserLoginCommand command) {
+    public ResponseEntity<Response<AuthDto>> login(@RequestBody UserLoginCommand command) {
         return userService.login(command);
     }
 

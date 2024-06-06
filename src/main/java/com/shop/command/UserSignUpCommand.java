@@ -22,12 +22,12 @@ public class UserSignUpCommand {
     @JsonProperty("password")
     private String password;
 
-    public User toEntity() {
+    public User toEntity(String encodedPassword) {
         return User.builder()
                 .name(name)
                 .phone(phone)
                 .email(email)
-                .password(password)
+                .password(encodedPassword)
                 .build();
     }
 

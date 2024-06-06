@@ -47,7 +47,7 @@ public class ProductService {
             if (command.getAmount() != null) {
                 product.get().setAmount(command.getAmount());
             }
-            if (command.getImageUrl() != null) {
+            if (command.getImageUrl() != null && !command.getImageUrl().equals("")) {
                 product.get().setImageUrl(command.getImageUrl());
             }
             if (command.getCategoryId() != null) {

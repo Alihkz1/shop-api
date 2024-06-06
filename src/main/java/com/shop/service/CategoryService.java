@@ -37,7 +37,7 @@ public class CategoryService {
     public ResponseEntity<Response<CategoryListDto>> list() {
         Response response = new Response();
         List<Product> products = productRepository.findAll();
-        List<CategoryListDto> dtoList = new ArrayList<CategoryListDto>();
+        List<CategoryListDto> dtoList = new ArrayList<>();
         categoryRepository.findAll().stream()
                 .forEach((category -> {
                     CategoryListDto dto = new CategoryListDto();
@@ -48,14 +48,15 @@ public class CategoryService {
                 }));
         dtoList.stream().forEach(dto -> {
             dto.setProducts(
-                    products.stream().filter(product ->
+                    products.stream()
+                            .sorted(Comparator.comparing(Product::getProductId))
+                            .filter(product ->
                             product.getCategoryId() == dto.getCategoryId()
                     ).collect(Collectors.toList())
             );
         });
 
         List<CategoryListDto> sorted = dtoList.stream()
-//                .filter(categoryListDto -> !categoryListDto.getProducts().isEmpty())
                 .sorted(Comparator.comparing(CategoryListDto::getCategoryId))
                 .collect(Collectors.toList());
 
@@ -73,7 +74,7 @@ public class CategoryService {
             if (command.getCategoryName() != null) {
                 category.get().setCategoryName(command.getCategoryName());
             }
-            if (command.getImageUrl() != null) {
+            if (command.getImageUrl() != null && !command.getImageUrl().equals("")) {
                 category.get().setImageUrl(command.getImageUrl());
             }
             categoryRepository.save(category.get());

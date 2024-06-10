@@ -22,6 +22,11 @@ public class CommentController {
         return commentService.getAll();
     }
 
+    @GetMapping(path = "user/{userId}")
+    public ResponseEntity<Response> getUserAllComments(@PathVariable Long userId) {
+        return commentService.getUserAllComments(userId);
+    }
+
     @PutMapping(path = "edit")
     public ResponseEntity<Response> edit(@RequestBody CommentEditCommand command) {
         return commentService.edit(command);

@@ -40,6 +40,15 @@ public class CommentService {
         return ResponseEntity.ok(response);
     }
 
+    public ResponseEntity<Response> getUserAllComments(Long userId) {
+        Response response = new Response();
+        Map<String, List<Comment>> map = new HashMap<>();
+        List<Comment> comments = commentRepository.getUserAllComments(userId);
+        map.put("userComments", comments);
+        response.setData(map);
+        return ResponseEntity.ok(response);
+    }
+
     public ResponseEntity<Response> add(CommentAddCommand command) {
         /*todo: increase comment length*/
         Response response = new Response();
@@ -83,4 +92,5 @@ public class CommentService {
             return ResponseEntity.ok(response);
         }
     }
+
 }

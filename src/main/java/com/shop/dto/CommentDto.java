@@ -11,5 +11,6 @@ import java.util.Optional;
 @Setter
 public class CommentDto {
     private Comment comment;
+
     private Optional<User> user;
 }

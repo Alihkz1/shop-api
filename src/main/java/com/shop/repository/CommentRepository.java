@@ -12,4 +12,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query(value = "select * from comment order by comment_id asc", nativeQuery = true)
     List<Comment> getAll();
+
+    @Query(value = "select * from comment where user_id = :userId order by comment_id asc", nativeQuery = true)
+    List<Comment> getUserAllComments(Long userId);
 }

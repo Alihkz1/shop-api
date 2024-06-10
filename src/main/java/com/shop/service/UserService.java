@@ -1,5 +1,6 @@
 package com.shop.service;
 
+import com.shop.command.AdminChangePasswordCommand;
 import com.shop.command.UserEditCommand;
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
@@ -10,9 +11,6 @@ import com.shop.repository.UserRepository;
 import com.shop.shared.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +28,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(
-            JWTService jwtService,
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder
-    ) {
+    public UserService(JWTService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -76,11 +70,7 @@ public class UserService {
 
             if (passwordMatches) {
                 var token = jwtService.generateToken(userInDB);
-                AuthDto authDto = AuthDto
-                        .builder()
-                        .token(token)
-                        .user(userInDB)
-                        .build();
+                AuthDto authDto = AuthDto.builder().token(token).user(userInDB).build();
                 response.setData(authDto);
             } else {
                 response.setSuccess(false);
@@ -133,6 +123,30 @@ public class UserService {
             response.setData(map);
         } else {
             response.setMessage("user not found! wrong userId.");
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> deleteById(Long userId) {
+        Response response = new Response();
+        try {
+            userRepository.deleteById(userId);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setSuccess(false);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> changePassowrd(AdminChangePasswordCommand command) {
+        Response response = new Response();
+        Optional<User> user = userRepository.findByUserId(command.getUserId());
+        if (user.isEmpty()) {
+            response.setSuccess(false);
+            response.setMessage("no users found!");
+        } else {
+            user.get().setPassword(passwordEncoder.encode(command.getNewPassword()));
+            userRepository.save(user.get());
         }
         return ResponseEntity.ok(response);
     }

@@ -1,5 +1,6 @@
 package com.shop.controller;
 
+import com.shop.command.AdminChangePasswordCommand;
 import com.shop.command.UserEditCommand;
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
@@ -44,5 +45,15 @@ public class UserController {
     @GetMapping(path = "retrieve/{userId}")
     public ResponseEntity<Response> getById(@PathVariable Long userId) {
         return userService.getById(userId);
-    }    ;
+    }
+
+    @DeleteMapping(path = "delete/{userId}")
+    public ResponseEntity<Response> deleteById(@PathVariable Long userId) {
+        return userService.deleteById(userId);
+    }
+
+    @PutMapping(path = "change-password")
+    public ResponseEntity<Response> changePassword(@RequestBody AdminChangePasswordCommand command) {
+        return userService.changePassowrd(command);
+    }
 }

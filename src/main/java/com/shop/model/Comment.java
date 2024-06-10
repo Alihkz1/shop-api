@@ -3,6 +3,8 @@ package com.shop.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "comment")
 @AllArgsConstructor
@@ -21,5 +23,13 @@ public class Comment {
     private String message;
 
     private Boolean read;
+
+    @Column(nullable = false)
+    private Long date;
+
+    @PrePersist
+    public void init() {
+        this.date = new Date().getTime();
+    }
 
 }

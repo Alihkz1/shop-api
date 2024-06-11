@@ -1,5 +1,6 @@
 package com.shop.controller;
 
+import com.shop.command.ShopCardModifyCommand;
 import com.shop.service.ShopCardService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ public class ShopCardController {
         return shopCardService.getUserCard(userId);
     }
 
-//    @PostMapping("add")
-//    public ResponseEntity<Response> add(@RequestBody) {
-//
-//    }
+    @PostMapping("modify")
+    public ResponseEntity<Response> modify(@RequestBody ShopCardModifyCommand command) {
+        return shopCardService.modify(command);
+    }
 }

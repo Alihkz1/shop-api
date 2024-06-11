@@ -1,5 +1,6 @@
 package com.shop.service;
 
+import com.shop.command.ShopCardModifyCommand;
 import com.shop.model.ShopCard;
 import com.shop.repository.ShopCardRepository;
 import com.shop.shared.classes.Response;
@@ -36,6 +37,27 @@ public class ShopCardService {
             response.setSuccess(false);
             response.setMessage(e.getMessage());
         }
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> modify(ShopCardModifyCommand command) {
+        Response response = new Response();
+        Optional<ShopCard> userCard = shopCardRepository.findByUserId(command.getUserId());
+        try {
+            if (userCard.isPresent()) {
+                userCard.get().setProducts(command.getProducts());
+                shopCardRepository.save(userCard.get());
+            } else {
+                ShopCard shopCard = new ShopCard();
+                shopCard.setUserId(command.getUserId());
+                shopCard.setProducts(command.getProducts());
+                shopCardRepository.save(shopCard);
+            }
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+        }
+
         return ResponseEntity.ok(response);
     }
 }

@@ -24,6 +24,12 @@ public class ProductController {
         return productService.getAll(categoryId);
     }
 
+    @GetMapping(path = "retrieve/{productId}")
+    public ResponseEntity<Response> retrieve(@PathVariable Long productId) {
+        return productService.retrieve(productId);
+    }
+
+
     @PutMapping(path = "edit")
     public ResponseEntity<Response> edit(@RequestBody ProductEditCommand command) {
         return productService.edit(command);

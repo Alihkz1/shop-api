@@ -86,4 +86,24 @@ public class ProductService {
         }
     }
 
+    public ResponseEntity<Response> retrieve(Long productId) {
+        Response response = new Response();
+        try {
+            Optional<Product> product = productRepository.findByProductId(productId);
+            if (product.isPresent()) {
+                Map<String, Product> map = new HashMap<>();
+                map.put("product", product.get());
+                response.setData(map);
+            } else {
+                response.setMessage("wrong productId!");
+                response.setSuccess(false);
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+
 }

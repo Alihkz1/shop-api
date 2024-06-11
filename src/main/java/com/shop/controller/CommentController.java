@@ -3,7 +3,7 @@ package com.shop.controller;
 import com.shop.command.CommentAddCommand;
 import com.shop.command.CommentEditCommand;
 import com.shop.service.CommentService;
-import com.shop.shared.Response;
+import com.shop.shared.classes.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

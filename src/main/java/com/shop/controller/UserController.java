@@ -6,7 +6,7 @@ import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
 import com.shop.dto.AuthDto;
 import com.shop.service.UserService;
-import com.shop.shared.Response;
+import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

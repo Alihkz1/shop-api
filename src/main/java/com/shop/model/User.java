@@ -1,7 +1,6 @@
 package com.shop.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.shop.role.Role;
+import com.shop.shared.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

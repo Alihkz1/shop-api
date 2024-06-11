@@ -6,7 +6,7 @@ import com.shop.dto.CommentDto;
 import com.shop.model.Comment;
 import com.shop.repository.CommentRepository;
 import com.shop.repository.UserRepository;
-import com.shop.shared.Response;
+import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

@@ -4,7 +4,7 @@ import com.shop.command.ProductAddCommand;
 import com.shop.command.ProductEditCommand;
 import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
-import com.shop.shared.Response;
+import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

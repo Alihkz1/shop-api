@@ -4,7 +4,7 @@ import com.shop.command.CategoryAddCommand;
 import com.shop.command.CategoryEditCommand;
 import com.shop.dto.CategoryListDto;
 import com.shop.service.CategoryService;
-import com.shop.shared.Response;
+import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

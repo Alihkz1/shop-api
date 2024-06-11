@@ -3,7 +3,7 @@ package com.shop.controller;
 import com.shop.command.ProductAddCommand;
 import com.shop.command.ProductEditCommand;
 import com.shop.service.ProductService;
-import com.shop.shared.Response;
+import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

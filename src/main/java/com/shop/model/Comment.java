@@ -20,6 +20,7 @@ public class Comment {
 
     private Long userId;
 
+    @Column(length = 10000)
     private String message;
 
     private Boolean read;

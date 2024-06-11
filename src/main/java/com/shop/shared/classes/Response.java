@@ -1,4 +1,4 @@
-package com.shop.shared;
+package com.shop.shared.classes;
 
 import lombok.*;
 import org.springframework.stereotype.Component;

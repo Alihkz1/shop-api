@@ -1,4 +1,4 @@
-package com.shop.role;
+package com.shop.shared.enums;
 
 public enum Role {
     ADMIN,

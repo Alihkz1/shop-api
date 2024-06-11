@@ -7,7 +7,7 @@ import com.shop.model.Category;
 import com.shop.model.Product;
 import com.shop.repository.CategoryRepository;
 import com.shop.repository.ProductRepository;
-import com.shop.shared.Response;
+import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

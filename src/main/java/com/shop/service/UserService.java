@@ -8,7 +8,7 @@ import com.shop.config.JWTService;
 import com.shop.dto.AuthDto;
 import com.shop.model.User;
 import com.shop.repository.UserRepository;
-import com.shop.shared.Response;
+import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;

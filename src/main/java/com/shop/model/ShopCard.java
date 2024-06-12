@@ -18,6 +18,6 @@ public class ShopCard {
 
     private Long userId;
 
-    @Column(length = 10000)
+    @Column(length = 100000)
     private String products;
 }

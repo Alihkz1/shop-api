@@ -19,9 +19,14 @@ public class ShopCardController {
         this.shopCardService = shopCardService;
     }
 
-    @GetMapping("{userId}")
+    @GetMapping("user/{userId}")
     public ResponseEntity<Response> getUserCard(@PathVariable Long userId) {
         return shopCardService.getUserCard(userId);
+    }
+
+    @GetMapping("length/{userId}")
+    public ResponseEntity<Response> getUserCardLength(@PathVariable Long userId) {
+        return shopCardService.getUserCardLength(userId);
     }
 
     @PostMapping("modify")

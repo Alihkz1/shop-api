@@ -3,6 +3,7 @@ package com.shop.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.command.ShopCardModifyCommand;
+import com.shop.dto.ShopCardDto;
 import com.shop.model.Product;
 import com.shop.model.ShopCard;
 import com.shop.repository.ShopCardRepository;
@@ -10,6 +11,7 @@ import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +34,10 @@ public class ShopCardService {
             if (shopCard.isEmpty()) {
                 response.setMessage("no data for this user!");
             } else {
-                Map<String, List<Product>> map = new HashMap<>();
+                Map<String, List<ShopCardDto>> map = new HashMap<>();
                 String stringProducts = shopCard.get().getProducts();
                 ObjectMapper objectMapper = new ObjectMapper();
-                List<Product> products = objectMapper.readValue(stringProducts, new TypeReference<List<Product>>(){});
+                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {});
                 map.put("card", products);
                 response.setData(map);
             }
@@ -56,7 +58,8 @@ public class ShopCardService {
             } else {
                 String stringProducts = shopCard.get().getProducts();
                 ObjectMapper objectMapper = new ObjectMapper();
-                List<Product> products = objectMapper.readValue(stringProducts, new TypeReference<List<Product>>(){});
+                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
+                });
                 response.setData(products.size());
             }
         } catch (Exception e) {
@@ -69,15 +72,16 @@ public class ShopCardService {
 
     public ResponseEntity<Response> modify(ShopCardModifyCommand command) {
         Response response = new Response();
+        ObjectMapper objectMapper = new ObjectMapper();
         Optional<ShopCard> userCard = shopCardRepository.findByUserId(command.getUserId());
         try {
             if (userCard.isPresent()) {
-                userCard.get().setProducts(command.getProducts());
+                userCard.get().setProducts(objectMapper.writeValueAsString(command.getProducts()));
                 shopCardRepository.save(userCard.get());
             } else {
                 ShopCard shopCard = new ShopCard();
                 shopCard.setUserId(command.getUserId());
-                shopCard.setProducts(command.getProducts());
+                shopCard.setProducts(objectMapper.writeValueAsString(command.getProducts()));
                 shopCardRepository.save(shopCard);
             }
         } catch (Exception e) {

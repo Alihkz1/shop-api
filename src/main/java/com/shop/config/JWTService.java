@@ -46,7 +46,7 @@ public class JWTService {
     public String generateToken(Map<String, Object> extraClaims, User userDetails) {
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getEmail()) /*is always username for spring boot; ours is email*/
+                .setSubject(userDetails.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * (60 * 60 * 24)))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)

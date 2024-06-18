@@ -20,9 +20,15 @@ public class JWTService {
 
     private static final String SECRET_KEY = "fb7f755f333c7c2e558abc2e5fcf95e88ef186478d946642b5563bae5692a75c";
 
-    public String extractEmail(String jwt) {
-        return extractClaim(jwt, Claims::getSubject);
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
     }
+
+    public Object extractUserId(String token) {
+        Claims extractAllClaims = extractAllClaims(token);
+        return extractAllClaims.get("userId");
+    }
+
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -43,18 +49,18 @@ public class JWTService {
         return Keys.hmacShaKeyFor(bytes);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, User userDetails) {
+    private String tokenGenerator(User userDetails, Map<String, Object> extraClaims) {
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getEmail()) /*is always username for spring boot; ours is email*/
+                .setSubject(userDetails.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * (60 * 60 * 24)))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String generateToken(User userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(User userDetails, Map<String, Object> extraClaims) {
+        return tokenGenerator(userDetails, extraClaims);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

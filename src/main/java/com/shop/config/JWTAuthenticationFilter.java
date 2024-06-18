@@ -1,5 +1,6 @@
 package com.shop.config;
 
+import com.shop.command.CommentEditCommand;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -44,13 +47,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.myUserDetailsService.loadUserByUsername(userEmail);
             if (jwtService.isTokenValid(jwtToken, userDetails)) {
+                Map<String, Object> tokenDetails = new HashMap<>();
+                tokenDetails.put("userId", jwtService.extractUserId(jwtToken));
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities()
                 );
                 token.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
+                        tokenDetails
                 );
                 SecurityContextHolder.getContext().setAuthentication(token);
             }

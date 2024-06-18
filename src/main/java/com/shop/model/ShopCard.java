@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "shopCard", uniqueConstraints = {@UniqueConstraint(columnNames = {"userId", "shopCardId"})})
+@Table(name = "shopCard", uniqueConstraints = {@UniqueConstraint(columnNames = {"shopCardId"})})
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -18,6 +18,15 @@ public class ShopCard {
 
     private Long userId;
 
+    private Byte paid;
+    /* 0 not paid*/
+    /* 1 paid*/
+
     @Column(length = 100000)
     private String products;
+
+    @PrePersist
+    private void init() {
+        this.paid = 0;
+    }
 }

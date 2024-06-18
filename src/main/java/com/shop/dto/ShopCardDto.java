@@ -10,6 +10,10 @@ public class ShopCardDto {
 
     private Long categoryId;
 
+    private Long userId;
+
+    private Long shopCardId;
+
     private Long price;
 
     private String title;

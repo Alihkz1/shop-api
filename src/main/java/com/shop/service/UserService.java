@@ -69,7 +69,9 @@ public class UserService {
             boolean passwordMatches = passwordEncoder.matches(command.getPassword(), userInDB.getPassword());
 
             if (passwordMatches) {
-                var token = jwtService.generateToken(userInDB);
+                Map<String, Object> extraClaims = new HashMap<>();
+                extraClaims.put("userId", userInDB.getUserId());
+                var token = jwtService.generateToken(userInDB, extraClaims);
                 AuthDto authDto = AuthDto.builder().token(token).user(userInDB).build();
                 response.setData(authDto);
             } else {

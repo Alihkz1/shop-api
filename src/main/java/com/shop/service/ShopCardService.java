@@ -28,6 +28,7 @@ public class ShopCardService {
     }
 
     public ResponseEntity<Response> getUserCard(Long userId) {
+        /*todo: mpaid = 0 should come*/
         Response response = new Response();
         try {
             Optional<ShopCard> shopCard = shopCardRepository.findByUserId(userId);
@@ -37,7 +38,12 @@ public class ShopCardService {
                 Map<String, List<ShopCardDto>> map = new HashMap<>();
                 String stringProducts = shopCard.get().getProducts();
                 ObjectMapper objectMapper = new ObjectMapper();
-                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {});
+                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
+                });
+                products.stream().forEach(shopCardDto -> {
+                    shopCardDto.setUserId(userId);
+                    shopCardDto.setShopCardId(shopCard.get().getShopCardId());
+                });
                 map.put("card", products);
                 response.setData(map);
             }
@@ -90,5 +96,9 @@ public class ShopCardService {
         }
 
         return ResponseEntity.ok(response);
+    }
+
+    public void shopCardIsPaid(Long shopCardId) {
+        shopCardRepository.shopCardIsPaid(shopCardId);
     }
 }

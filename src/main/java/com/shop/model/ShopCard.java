@@ -1,5 +1,6 @@
 package com.shop.model;
 
+import com.shop.shared.enums.ShopCardStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,15 +19,13 @@ public class ShopCard {
 
     private Long userId;
 
-    private Byte paid;
-    /* 0 not paid*/
-    /* 1 paid*/
+    private ShopCardStatus paid;
 
     @Column(length = 100000)
     private String products;
 
     @PrePersist
     private void init() {
-        this.paid = 0;
+        this.paid = ShopCardStatus.NOT_PAID;
     }
 }

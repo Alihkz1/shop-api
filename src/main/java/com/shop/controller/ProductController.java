@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class ProductController {
     private final ProductService productService;
-
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
@@ -28,7 +27,6 @@ public class ProductController {
     public ResponseEntity<Response> retrieve(@PathVariable Long productId) {
         return productService.retrieve(productId);
     }
-
 
     @PutMapping(path = "edit")
     public ResponseEntity<Response> edit(@RequestBody ProductEditCommand command) {

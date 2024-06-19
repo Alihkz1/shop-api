@@ -29,7 +29,6 @@ public class JWTService {
         return extractAllClaims.get("userId");
     }
 
-
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/card")
 @CrossOrigin(origins = "*")
 public class ShopCardController {
-
     private final ShopCardService shopCardService;
 
     @Autowired

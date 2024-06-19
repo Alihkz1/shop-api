@@ -1,13 +1,11 @@
 package com.shop.command;
 
 import com.shop.model.Product;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 public class ProductAddCommand {
     private Long categoryId;
 
@@ -15,7 +13,7 @@ public class ProductAddCommand {
 
     private String title;
 
-    private long amount;
+    private Long amount;
 
     private String imageUrl;
 

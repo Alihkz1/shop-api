@@ -8,13 +8,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 public class CategoryAddCommand {
-    @JsonProperty("categoryName")
-    private final String categoryName;
+    private String categoryName;
 
-    @JsonProperty("imageUrl")
-    private final String imageUrl;
+    private String imageUrl;
 
     public Category toEntity() {
         return Category.builder()

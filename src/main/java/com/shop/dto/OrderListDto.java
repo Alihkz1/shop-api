@@ -8,13 +8,13 @@ public interface OrderListDto {
     @JsonProperty("orderId")
     Long getOrderId();
 
-    @JsonProperty("ShopCardId")
+    @JsonProperty("shopCardId")
     Long getShopCardId();
 
     @JsonProperty("userId")
     Long getUserId();
 
-    @JsonProperty("ReceiverName")
+    @JsonProperty("receiverName")
     String getReceiverName();
 
     @JsonProperty("receiverPhone")

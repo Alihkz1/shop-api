@@ -13,14 +13,18 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class MyUserDetailService {
+
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public MyUserDetailService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByEmail(email);
-        if (user == null) {
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException("user not found!");
         }
         return new UserDetails() {

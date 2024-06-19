@@ -1,13 +1,11 @@
 package com.shop.command;
 
 import com.shop.model.Order;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 public class OrderAddCommand {
     private Long shopCardId;
 

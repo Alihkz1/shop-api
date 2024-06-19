@@ -21,7 +21,6 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
-    /*intercept any request and change request and response*/
 
     private final MyUserDetailService myUserDetailsService;
 
@@ -36,12 +35,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         final String jwtToken;
         final String userEmail;
         if (authHeaderValue == null || !authHeaderValue.startsWith("Bearer ")) {
-            /* skip the request */
             filterChain.doFilter(request, response);
             return;
         }
 
-        /* set token */
         jwtToken = authHeaderValue.substring(7);
         userEmail = jwtService.extractEmail(jwtToken);
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {

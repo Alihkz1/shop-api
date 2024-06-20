@@ -16,7 +16,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<List<OrderListDto>> findByUserId(Long userId);
 
     @Query(value = "select * from orders o JOIN shop_card s " +
-            "on o.shop_card_id = s.shop_card_id order by o.order_id desc", nativeQuery = true)
+            "on o.shop_card_id = s.shop_card_id " +
+            "where o.status = :status " +
+            "order by o.order_id desc", nativeQuery = true)
+    Optional<List<OrderListDto>> adminList(Byte status);
+
+    @Query(value = "select * from orders o JOIN shop_card s " +
+            "on o.shop_card_id = s.shop_card_id " +
+            "order by o.order_id desc", nativeQuery = true)
     Optional<List<OrderListDto>> adminList();
 
     Optional<Order> findByOrderId(Long orderId);

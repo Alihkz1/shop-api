@@ -55,11 +55,13 @@ public class OrderService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Response> adminList() {
+    public ResponseEntity<Response> adminList(Byte status) {
         Response response = new Response();
         try {
+            Optional<List<OrderListDto>> userOrders = Optional.empty();
             Map<String, List<OrderListDto>> map = new HashMap<>();
-            Optional<List<OrderListDto>> userOrders = orderRepository.adminList();
+            if (status != null) userOrders = orderRepository.adminList(status);
+            else userOrders = orderRepository.adminList();
             map.put("allOrders", userOrders.get());
             response.setData(map);
         } catch (Exception e) {

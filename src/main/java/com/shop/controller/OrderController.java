@@ -4,7 +4,6 @@ import com.shop.command.OrderAddCommand;
 import com.shop.command.OrderChangeStatusCommand;
 import com.shop.service.OrderService;
 import com.shop.shared.classes.Response;
-import com.shop.shared.enums.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +31,11 @@ public class OrderController {
     }
 
     @GetMapping(path = "admin-list")
-    public ResponseEntity<Response> adminList() {
-        return orderService.adminList();
+    public ResponseEntity<Response> adminList(@RequestParam(value = "status", required = false) Byte status) {
+        return orderService.adminList(status);
     }
 
-        @PutMapping(path = "admin-change-status")
+    @PutMapping(path = "admin-change-status")
     public ResponseEntity<Response> changeStatus(@RequestBody OrderChangeStatusCommand command) {
         return orderService.changeStatus(command);
     }

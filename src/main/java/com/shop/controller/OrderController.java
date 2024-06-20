@@ -26,8 +26,8 @@ public class OrderController {
     }
 
     @GetMapping(path = "list/{userId}")
-    public ResponseEntity<Response> getAll(@PathVariable Long userId) {
-        return orderService.getAll(userId);
+    public ResponseEntity<Response> getAll(@PathVariable Long userId, @RequestParam(value = "status", required = false) Byte status) {
+        return orderService.getAll(userId, status);
     }
 
     @GetMapping(path = "admin-list")

@@ -34,6 +34,7 @@ public class OrderService {
         try {
             shopCardService.shopCardIsPaid(command.getShopCardId());
             orderRepository.save(command.toEntity());
+            changeProductsAmount(command.getShopCardId());
         } catch (Exception e) {
             response.setMessage(e.getMessage());
             response.setSuccess(false);
@@ -41,11 +42,13 @@ public class OrderService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Response> getAll(Long userId) {
+    public ResponseEntity<Response> getAll(Long userId, Byte status) {
         Response response = new Response();
         try {
+            Optional<List<OrderListDto>> userOrders = Optional.empty();
             Map<String, List<OrderListDto>> map = new HashMap<>();
-            Optional<List<OrderListDto>> userOrders = orderRepository.findByUserId(userId);
+            if (status == null) userOrders = orderRepository.findByUserId(userId);
+            else userOrders = orderRepository.findByUserId(userId, status);
             map.put("userAllOrders", userOrders.get());
             response.setData(map);
         } catch (Exception e) {
@@ -76,9 +79,6 @@ public class OrderService {
         Optional<Order> order = orderRepository.findByOrderId(command.getOrderId());
         try {
             if (order.isPresent()) {
-                if (command.getOrderStatus() == OrderStatus.SENT_VIA_POST) {
-                    changeProductsAmount(order.get().getOrderId());
-                }
                 order.get().setStatus(command.getOrderStatus());
                 orderRepository.save(order.get());
             } else {
@@ -92,9 +92,9 @@ public class OrderService {
         return ResponseEntity.ok(response);
     }
 
-    private void changeProductsAmount(Long orderId) {
+    private void changeProductsAmount(Long shopCardId) {
         ObjectMapper objectMapper = new ObjectMapper();
-        String stringProducts = orderRepository.getOrderProductsByOrderId(orderId);
+        String stringProducts = orderRepository.getOrderProductsByShopCardId(shopCardId);
         if (!stringProducts.isEmpty()) {
             try {
 

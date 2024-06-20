@@ -22,5 +22,5 @@ public class ShopCardDto {
 
     private String imageUrl;
 
-    private Integer inCardAmount;
+    private Long inCardAmount;
 }

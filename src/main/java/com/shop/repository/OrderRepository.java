@@ -20,4 +20,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<List<OrderListDto>> adminList();
 
     Optional<Order> findByOrderId(Long orderId);
+
+    @Query(value = "select s.products from orders o JOIN shop_card s " +
+            "on o.shop_card_id = s.shop_card_id " +
+            "where o.order_id = :orderId", nativeQuery = true)
+    String getOrderProductsByOrderId(Long orderId);
 }

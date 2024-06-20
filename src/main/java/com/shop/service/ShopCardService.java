@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.command.ShopCardModifyCommand;
 import com.shop.dto.ShopCardDto;
-import com.shop.model.Product;
 import com.shop.model.ShopCard;
 import com.shop.repository.ShopCardRepository;
 import com.shop.shared.classes.Response;

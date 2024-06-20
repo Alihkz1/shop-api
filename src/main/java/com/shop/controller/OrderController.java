@@ -1,8 +1,10 @@
 package com.shop.controller;
 
 import com.shop.command.OrderAddCommand;
+import com.shop.command.OrderChangeStatusCommand;
 import com.shop.service.OrderService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.enums.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,4 +30,15 @@ public class OrderController {
     public ResponseEntity<Response> getAll(@PathVariable Long userId) {
         return orderService.getAll(userId);
     }
+
+    @GetMapping(path = "admin-list")
+    public ResponseEntity<Response> adminList() {
+        return orderService.adminList();
+    }
+
+        @PutMapping(path = "admin-change-status")
+    public ResponseEntity<Response> changeStatus(@RequestBody OrderChangeStatusCommand command) {
+        return orderService.changeStatus(command);
+    }
+
 }

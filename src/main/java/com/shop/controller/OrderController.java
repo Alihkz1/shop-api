@@ -35,9 +35,8 @@ public class OrderController {
         return orderService.adminList(status);
     }
 
-    @PutMapping(path = "admin-change-status")
+    @PutMapping(path = "change-status")
     public ResponseEntity<Response> changeStatus(@RequestBody OrderChangeStatusCommand command) {
         return orderService.changeStatus(command);
     }
-
 }

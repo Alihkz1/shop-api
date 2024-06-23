@@ -43,4 +43,7 @@ public interface OrderListDto {
 
     @JsonProperty("paid")
     Byte getPaid();
+
+    @JsonProperty("notDeliver")
+    Byte getNotDeliver();
 }

@@ -1,6 +1,6 @@
 package com.shop.controller;
 
-import com.shop.command.AdminChangePasswordCommand;
+import com.shop.command.ChangePasswordCommand;
 import com.shop.command.UserEditCommand;
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping(path = "change-password")
-    public ResponseEntity<Response> changePassword(@RequestBody AdminChangePasswordCommand command) {
+    public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordCommand command) {
         return userService.changePassowrd(command);
     }
 }

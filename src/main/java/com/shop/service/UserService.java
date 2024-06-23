@@ -1,6 +1,6 @@
 package com.shop.service;
 
-import com.shop.command.AdminChangePasswordCommand;
+import com.shop.command.ChangePasswordCommand;
 import com.shop.command.UserEditCommand;
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
@@ -140,7 +140,7 @@ public class UserService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Response> changePassowrd(AdminChangePasswordCommand command) {
+    public ResponseEntity<Response> changePassowrd(ChangePasswordCommand command) {
         Response response = new Response();
         Optional<User> user = userRepository.findByUserId(command.getUserId());
         if (user.isEmpty()) {

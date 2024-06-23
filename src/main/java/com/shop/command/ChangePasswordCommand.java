@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AdminChangePasswordCommand {
+public class ChangePasswordCommand {
     private Long userId;
     private String newPassword;
 }

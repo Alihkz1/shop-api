@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController()
 @RequestMapping("api/v1/product")
 @CrossOrigin(origins = "*")
@@ -41,5 +43,10 @@ public class ProductController {
     @DeleteMapping(path = "delete/{productId}")
     public ResponseEntity<Response> deleteById(@PathVariable Long productId) {
         return productService.deleteById(productId);
+    }
+
+    @GetMapping(path = "amount-check")
+    public ResponseEntity<Response> amountCheck(@RequestParam("ids")List<Long> productIds) {
+        return productService.amountCheck(productIds);
     }
 }

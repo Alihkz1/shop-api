@@ -2,6 +2,7 @@ package com.shop.service;
 
 import com.shop.command.ProductAddCommand;
 import com.shop.command.ProductEditCommand;
+import com.shop.dto.ProductAmountCheckDto;
 import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
 import com.shop.shared.classes.Response;
@@ -9,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductService {
@@ -85,6 +83,29 @@ public class ProductService {
             return ResponseEntity.ok(response);
         }
     }
+
+    public ResponseEntity<Response> amountCheck(List<Long> productIds) {
+        Response response = new Response();
+        try {
+            List<ProductAmountCheckDto> list = new ArrayList<>();
+            Map<String, List<ProductAmountCheckDto>> map = new HashMap<>();
+            productIds.forEach(productId -> {
+                Long amount = productRepository.getAmountByProductId(productId);
+                ProductAmountCheckDto dto = new ProductAmountCheckDto();
+                dto.setProductId(productId);
+                dto.setAmount(amount);
+                list.add(dto);
+            });
+            map.put("products", list);
+            response.setData(map);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+
 
     public ResponseEntity<Response> retrieve(Long productId) {
         Response response = new Response();

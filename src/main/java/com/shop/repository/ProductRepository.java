@@ -24,6 +24,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             " order by product_id asc", nativeQuery = true)
     List<Product> getAll(Long categoryId);
 
+    @Query(value = "select amount from product" +
+            " where product_id = :productId", nativeQuery = true)
+    Long getAmountByProductId(Long productId);
+
     @Modifying
     @Transactional
     @Query(value = "update product set amount = amount - :lostAmount where product_id = :productId", nativeQuery = true)

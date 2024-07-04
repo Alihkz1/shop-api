@@ -51,6 +51,9 @@ public class ProductService {
             if (command.getCategoryId() != null) {
                 product.get().setCategoryId(command.getCategoryId());
             }
+            if (command.getDescription() != null) {
+                product.get().setDescription(command.getDescription());
+            }
             productRepository.save(product.get());
             return ResponseEntity.ok(response);
         } else {

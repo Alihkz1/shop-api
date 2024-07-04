@@ -17,6 +17,8 @@ public class ProductAddCommand {
 
     private String imageUrl;
 
+    private String description;
+
     public Product toEntity() {
         return Product.
                 builder()
@@ -25,6 +27,7 @@ public class ProductAddCommand {
                 .title(title)
                 .amount(amount)
                 .imageUrl(imageUrl)
+                .description(description)
                 .build();
     }
 }

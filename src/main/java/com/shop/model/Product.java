@@ -24,4 +24,8 @@ public class Product {
     private Long amount;
 
     private String imageUrl;
+
+    @Column(length = 2000)
+    private String description;
+
 }

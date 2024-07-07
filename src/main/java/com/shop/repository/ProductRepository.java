@@ -23,6 +23,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             " where category_id = :categoryId" +
             " order by product_id asc", nativeQuery = true)
     List<Product> getAll(Long categoryId);
+    @Query(value = "select * from product" +
+            " where category_id = :categoryId" +
+            " order by price desc", nativeQuery = true)
+    List<Product> getAllExpensive(Long categoryId);
+
+    @Query(value = "select * from product" +
+            " where category_id = :categoryId" +
+            " order by price asc", nativeQuery = true)
+    List<Product> getAllCheap(Long categoryId);
+
+    @Query(value = "select * from product" +
+            " where category_id = :categoryId" +
+            " order by buy_count asc", nativeQuery = true)
+    List<Product> getAllMostBuy(Long categoryId);
 
     @Query(value = "select amount from product" +
             " where product_id = :productId", nativeQuery = true)

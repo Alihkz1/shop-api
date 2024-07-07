@@ -36,6 +36,7 @@ public class OrderService {
     }
 
     public ResponseEntity<Response> add(OrderAddCommand command) {
+        /*todo: increate products buyCount*/
         Response response = new Response();
         try {
             shopCardService.shopCardIsPaid(command.getShopCardId());

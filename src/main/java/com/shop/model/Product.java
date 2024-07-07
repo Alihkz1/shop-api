@@ -23,6 +23,8 @@ public class Product {
 
     private Long amount;
 
+    private Long buyCount;
+
     private String imageUrl;
 
     @Column(length = 2000)

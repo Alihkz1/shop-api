@@ -10,3 +10,4 @@ public class ProductAmountCheckDto {
     private Long amount;
     private Long price;
 }
+        

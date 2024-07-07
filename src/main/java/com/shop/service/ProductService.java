@@ -120,7 +120,8 @@ public class ProductService {
                 response.setData(map);
             } else {
                 response.setMessage("wrong productId!");
-                response.setSuccess(false);
+                response.setSuccess(true);
+                response.setData(new Product());
             }
             return ResponseEntity.ok(response);
         } catch (Exception e) {

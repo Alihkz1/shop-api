@@ -21,6 +21,8 @@ public class ProductEditCommand {
 
     private String description;
 
+    private String size;
+
     public Product toEntity() {
         return Product.
                 builder()
@@ -30,6 +32,7 @@ public class ProductEditCommand {
                 .amount(amount)
                 .imageUrl(imageUrl)
                 .description(description)
+                .size(size)
                 .build();
     }
 }

@@ -37,10 +37,15 @@ public class UserService {
     public ResponseEntity<Response> signUp(UserSignUpCommand command) {
         Response response = new Response();
         try {
-            Optional<User> exist = userRepository.findByEmail(command.getEmail());
-            if (exist.isPresent()) {
+            Optional<User> existByEmail = userRepository.findByEmail(command.getEmail());
+            Optional<User> existByPhone = userRepository.findByPhone(command.getPhone());
+            if (existByEmail.isPresent()) {
                 response.setSuccess(false);
-                response.setMessage("email already taken!");
+                response.setMessage("ایمیل وارد شده قبلا قبت نام کرده است");
+                return ResponseEntity.badRequest().body(response);
+            } else if (existByPhone.isPresent()) {
+                response.setSuccess(false);
+                response.setMessage("تلفن همراه وارد شده قبلا ثبت نام کرده است");
                 return ResponseEntity.badRequest().body(response);
             } else {
                 userRepository.save(command.toEntity(passwordEncoder.encode(command.getPassword())));
@@ -59,7 +64,7 @@ public class UserService {
 
     public ResponseEntity<Response<AuthDto>> login(UserLoginCommand command) {
         Response response = new Response();
-        User userInDB = userRepository.login(command.getEmail());
+        User userInDB = userRepository.login(command.getEmailOrPhone());
 
         if (userInDB == null) {
             response.setSuccess(false);

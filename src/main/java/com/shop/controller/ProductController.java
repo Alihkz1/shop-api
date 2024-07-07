@@ -15,14 +15,15 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ProductController {
     private final ProductService productService;
+
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
     @GetMapping(path = "list/{categoryId}")
-    public ResponseEntity<Response> getAll(@PathVariable Long categoryId) {
-        return productService.getAll(categoryId);
+    public ResponseEntity<Response> getAll(@PathVariable Long categoryId, @RequestParam(value = "sort",required = false) Byte sort) {
+        return productService.getAll(categoryId, sort);
     }
 
     @GetMapping(path = "retrieve/{productId}")
@@ -46,7 +47,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "amount-check")
-    public ResponseEntity<Response> amountCheck(@RequestParam("ids")List<Long> productIds) {
+    public ResponseEntity<Response> amountCheck(@RequestParam("ids") List<Long> productIds) {
         return productService.amountCheck(productIds);
     }
 }

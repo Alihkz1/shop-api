@@ -6,6 +6,7 @@ import com.shop.dto.ProductAmountCheckDto;
 import com.shop.model.Product;
 import com.shop.repository.ProductRepository;
 import com.shop.shared.classes.Response;
+import com.shop.shared.enums.SortProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,19 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ResponseEntity<Response> getAll(Long categoryId) {
-        /*todo: getByCategoryId */
+    public ResponseEntity<Response> getAll(Long categoryId, Byte sort) {
         Response response = new Response();
+        /*todo: imp sort by most bought*/
         Map<String, List<Product>> map = new HashMap<>();
-        map.put("products", productRepository.getAll(categoryId));
+        if (sort == null) {
+            map.put("products", productRepository.getAll(categoryId));
+        } else if (sort == 1) {
+            map.put("products", productRepository.getAllExpensive(categoryId));
+        } else if (sort == 2) {
+            map.put("products", productRepository.getAllCheap(categoryId));
+        } else if (sort == 3) {
+            map.put("products", productRepository.getAllMostBuy(categoryId));
+        }
         response.setData(map);
         return ResponseEntity.ok(response);
     }

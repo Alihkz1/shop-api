@@ -6,6 +6,8 @@ import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
 import com.shop.config.JWTService;
 import com.shop.dto.AuthDto;
+import com.shop.dto.UserDto;
+import com.shop.dto.UserDtoMapper;
 import com.shop.model.User;
 import com.shop.repository.UserRepository;
 import com.shop.shared.classes.Response;
@@ -26,12 +28,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final UserDtoMapper userDtoMapper;
 
     @Autowired
-    public UserService(JWTService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(
+            JWTService jwtService,
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            UserDtoMapper userDtoMapper
+    ) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userDtoMapper = userDtoMapper;
     }
 
     public ResponseEntity<Response> signUp(UserSignUpCommand command) {
@@ -68,7 +77,7 @@ public class UserService {
 
         if (userInDB == null) {
             response.setSuccess(false);
-            response.setMessage("incorrect email!");
+            response.setMessage("ایمیل یا شماره همراه اشتباه است");
             return ResponseEntity.ok(response);
         } else {
             boolean passwordMatches = passwordEncoder.matches(command.getPassword(), userInDB.getPassword());
@@ -77,7 +86,8 @@ public class UserService {
                 Map<String, Object> extraClaims = new HashMap<>();
                 extraClaims.put("userId", userInDB.getUserId());
                 var token = jwtService.generateToken(userInDB, extraClaims);
-                AuthDto authDto = AuthDto.builder().token(token).user(userInDB).build();
+
+                AuthDto authDto = AuthDto.builder().token(token).user(userDtoMapper.apply(userInDB)).build();
                 response.setData(authDto);
             } else {
                 response.setSuccess(false);

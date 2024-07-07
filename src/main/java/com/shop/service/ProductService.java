@@ -93,10 +93,11 @@ public class ProductService {
             List<ProductAmountCheckDto> list = new ArrayList<>();
             Map<String, List<ProductAmountCheckDto>> map = new HashMap<>();
             productIds.forEach(productId -> {
-                Long amount = productRepository.getAmountByProductId(productId);
+                Optional<Product> product = productRepository.findByProductId(productId);
                 ProductAmountCheckDto dto = new ProductAmountCheckDto();
                 dto.setProductId(productId);
-                dto.setAmount(amount);
+                dto.setAmount(product.get().getAmount());
+                dto.setPrice(product.get().getPrice());
                 list.add(dto);
             });
             map.put("products", list);

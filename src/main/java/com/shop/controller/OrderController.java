@@ -30,6 +30,11 @@ public class OrderController {
         return orderService.getAll(userId, status);
     }
 
+    @GetMapping(path = "track/{orderCode}")
+    public ResponseEntity<Response> track(@PathVariable String orderCode) {
+        return orderService.track(orderCode);
+    }
+
     @GetMapping(path = "admin-list")
     public ResponseEntity<Response> adminList(@RequestParam(value = "status", required = false) Byte status) {
         return orderService.adminList(status);

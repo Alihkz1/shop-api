@@ -32,6 +32,9 @@ public class Order {
 
     private Long postalCode;
 
+    @Column(nullable = false)
+    private String code;
+
     private OrderStatus status;
 
     @Column(length = 100000)
@@ -47,6 +50,6 @@ public class Order {
     public void init() {
         this.status = OrderStatus.PAID;
         this.date = new Date().getTime();
+        this.code = "OR" + new Date().getTime();
     }
-
 }

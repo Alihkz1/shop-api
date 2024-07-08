@@ -46,18 +46,19 @@ public class OrderService {
             response.setMessage(e.getMessage());
             response.setSuccess(false);
         }
-        try {
-            KavenegarApi api = new KavenegarApi(environment.getProperty("kavehNegarApiKey"));
-            SendResult result = api.send(
-                    environment.getProperty("kavehNegarSender"),
-                    environment.getProperty("adminPhoneNumber"),
-                    "Hi Kiwi"
-            );
-        } catch (HttpException ex) {
-            System.out.print("HttpException  : " + ex.getMessage());
-        } catch (ApiException ex) {
-            System.out.print("ApiException : " + ex.getMessage());
-        }
+//        try {
+//            KavenegarApi api = new KavenegarApi(environment.getProperty("kavehNegarApiKey"));
+//            SendResult result = api.send(
+//                    environment.getProperty("kavehNegarSender"),
+//                    environment.getProperty("adminPhoneNumber"),
+//                    "Hi Kiwi"
+//            );
+//        } catch (HttpException ex) {
+//            System.out.print("HttpException  : " + ex.getMessage());
+//        } catch (ApiException ex) {
+//            System.out.print("ApiException : " + ex.getMessage());
+//        }
+        response.setData(orderRepository.getOrderCodeByShopCardId(command.getShopCardId()));
         return ResponseEntity.ok(response);
     }
 
@@ -73,6 +74,19 @@ public class OrderService {
         } catch (Exception e) {
             response.setMessage(e.getMessage());
             response.setSuccess(false);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> track(String orderCode) {
+        Response response = new Response();
+        Optional<OrderListDto> order = orderRepository.findByCode(orderCode);
+        if (order.isEmpty()) {
+            response.setMessage("wrong orderCode!");
+        } else {
+            Map<String, OrderListDto> map = new HashMap<>();
+            map.put("order", order.get());
+            response.setData(map);
         }
         return ResponseEntity.ok(response);
     }

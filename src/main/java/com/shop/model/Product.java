@@ -1,7 +1,10 @@
 package com.shop.model;
 
+import com.shop.shared.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "product")
@@ -32,5 +35,10 @@ public class Product {
 
     @Column(length = 10000)
     private String size;
+
+    @PrePersist
+    public void init() {
+        this.buyCount = 0L;
+    }
 
 }

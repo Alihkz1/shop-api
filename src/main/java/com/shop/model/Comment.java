@@ -30,6 +30,7 @@ public class Comment {
     @PrePersist
     public void init() {
         this.date = new Date().getTime();
+        this.read = false;
     }
 
 }

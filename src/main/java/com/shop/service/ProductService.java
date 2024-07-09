@@ -63,9 +63,6 @@ public class ProductService {
             if (command.getDescription() != null) {
                 product.get().setDescription(command.getDescription());
             }
-            if (command.getSize() != null) {
-                product.get().setSize(command.getSize());
-            }
             productRepository.save(product.get());
             return ResponseEntity.ok(response);
         } else {

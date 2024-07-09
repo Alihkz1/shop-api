@@ -30,7 +30,6 @@ public class ProductAddCommand {
                 .amount(amount)
                 .imageUrl(imageUrl)
                 .description(description)
-                .size(size)
                 .build();
     }
 }

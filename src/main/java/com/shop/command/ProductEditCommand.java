@@ -32,7 +32,6 @@ public class ProductEditCommand {
                 .amount(amount)
                 .imageUrl(imageUrl)
                 .description(description)
-                .size(size)
                 .build();
     }
 }

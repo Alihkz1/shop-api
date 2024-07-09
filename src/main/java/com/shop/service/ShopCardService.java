@@ -34,17 +34,18 @@ public class ShopCardService {
             if (shopCard.isEmpty()) {
                 response.setMessage("no data for this user!");
             } else {
-                Map<String, List<ShopCardDto>> map = new HashMap<>();
-                String stringProducts = shopCard.get().getProducts();
-                ObjectMapper objectMapper = new ObjectMapper();
-                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
-                });
-                products.stream().forEach(shopCardDto -> {
-                    shopCardDto.setUserId(userId);
-                    shopCardDto.setShopCardId(shopCard.get().getShopCardId());
-                });
-                map.put("card", products);
-                response.setData(map);
+//                Map<String, List<ShopCardDto>> map = new HashMap<>();
+//                /*todo*/
+//                String stringProducts = shopCard.get().getProducts();
+//                ObjectMapper objectMapper = new ObjectMapper();
+//                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
+//                });
+//                products.stream().forEach(shopCardDto -> {
+//                    shopCardDto.setUserId(userId);
+//                    shopCardDto.setShopCardId(shopCard.get().getShopCardId());
+//                });
+//                map.put("card", products);
+//                response.setData(map);
             }
         } catch (Exception e) {
             response.setSuccess(false);
@@ -61,11 +62,12 @@ public class ShopCardService {
                 response.setMessage("no data for this user!");
                 response.setData(0);
             } else {
-                String stringProducts = shopCard.get().getProducts();
-                ObjectMapper objectMapper = new ObjectMapper();
-                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
-                });
-                response.setData(products.size());
+                /*todo*/
+//                String stringProducts = shopCard.get().getProducts();
+//                ObjectMapper objectMapper = new ObjectMapper();
+//                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
+//                });
+//                response.setData(products.size());
             }
         } catch (Exception e) {
             response.setSuccess(false);
@@ -80,15 +82,16 @@ public class ShopCardService {
         ObjectMapper objectMapper = new ObjectMapper();
         Optional<ShopCard> userCard = shopCardRepository.findByUserId(command.getUserId());
         try {
-            if (userCard.isPresent()) {
-                userCard.get().setProducts(objectMapper.writeValueAsString(command.getProducts()));
-                shopCardRepository.save(userCard.get());
-            } else {
-                ShopCard shopCard = new ShopCard();
-                shopCard.setUserId(command.getUserId());
-                shopCard.setProducts(objectMapper.writeValueAsString(command.getProducts()));
-                shopCardRepository.save(shopCard);
-            }
+//            if (userCard.isPresent()) {
+//                userCard.get().setProducts(objectMapper.writeValueAsString(command.getProducts()));
+//                shopCardRepository.save(userCard.get());
+//            } else {
+//                ShopCard shopCard = new ShopCard();
+//                shopCard.setUserId(command.getUserId());
+//                shopCard.setProducts(objectMapper.writeValueAsString(command.getProducts()));
+//                shopCardRepository.save(shopCard);
+//            }
+            /*todo*/
         } catch (Exception e) {
             response.setSuccess(false);
             response.setMessage(e.getMessage());

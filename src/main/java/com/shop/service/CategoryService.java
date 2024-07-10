@@ -42,14 +42,13 @@ public class CategoryService {
     public ResponseEntity<Response<CategoryListDto>> list() {
         Response response = new Response();
         List<CategoryListDto> finalDto = new ArrayList<>();
-        categoryRepository.findAll().stream()
-                .forEach((category -> {
-                    CategoryListDto dto = new CategoryListDto();
-                    dto.setCategoryId(category.getCategoryId());
-                    dto.setCategoryName(category.getCategoryName());
-                    dto.setImageUrl(category.getImageUrl());
-                    finalDto.add(dto);
-                }));
+        categoryRepository.findAll().stream().forEach((category -> {
+            CategoryListDto dto = new CategoryListDto();
+            dto.setCategoryId(category.getCategoryId());
+            dto.setCategoryName(category.getCategoryName());
+            dto.setImageUrl(category.getImageUrl());
+            finalDto.add(dto);
+        }));
 
         finalDto.stream().forEach(dto -> {
             List<ProductDto> products = new ArrayList<>();
@@ -64,9 +63,7 @@ public class CategoryService {
             dto.setProducts(products);
         });
 
-        List<CategoryListDto> sorted = finalDto.stream()
-                .sorted(Comparator.comparing(CategoryListDto::getCategoryId))
-                .collect(Collectors.toList());
+        List<CategoryListDto> sorted = finalDto.stream().sorted(Comparator.comparing(CategoryListDto::getCategoryId)).collect(Collectors.toList());
 
         Map<String, List<CategoryListDto>> map = new HashMap<>();
         map.put("categories", sorted);
@@ -109,6 +106,7 @@ public class CategoryService {
     public ResponseEntity<Response> deleteById(Long categoryId) {
         Response response = new Response();
         try {
+            /*todo: delete sizes */
             productRepository.deleteByCategoryId(categoryId);
             categoryRepository.deleteById(categoryId);
             return ResponseEntity.ok(response);

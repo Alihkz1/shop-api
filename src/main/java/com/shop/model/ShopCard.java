@@ -18,6 +18,12 @@ public class ShopCard {
 
     private Long userId;
 
+    private Long productId;
+
+    private String size;
+
+    private Long amount;
+
     private ShopCardStatus paid;
 
     @PrePersist

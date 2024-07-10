@@ -73,7 +73,7 @@ public class ProductService {
                 if (command.getAmount() != null) {
                     product.get().setAmount(command.getAmount());
                 }
-                if (command.getImageUrl() != null && !command.getImageUrl().equals("")) {
+                if (command.getImageUrl() != null && !command.getImageUrl().isEmpty()) {
                     product.get().setImageUrl(command.getImageUrl());
                 }
                 if (command.getCategoryId() != null) {
@@ -106,12 +106,13 @@ public class ProductService {
         try {
             List<ProductSize> sizes = objectMapper.readValue(command.getSize(), new TypeReference<List<ProductSize>>() {
             });
-
             Product savedProduct = productRepository.save(command.toEntity());
+
             sizes.forEach(productSize -> productSize.setProductId(savedProduct.getProductId()));
             sizeRepository.saveAll(sizes);
 
             return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             response.setSuccess(false);
             response.setMessage(e.getMessage());
@@ -137,6 +138,7 @@ public class ProductService {
         try {
             List<ProductAmountCheckDto> list = new ArrayList<>();
             Map<String, List<ProductAmountCheckDto>> map = new HashMap<>();
+
             productIds.forEach(productId -> {
                 Optional<Product> product = productRepository.findByProductId(productId);
                 ProductAmountCheckDto dto = new ProductAmountCheckDto();
@@ -145,6 +147,8 @@ public class ProductService {
                 dto.setPrice(product.get().getPrice());
                 Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
                 dto.setSizes(sizes.get());
+                if (sizes.get().isEmpty()) dto.setIsSized(false);
+                else dto.setIsSized(true);
                 list.add(dto);
             });
             map.put("products", list);

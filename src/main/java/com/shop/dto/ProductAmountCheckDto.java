@@ -12,6 +12,7 @@ public class ProductAmountCheckDto {
     private Long productId;
     private Long amount;
     private Long price;
+    private Boolean isSized;
     private List<ProductSize> sizes;
 }
         

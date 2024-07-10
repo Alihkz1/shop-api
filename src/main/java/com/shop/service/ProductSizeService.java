@@ -26,5 +26,4 @@ public class ProductSizeService {
             return ResponseEntity.ok(response);
         }
     }
-
 }

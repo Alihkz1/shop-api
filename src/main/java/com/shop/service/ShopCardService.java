@@ -60,6 +60,7 @@ public class ShopCardService {
                     ShopCardDto shopCardDto = new ShopCardDto();
                     ProductDto productDto = new ProductDto();
                     shopCardDto.setShopCard(shopCard);
+                    /*todo: code below if not found check*/
                     productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
                     productDto.setProductSize(sizeRepository.findByProductId(shopCard.getProductId()).get());
                     shopCardDto.setProduct(productDto);

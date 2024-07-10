@@ -47,4 +47,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "on o.shop_card_id = s.shop_card_id " +
             "where s.shop_card_id = :shopCardId", nativeQuery = true)
     String getOrderCodeByShopCardId(Long shopCardId);
+
+    @Query(value = "select order_id from orders where code = :orderCode", nativeQuery = true)
+    Long getOrderIdByOrderCode(String orderCode);
 }

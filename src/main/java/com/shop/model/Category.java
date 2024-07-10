@@ -18,6 +18,6 @@ public class Category {
     @Column(nullable = false)
     private String categoryName;
 
-    @Column(nullable = false)
+    @Column(length = 10000000)
     private String imageUrl;
 }

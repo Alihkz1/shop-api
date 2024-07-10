@@ -67,7 +67,7 @@ public class OrderService {
         Response response = new Response();
         List<OrderDto> userAllOrders = new ArrayList<>();
         try {
-            Optional<List<OrderListDto>> userOrders = Optional.empty();
+            Optional<List<OrderListDto>> userOrders;
             Map<String, List<OrderDto>> map = new HashMap<>();
             if (status == null) userOrders = orderRepository.findByUserId(userId);
             else userOrders = orderRepository.findByUserId(userId, status);
@@ -96,14 +96,26 @@ public class OrderService {
     }
 
     public ResponseEntity<Response> track(String orderCode) {
-        /*todo*/
         Response response = new Response();
         Optional<OrderListDto> order = orderRepository.findByCode(orderCode);
         if (order.isEmpty()) {
             response.setMessage("wrong orderCode!");
         } else {
-            Map<String, OrderListDto> map = new HashMap<>();
-            map.put("order", order.get());
+            Map<String, OrderDto> map = new HashMap<>();
+            OrderDto orderDto = new OrderDto();
+            List<OrderProductDto> products = new ArrayList<>();
+            orderDto.setOrder(order.get());
+            Long orderId = orderRepository.getOrderIdByOrderCode(orderCode);
+            Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(orderId);
+            orderShopCards.get().forEach(shopCard -> {
+                OrderProductDto productDto = new OrderProductDto();
+                productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
+                productDto.setSize(shopCard.getSize());
+                productDto.setAmount(shopCard.getAmount());
+                products.add(productDto);
+            });
+            orderDto.setProducts(products);
+            map.put("order", orderDto);
             response.setData(map);
         }
         return ResponseEntity.ok(response);

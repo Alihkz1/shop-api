@@ -15,8 +15,14 @@ public interface ShopCardRepository extends JpaRepository<ShopCard, Long> {
     @Query(value = "select * from shop_card where user_id = :userId and paid = 0", nativeQuery = true)
     Optional<List<ShopCard>> findByUserId(Long userId);
 
+    @Query(value = "select * from shop_card where shop_card_id = :cardId", nativeQuery = true)
+    Optional<List<ShopCard>> findByShopCardId(Long cardId);
+
+    @Query(value = "select * from shop_card where order_id = :orderId", nativeQuery = true)
+    Optional<List<ShopCard>> findByOrderId(Long orderId);
+
     @Modifying
     @Transactional
-    @Query(value = "update shop_card set paid = 1 where shop_card_id = :shopCardId", nativeQuery = true)
-    void payShopCard(Long shopCardId);
+    @Query(value = "update shop_card set paid = 1, order_id = :orderId where paid = 0", nativeQuery = true)
+    void payShopCards(Long orderId);
 }

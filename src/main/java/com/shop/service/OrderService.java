@@ -1,15 +1,16 @@
 package com.shop.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.command.OrderAddCommand;
 import com.shop.command.OrderChangeStatusCommand;
+import com.shop.dto.OrderDto;
 import com.shop.dto.OrderListDto;
-import com.shop.dto.ShopCardDto;
+import com.shop.dto.OrderProductDto;
+import com.shop.dto.ProductDto;
 import com.shop.model.Order;
+import com.shop.model.ShopCard;
 import com.shop.repository.OrderRepository;
 import com.shop.repository.ProductRepository;
+import com.shop.repository.ShopCardRepository;
 import com.shop.shared.classes.Response;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -21,22 +22,26 @@ import java.util.*;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ShopCardService shopCardService;
+
+    private final ShopCardRepository shopCardRepository;
+
     private final ProductRepository productRepository;
     private final Environment environment;
 
-    public OrderService(OrderRepository repository, ShopCardService shopCardService, ProductRepository productRepository, Environment environment) {
+    public OrderService(OrderRepository repository, ShopCardService shopCardService, ProductRepository productRepository, Environment environment, ShopCardRepository shopCardRepository) {
         this.orderRepository = repository;
         this.shopCardService = shopCardService;
         this.productRepository = productRepository;
         this.environment = environment;
+        this.shopCardRepository = shopCardRepository;
     }
 
     public ResponseEntity<Response> add(OrderAddCommand command) {
         /*todo: increase products buyCount*/
         Response response = new Response();
         try {
-            shopCardService.payShopCard(command.getShopCardId());
-            orderRepository.save(command.toEntity());
+            Order order = orderRepository.save(command.toEntity());
+            shopCardService.payShopCards(order.getOrderId());
             changeProductsAmount(command.getShopCardId());
         } catch (Exception e) {
             response.setMessage(e.getMessage());
@@ -60,12 +65,28 @@ public class OrderService {
 
     public ResponseEntity<Response> getAll(Long userId, Byte status) {
         Response response = new Response();
+        List<OrderDto> userAllOrders = new ArrayList<>();
         try {
             Optional<List<OrderListDto>> userOrders = Optional.empty();
-            Map<String, List<OrderListDto>> map = new HashMap<>();
+            Map<String, List<OrderDto>> map = new HashMap<>();
             if (status == null) userOrders = orderRepository.findByUserId(userId);
             else userOrders = orderRepository.findByUserId(userId, status);
-            map.put("userAllOrders", userOrders.get());
+            userOrders.get().forEach(userOrder -> {
+                OrderDto orderDto = new OrderDto();
+                List<OrderProductDto> products = new ArrayList<>();
+                Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(userOrder.getOrderId());
+                orderShopCards.get().forEach(shopCard -> {
+                    OrderProductDto productDto = new OrderProductDto();
+                    productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
+                    productDto.setSize(shopCard.getSize());
+                    productDto.setAmount(shopCard.getAmount());
+                    products.add(productDto);
+                });
+                orderDto.setProducts(products);
+                orderDto.setOrder(userOrder);
+                userAllOrders.add(orderDto);
+            });
+            map.put("userAllOrders", userAllOrders);
             response.setData(map);
         } catch (Exception e) {
             response.setMessage(e.getMessage());
@@ -75,6 +96,7 @@ public class OrderService {
     }
 
     public ResponseEntity<Response> track(String orderCode) {
+        /*todo*/
         Response response = new Response();
         Optional<OrderListDto> order = orderRepository.findByCode(orderCode);
         if (order.isEmpty()) {
@@ -88,6 +110,7 @@ public class OrderService {
     }
 
     public ResponseEntity<Response> adminList(Byte status) {
+        /*todo*/
         Response response = new Response();
         try {
             Optional<List<OrderListDto>> userOrders;
@@ -123,22 +146,5 @@ public class OrderService {
 
     private void changeProductsAmount(Long shopCardId) {
         /*todo*/
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        String stringProducts = orderRepository.getOrderProductsByShopCardId(shopCardId);
-//        if (!stringProducts.isEmpty()) {
-//            try {
-//
-//                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
-//                });
-//
-//                products.forEach(product -> {
-//                    productRepository.reduceProductAmount(product.getProductId(), product.getInCardAmount());
-//                });
-//
-//
-//            } catch (JsonProcessingException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
     }
 }

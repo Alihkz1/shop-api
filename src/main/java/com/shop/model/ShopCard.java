@@ -18,6 +18,8 @@ public class ShopCard {
 
     private Long userId;
 
+    private Long orderId;
+
     private Long productId;
 
     private String size;

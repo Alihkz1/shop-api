@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ShopCardService {
@@ -138,7 +137,7 @@ public class ShopCardService {
         return ResponseEntity.ok(response);
     }
 
-    public void payShopCard(Long shopCardId) {
-        shopCardRepository.payShopCard(shopCardId);
+    public void payShopCards(Long shopCardId) {
+        shopCardRepository.payShopCards(shopCardId);
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController()
 @RequestMapping("api/v1/card")
 @CrossOrigin(origins = "*")
@@ -16,6 +18,11 @@ public class ShopCardController {
     @Autowired
     public ShopCardController(ShopCardService shopCardService) {
         this.shopCardService = shopCardService;
+    }
+
+    @GetMapping("light/{userId}")
+    public ResponseEntity<Response> getUserCardLight(@PathVariable Long userId) {
+        return shopCardService.getUserCardLight(userId);
     }
 
     @GetMapping("user/{userId}")
@@ -31,5 +38,15 @@ public class ShopCardController {
     @PostMapping("modify")
     public ResponseEntity<Response> modify(@RequestBody ShopCardModifyCommand command) {
         return shopCardService.modify(command);
+    }
+
+    @PostMapping("modifyAll")
+    public ResponseEntity<Response> modifyAll(@RequestBody List<ShopCardModifyCommand> list) {
+        return shopCardService.modifyAll(list);
+    }
+
+    @DeleteMapping("delete/{shopCardId}")
+    public ResponseEntity<Response> deleteById(@PathVariable Long shopCardId) {
+        return shopCardService.deleteById(shopCardId);
     }
 }

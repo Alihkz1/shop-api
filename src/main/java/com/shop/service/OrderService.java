@@ -3,10 +3,6 @@ package com.shop.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kavenegar.sdk.KavenegarApi;
-import com.kavenegar.sdk.excepctions.ApiException;
-import com.kavenegar.sdk.excepctions.HttpException;
-import com.kavenegar.sdk.models.SendResult;
 import com.shop.command.OrderAddCommand;
 import com.shop.command.OrderChangeStatusCommand;
 import com.shop.dto.OrderListDto;
@@ -36,10 +32,10 @@ public class OrderService {
     }
 
     public ResponseEntity<Response> add(OrderAddCommand command) {
-        /*todo: increate products buyCount*/
+        /*todo: increase products buyCount*/
         Response response = new Response();
         try {
-            shopCardService.shopCardIsPaid(command.getShopCardId());
+            shopCardService.payShopCard(command.getShopCardId());
             orderRepository.save(command.toEntity());
             changeProductsAmount(command.getShopCardId());
         } catch (Exception e) {
@@ -94,7 +90,7 @@ public class OrderService {
     public ResponseEntity<Response> adminList(Byte status) {
         Response response = new Response();
         try {
-            Optional<List<OrderListDto>> userOrders = Optional.empty();
+            Optional<List<OrderListDto>> userOrders;
             Map<String, List<OrderListDto>> map = new HashMap<>();
             if (status != null) userOrders = orderRepository.adminList(status);
             else userOrders = orderRepository.adminList();
@@ -126,22 +122,23 @@ public class OrderService {
     }
 
     private void changeProductsAmount(Long shopCardId) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String stringProducts = orderRepository.getOrderProductsByShopCardId(shopCardId);
-        if (!stringProducts.isEmpty()) {
-            try {
-
-                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
-                });
-
-                products.forEach(product -> {
-                    productRepository.reduceProductAmount(product.getProductId(), product.getInCardAmount());
-                });
-
-
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        /*todo*/
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        String stringProducts = orderRepository.getOrderProductsByShopCardId(shopCardId);
+//        if (!stringProducts.isEmpty()) {
+//            try {
+//
+//                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
+//                });
+//
+//                products.forEach(product -> {
+//                    productRepository.reduceProductAmount(product.getProductId(), product.getInCardAmount());
+//                });
+//
+//
+//            } catch (JsonProcessingException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
     }
 }

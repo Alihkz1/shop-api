@@ -1,51 +1,44 @@
 package com.shop.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.command.ShopCardModifyCommand;
+import com.shop.dto.ProductDto;
 import com.shop.dto.ShopCardDto;
 import com.shop.model.ShopCard;
+import com.shop.repository.ProductRepository;
+import com.shop.repository.ProductSizeRepository;
 import com.shop.repository.ShopCardRepository;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ShopCardService {
 
     private final ShopCardRepository shopCardRepository;
+    private final ProductRepository productRepository;
+    private final ProductSizeRepository sizeRepository;
 
     @Autowired
-    public ShopCardService(ShopCardRepository shopCardRepository) {
+    public ShopCardService(ShopCardRepository shopCardRepository, ProductRepository productRepository, ProductSizeRepository sizeRepository) {
         this.shopCardRepository = shopCardRepository;
+        this.productRepository = productRepository;
+        this.sizeRepository = sizeRepository;
     }
 
-    public ResponseEntity<Response> getUserCard(Long userId) {
-        /*todo: mpaid = 0 should come*/
+    public ResponseEntity<Response> getUserCardLight(Long userId) {
         Response response = new Response();
+        Map<String, List<ShopCard>> map = new HashMap<>();
         try {
-            Optional<ShopCard> shopCard = shopCardRepository.findByUserId(userId);
-            if (shopCard.isEmpty()) {
+            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(userId);
+            if (userShopCards.isEmpty()) {
                 response.setMessage("no data for this user!");
             } else {
-//                Map<String, List<ShopCardDto>> map = new HashMap<>();
-//                /*todo*/
-//                String stringProducts = shopCard.get().getProducts();
-//                ObjectMapper objectMapper = new ObjectMapper();
-//                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
-//                });
-//                products.stream().forEach(shopCardDto -> {
-//                    shopCardDto.setUserId(userId);
-//                    shopCardDto.setShopCardId(shopCard.get().getShopCardId());
-//                });
-//                map.put("card", products);
-//                response.setData(map);
+                map.put("cards", userShopCards.get());
+                response.setData(map);
             }
         } catch (Exception e) {
             response.setSuccess(false);
@@ -54,20 +47,44 @@ public class ShopCardService {
         return ResponseEntity.ok(response);
     }
 
+    public ResponseEntity<Response> getUserCard(Long userId) {
+        Response response = new Response();
+        Map<String, List<ShopCardDto>> map = new HashMap<>();
+        try {
+            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(userId);
+            if (userShopCards.isEmpty()) {
+                response.setMessage("no data for this user!");
+            } else {
+                List<ShopCardDto> list = new ArrayList<>();
+                userShopCards.get().forEach(shopCard -> {
+                    ShopCardDto shopCardDto = new ShopCardDto();
+                    ProductDto productDto = new ProductDto();
+                    shopCardDto.setShopCard(shopCard);
+                    productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
+                    productDto.setProductSize(sizeRepository.findByProductId(shopCard.getProductId()).get());
+                    shopCardDto.setProduct(productDto);
+                    list.add(shopCardDto);
+                });
+                map.put("cards", list);
+                response.setData(map);
+            }
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+
     public ResponseEntity<Response> getUserCardLength(Long userId) {
         Response<Integer> response = new Response();
         try {
-            Optional<ShopCard> shopCard = shopCardRepository.findByUserId(userId);
-            if (shopCard.isEmpty()) {
+            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(userId);
+            if (userShopCards.isEmpty()) {
                 response.setMessage("no data for this user!");
                 response.setData(0);
             } else {
-                /*todo*/
-//                String stringProducts = shopCard.get().getProducts();
-//                ObjectMapper objectMapper = new ObjectMapper();
-//                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
-//                });
-//                response.setData(products.size());
+                response.setData(userShopCards.get().size());
             }
         } catch (Exception e) {
             response.setSuccess(false);
@@ -79,19 +96,11 @@ public class ShopCardService {
 
     public ResponseEntity<Response> modify(ShopCardModifyCommand command) {
         Response response = new Response();
-        ObjectMapper objectMapper = new ObjectMapper();
-        Optional<ShopCard> userCard = shopCardRepository.findByUserId(command.getUserId());
+        Map<String, ShopCard> map = new HashMap<>();
         try {
-//            if (userCard.isPresent()) {
-//                userCard.get().setProducts(objectMapper.writeValueAsString(command.getProducts()));
-//                shopCardRepository.save(userCard.get());
-//            } else {
-//                ShopCard shopCard = new ShopCard();
-//                shopCard.setUserId(command.getUserId());
-//                shopCard.setProducts(objectMapper.writeValueAsString(command.getProducts()));
-//                shopCardRepository.save(shopCard);
-//            }
-            /*todo*/
+            ShopCard card = shopCardRepository.save(command.toEntity());
+            map.put("card", card);
+            response.setData(map);
         } catch (Exception e) {
             response.setSuccess(false);
             response.setMessage(e.getMessage());
@@ -100,7 +109,35 @@ public class ShopCardService {
         return ResponseEntity.ok(response);
     }
 
-    public void shopCardIsPaid(Long shopCardId) {
-        shopCardRepository.shopCardIsPaid(shopCardId);
+    public ResponseEntity<Response> modifyAll(List<ShopCardModifyCommand> list) {
+        Response response = new Response();
+        Map<String, List<ShopCard>> map = new HashMap<>();
+
+        try {
+            List<ShopCard> cards = list.stream().map(ShopCardModifyCommand::toEntity).toList();
+            List<ShopCard> saved = shopCardRepository.saveAll(cards);
+            map.put("cards", saved);
+            response.setData(map);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> deleteById(Long shopCardId) {
+        Response response = new Response();
+        try {
+            shopCardRepository.deleteById(shopCardId);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    public void payShopCard(Long shopCardId) {
+        shopCardRepository.payShopCard(shopCardId);
     }
 }

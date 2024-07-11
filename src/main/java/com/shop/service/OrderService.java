@@ -2,6 +2,7 @@ package com.shop.service;
 
 import com.shop.command.OrderAddCommand;
 import com.shop.command.OrderChangeStatusCommand;
+import com.shop.command.OrderTrackCodeCommand;
 import com.shop.dto.OrderDto;
 import com.shop.dto.OrderListDto;
 import com.shop.dto.OrderProductDto;
@@ -14,6 +15,7 @@ import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
 import com.shop.repository.ShopCardRepository;
 import com.shop.shared.classes.Response;
+import com.shop.shared.enums.OrderStatus;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -111,6 +113,7 @@ public class OrderService {
         Optional<OrderListDto> order = orderRepository.findByCode(orderCode);
         if (order.isEmpty()) {
             response.setMessage("wrong orderCode!");
+            response.setSuccess(false);
         } else {
             Map<String, OrderDto> map = new HashMap<>();
             OrderDto orderDto = new OrderDto();
@@ -128,6 +131,21 @@ public class OrderService {
             orderDto.setProducts(products);
             map.put("order", orderDto);
             response.setData(map);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Response> submitTrackCode(OrderTrackCodeCommand command) {
+        Response response = new Response();
+        Optional<Order> order = orderRepository.findByOrderId(command.getOrderId());
+        /*todo: Sms trackCode to order.get().getReceiverPhone() */
+        if (order.isEmpty()) {
+            response.setMessage("wrong orderCode!");
+            response.setSuccess(false);
+        } else {
+            order.get().setTrackCode(command.getTrackCode());
+            order.get().setStatus(OrderStatus.SENT_VIA_POST);
+            orderRepository.save(order.get());
         }
         return ResponseEntity.ok(response);
     }

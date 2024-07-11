@@ -2,6 +2,7 @@ package com.shop.controller;
 
 import com.shop.command.OrderAddCommand;
 import com.shop.command.OrderChangeStatusCommand;
+import com.shop.command.OrderTrackCodeCommand;
 import com.shop.service.OrderService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,10 @@ public class OrderController {
     @PutMapping(path = "change-status")
     public ResponseEntity<Response> changeStatus(@RequestBody OrderChangeStatusCommand command) {
         return orderService.changeStatus(command);
+    }
+
+    @PutMapping(path = "track-code")
+    public ResponseEntity<Response> trackCode(@RequestBody OrderTrackCodeCommand command) {
+        return orderService.submitTrackCode(command);
     }
 }

@@ -32,6 +32,8 @@ public class Order {
 
     private Long postalCode;
 
+    private String trackCode;
+
     @Column(nullable = false)
     private String code;
 

@@ -32,6 +32,9 @@ public interface OrderListDto {
     @JsonProperty("address")
     String getAddress();
 
+    @JsonProperty("trackCode")
+    String getTrackCode();
+
     @JsonProperty("description")
     String getDescription();
 

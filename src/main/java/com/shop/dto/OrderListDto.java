@@ -38,9 +38,6 @@ public interface OrderListDto {
     @JsonProperty("date")
     Long getDate();
 
-    @JsonProperty("products")
-    String getProducts();
-
     @JsonProperty("paid")
     Byte getPaid();
 

@@ -4,20 +4,20 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "category")
+@Table(name = "productSize")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Category {
+public class ProductSize {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long categoryId;
+    private Long id;
 
-    @Column(nullable = false)
-    private String categoryName;
+    private Long productId;
 
-    @Column(length = 10000000)
-    private String imageUrl;
+    private String size;
+
+    private Long amount;
 }

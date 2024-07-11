@@ -28,13 +28,11 @@ public class Product {
 
     private Long buyCount;
 
+    @Column(length = 10000000)
     private String imageUrl;
 
     @Column(length = 2000)
     private String description;
-
-    @Column(length = 10000)
-    private String size;
 
     @PrePersist
     public void init() {

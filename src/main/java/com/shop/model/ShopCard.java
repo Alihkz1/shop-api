@@ -18,10 +18,15 @@ public class ShopCard {
 
     private Long userId;
 
-    private ShopCardStatus paid;
+    private Long orderId;
 
-    @Column(length = 100000)
-    private String products;
+    private Long productId;
+
+    private String size;
+
+    private Long amount;
+
+    private ShopCardStatus paid;
 
     @PrePersist
     private void init() {

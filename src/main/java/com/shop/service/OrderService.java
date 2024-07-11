@@ -1,19 +1,18 @@
 package com.shop.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kavenegar.sdk.KavenegarApi;
-import com.kavenegar.sdk.excepctions.ApiException;
-import com.kavenegar.sdk.excepctions.HttpException;
-import com.kavenegar.sdk.models.SendResult;
 import com.shop.command.OrderAddCommand;
 import com.shop.command.OrderChangeStatusCommand;
+import com.shop.dto.OrderDto;
 import com.shop.dto.OrderListDto;
-import com.shop.dto.ShopCardDto;
+import com.shop.dto.OrderProductDto;
 import com.shop.model.Order;
+import com.shop.model.Product;
+import com.shop.model.ProductSize;
+import com.shop.model.ShopCard;
 import com.shop.repository.OrderRepository;
 import com.shop.repository.ProductRepository;
+import com.shop.repository.ProductSizeRepository;
+import com.shop.repository.ShopCardRepository;
 import com.shop.shared.classes.Response;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -25,27 +24,42 @@ import java.util.*;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ShopCardService shopCardService;
+
+    private final ShopCardRepository shopCardRepository;
+
     private final ProductRepository productRepository;
+    private final ProductSizeRepository sizeRepository;
     private final Environment environment;
 
-    public OrderService(OrderRepository repository, ShopCardService shopCardService, ProductRepository productRepository, Environment environment) {
+    public OrderService(OrderRepository repository, ShopCardService shopCardService, ProductRepository productRepository,
+                        Environment environment, ShopCardRepository shopCardRepository, ProductSizeRepository sizeRepository) {
         this.orderRepository = repository;
         this.shopCardService = shopCardService;
         this.productRepository = productRepository;
         this.environment = environment;
+        this.shopCardRepository = shopCardRepository;
+        this.sizeRepository = sizeRepository;
     }
 
     public ResponseEntity<Response> add(OrderAddCommand command) {
-        /*todo: increate products buyCount*/
+        /*todo: increase products buyCount*/
         Response response = new Response();
         try {
-            shopCardService.shopCardIsPaid(command.getShopCardId());
-            orderRepository.save(command.toEntity());
-            changeProductsAmount(command.getShopCardId());
+            Order order = orderRepository.save(command.toEntity());
+            shopCardService.payShopCards(order.getOrderId(), order.getUserId());
+            decreaseProductsAmount(order.getOrderId());
+            increaseProductsBuyCount(order.getOrderId());
+            smsAdminForNewOrder();
         } catch (Exception e) {
             response.setMessage(e.getMessage());
             response.setSuccess(false);
         }
+
+        response.setData(orderRepository.getOrderCodeByShopCardId(command.getShopCardId()));
+        return ResponseEntity.ok(response);
+    }
+
+    private void smsAdminForNewOrder() {
 //        try {
 //            KavenegarApi api = new KavenegarApi(environment.getProperty("kavehNegarApiKey"));
 //            SendResult result = api.send(
@@ -58,18 +72,32 @@ public class OrderService {
 //        } catch (ApiException ex) {
 //            System.out.print("ApiException : " + ex.getMessage());
 //        }
-        response.setData(orderRepository.getOrderCodeByShopCardId(command.getShopCardId()));
-        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response> getAll(Long userId, Byte status) {
         Response response = new Response();
+        List<OrderDto> userAllOrders = new ArrayList<>();
         try {
-            Optional<List<OrderListDto>> userOrders = Optional.empty();
-            Map<String, List<OrderListDto>> map = new HashMap<>();
+            Optional<List<OrderListDto>> userOrders;
+            Map<String, List<OrderDto>> map = new HashMap<>();
             if (status == null) userOrders = orderRepository.findByUserId(userId);
             else userOrders = orderRepository.findByUserId(userId, status);
-            map.put("userAllOrders", userOrders.get());
+            userOrders.get().forEach(userOrder -> {
+                OrderDto orderDto = new OrderDto();
+                List<OrderProductDto> products = new ArrayList<>();
+                Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(userOrder.getOrderId());
+                orderShopCards.get().forEach(shopCard -> {
+                    OrderProductDto productDto = new OrderProductDto();
+                    productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
+                    productDto.setSize(shopCard.getSize());
+                    productDto.setAmount(shopCard.getAmount());
+                    products.add(productDto);
+                });
+                orderDto.setProducts(products);
+                orderDto.setOrder(userOrder);
+                userAllOrders.add(orderDto);
+            });
+            map.put("userAllOrders", userAllOrders);
             response.setData(map);
         } catch (Exception e) {
             response.setMessage(e.getMessage());
@@ -84,8 +112,21 @@ public class OrderService {
         if (order.isEmpty()) {
             response.setMessage("wrong orderCode!");
         } else {
-            Map<String, OrderListDto> map = new HashMap<>();
-            map.put("order", order.get());
+            Map<String, OrderDto> map = new HashMap<>();
+            OrderDto orderDto = new OrderDto();
+            List<OrderProductDto> products = new ArrayList<>();
+            orderDto.setOrder(order.get());
+            Long orderId = orderRepository.getOrderIdByOrderCode(orderCode);
+            Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(orderId);
+            orderShopCards.get().forEach(shopCard -> {
+                OrderProductDto productDto = new OrderProductDto();
+                productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
+                productDto.setSize(shopCard.getSize());
+                productDto.setAmount(shopCard.getAmount());
+                products.add(productDto);
+            });
+            orderDto.setProducts(products);
+            map.put("order", orderDto);
             response.setData(map);
         }
         return ResponseEntity.ok(response);
@@ -94,11 +135,29 @@ public class OrderService {
     public ResponseEntity<Response> adminList(Byte status) {
         Response response = new Response();
         try {
-            Optional<List<OrderListDto>> userOrders = Optional.empty();
-            Map<String, List<OrderListDto>> map = new HashMap<>();
-            if (status != null) userOrders = orderRepository.adminList(status);
-            else userOrders = orderRepository.adminList();
-            map.put("allOrders", userOrders.get());
+            Optional<List<OrderListDto>> usersOrders;
+            Map<String, List<OrderDto>> map = new HashMap<>();
+            List<OrderDto> allOrders = new ArrayList<>();
+
+            if (status != null) usersOrders = orderRepository.adminList(status);
+            else usersOrders = orderRepository.adminList();
+
+            usersOrders.get().forEach(userOrder -> {
+                OrderDto orderDto = new OrderDto();
+                List<OrderProductDto> products = new ArrayList<>();
+                Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(userOrder.getOrderId());
+                orderShopCards.get().forEach(shopCard -> {
+                    OrderProductDto productDto = new OrderProductDto();
+                    productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
+                    productDto.setSize(shopCard.getSize());
+                    productDto.setAmount(shopCard.getAmount());
+                    products.add(productDto);
+                });
+                orderDto.setProducts(products);
+                orderDto.setOrder(userOrder);
+                allOrders.add(orderDto);
+            });
+            map.put("allOrders", allOrders);
             response.setData(map);
         } catch (Exception e) {
             response.setMessage(e.getMessage());
@@ -125,23 +184,23 @@ public class OrderService {
         return ResponseEntity.ok(response);
     }
 
-    private void changeProductsAmount(Long shopCardId) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String stringProducts = orderRepository.getOrderProductsByShopCardId(shopCardId);
-        if (!stringProducts.isEmpty()) {
-            try {
-
-                List<ShopCardDto> products = objectMapper.readValue(stringProducts, new TypeReference<List<ShopCardDto>>() {
-                });
-
-                products.forEach(product -> {
-                    productRepository.reduceProductAmount(product.getProductId(), product.getInCardAmount());
-                });
-
-
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+    private void decreaseProductsAmount(Long orderId) {
+        List<ShopCard> orderShopCards = shopCardRepository.findByOrderId(orderId).get();
+        orderShopCards.forEach(shopCard -> {
+            Product product = productRepository.findByProductId(shopCard.getProductId()).get();
+            if (shopCard.getSize() != null) {
+                sizeRepository.reduceAmountByProductIdAndSize(product.getProductId(), shopCard.getSize(), shopCard.getAmount());
+            } else {
+                productRepository.reduceProductAmount(product.getProductId(), shopCard.getAmount());
             }
-        }
+        });
+    }
+
+    private void increaseProductsBuyCount(Long orderId) {
+        List<ShopCard> orderShopCards = shopCardRepository.findByOrderId(orderId).get();
+        orderShopCards.forEach(shopCard -> {
+            Product product = productRepository.findByProductId(shopCard.getProductId()).get();
+            productRepository.increaseProductBuyCount(product.getProductId(), shopCard.getAmount());
+        });
     }
 }

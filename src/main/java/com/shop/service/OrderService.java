@@ -122,14 +122,31 @@ public class OrderService {
     }
 
     public ResponseEntity<Response> adminList(Byte status) {
-        /*todo*/
         Response response = new Response();
         try {
-            Optional<List<OrderListDto>> userOrders;
-            Map<String, List<OrderListDto>> map = new HashMap<>();
-            if (status != null) userOrders = orderRepository.adminList(status);
-            else userOrders = orderRepository.adminList();
-            map.put("allOrders", userOrders.get());
+            Optional<List<OrderListDto>> usersOrders;
+            Map<String, List<OrderDto>> map = new HashMap<>();
+            List<OrderDto> allOrders = new ArrayList<>();
+
+            if (status != null) usersOrders = orderRepository.adminList(status);
+            else usersOrders = orderRepository.adminList();
+
+            usersOrders.get().forEach(userOrder -> {
+                OrderDto orderDto = new OrderDto();
+                List<OrderProductDto> products = new ArrayList<>();
+                Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(userOrder.getOrderId());
+                orderShopCards.get().forEach(shopCard -> {
+                    OrderProductDto productDto = new OrderProductDto();
+                    productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
+                    productDto.setSize(shopCard.getSize());
+                    productDto.setAmount(shopCard.getAmount());
+                    products.add(productDto);
+                });
+                orderDto.setProducts(products);
+                orderDto.setOrder(userOrder);
+                allOrders.add(orderDto);
+            });
+            map.put("allOrders", allOrders);
             response.setData(map);
         } catch (Exception e) {
             response.setMessage(e.getMessage());

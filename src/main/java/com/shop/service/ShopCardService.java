@@ -137,7 +137,7 @@ public class ShopCardService {
         return ResponseEntity.ok(response);
     }
 
-    public void payShopCards(Long shopCardId) {
-        shopCardRepository.payShopCards(shopCardId);
+    public void payShopCards(Long shopCardId, Long userId) {
+        shopCardRepository.payShopCards(shopCardId, userId);
     }
 }

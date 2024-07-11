@@ -23,6 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             " where category_id = :categoryId" +
             " order by product_id asc", nativeQuery = true)
     List<Product> getAll(Long categoryId);
+
     @Query(value = "select * from product" +
             " where category_id = :categoryId" +
             " order by price desc", nativeQuery = true)
@@ -35,7 +36,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "select * from product" +
             " where category_id = :categoryId" +
-            " order by buy_count asc", nativeQuery = true)
+            " order by buy_count desc", nativeQuery = true)
     List<Product> getAllMostBuy(Long categoryId);
 
     @Query(value = "select amount from product" +
@@ -46,4 +47,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Transactional
     @Query(value = "update product set amount = amount - :lostAmount where product_id = :productId", nativeQuery = true)
     void reduceProductAmount(Long productId, Long lostAmount);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update product set buy_count = buy_count + :buyCount where product_id = :productId", nativeQuery = true)
+    void increaseProductBuyCount(Long productId, Long buyCount);
 }

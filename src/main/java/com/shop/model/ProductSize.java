@@ -19,5 +19,5 @@ public class ProductSize {
 
     private String size;
 
-    private String amount;
+    private Long amount;
 }

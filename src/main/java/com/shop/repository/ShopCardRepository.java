@@ -23,6 +23,6 @@ public interface ShopCardRepository extends JpaRepository<ShopCard, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update shop_card set paid = 1, order_id = :orderId where paid = 0", nativeQuery = true)
-    void payShopCards(Long orderId);
+    @Query(value = "update shop_card set paid = 1, order_id = :orderId where paid = 0 and user_id = :userId", nativeQuery = true)
+    void payShopCards(Long orderId, Long userId);
 }

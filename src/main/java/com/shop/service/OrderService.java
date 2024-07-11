@@ -5,11 +5,13 @@ import com.shop.command.OrderChangeStatusCommand;
 import com.shop.dto.OrderDto;
 import com.shop.dto.OrderListDto;
 import com.shop.dto.OrderProductDto;
-import com.shop.dto.ProductDto;
 import com.shop.model.Order;
+import com.shop.model.Product;
+import com.shop.model.ProductSize;
 import com.shop.model.ShopCard;
 import com.shop.repository.OrderRepository;
 import com.shop.repository.ProductRepository;
+import com.shop.repository.ProductSizeRepository;
 import com.shop.repository.ShopCardRepository;
 import com.shop.shared.classes.Response;
 import org.springframework.core.env.Environment;
@@ -26,14 +28,17 @@ public class OrderService {
     private final ShopCardRepository shopCardRepository;
 
     private final ProductRepository productRepository;
+    private final ProductSizeRepository sizeRepository;
     private final Environment environment;
 
-    public OrderService(OrderRepository repository, ShopCardService shopCardService, ProductRepository productRepository, Environment environment, ShopCardRepository shopCardRepository) {
+    public OrderService(OrderRepository repository, ShopCardService shopCardService, ProductRepository productRepository,
+                        Environment environment, ShopCardRepository shopCardRepository, ProductSizeRepository sizeRepository) {
         this.orderRepository = repository;
         this.shopCardService = shopCardService;
         this.productRepository = productRepository;
         this.environment = environment;
         this.shopCardRepository = shopCardRepository;
+        this.sizeRepository = sizeRepository;
     }
 
     public ResponseEntity<Response> add(OrderAddCommand command) {
@@ -41,12 +46,20 @@ public class OrderService {
         Response response = new Response();
         try {
             Order order = orderRepository.save(command.toEntity());
-            shopCardService.payShopCards(order.getOrderId());
-            changeProductsAmount(command.getShopCardId());
+            shopCardService.payShopCards(order.getOrderId(), order.getUserId());
+            decreaseProductsAmount(order.getOrderId());
+            increaseProductsBuyCount(order.getOrderId());
+            smsAdminForNewOrder();
         } catch (Exception e) {
             response.setMessage(e.getMessage());
             response.setSuccess(false);
         }
+
+        response.setData(orderRepository.getOrderCodeByShopCardId(command.getShopCardId()));
+        return ResponseEntity.ok(response);
+    }
+
+    private void smsAdminForNewOrder() {
 //        try {
 //            KavenegarApi api = new KavenegarApi(environment.getProperty("kavehNegarApiKey"));
 //            SendResult result = api.send(
@@ -59,8 +72,6 @@ public class OrderService {
 //        } catch (ApiException ex) {
 //            System.out.print("ApiException : " + ex.getMessage());
 //        }
-        response.setData(orderRepository.getOrderCodeByShopCardId(command.getShopCardId()));
-        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response> getAll(Long userId, Byte status) {
@@ -173,7 +184,23 @@ public class OrderService {
         return ResponseEntity.ok(response);
     }
 
-    private void changeProductsAmount(Long shopCardId) {
-        /*todo*/
+    private void decreaseProductsAmount(Long orderId) {
+        List<ShopCard> orderShopCards = shopCardRepository.findByOrderId(orderId).get();
+        orderShopCards.forEach(shopCard -> {
+            Product product = productRepository.findByProductId(shopCard.getProductId()).get();
+            if (shopCard.getSize() != null) {
+                sizeRepository.reduceAmountByProductIdAndSize(product.getProductId(), shopCard.getSize(), shopCard.getAmount());
+            } else {
+                productRepository.reduceProductAmount(product.getProductId(), shopCard.getAmount());
+            }
+        });
+    }
+
+    private void increaseProductsBuyCount(Long orderId) {
+        List<ShopCard> orderShopCards = shopCardRepository.findByOrderId(orderId).get();
+        orderShopCards.forEach(shopCard -> {
+            Product product = productRepository.findByProductId(shopCard.getProductId()).get();
+            productRepository.increaseProductBuyCount(product.getProductId(), shopCard.getAmount());
+        });
     }
 }

@@ -21,4 +21,9 @@ public interface ProductSizeRepository extends JpaRepository<ProductSize, Long> 
     void deleteById(Long sizeId);
 
     Optional<List<ProductSize>> findByProductId(Long productId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update product_size set amount = amount - :lostAmount where product_id = :productId and size = :size ", nativeQuery = true)
+    void reduceAmountByProductIdAndSize(Long productId, String size, Long lostAmount);
 }

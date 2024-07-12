@@ -22,13 +22,23 @@ public class ProductController {
     }
 
     @GetMapping(path = "list/{categoryId}")
-    public ResponseEntity<Response> getAll(@PathVariable Long categoryId, @RequestParam(value = "sort",required = false) Byte sort) {
+    public ResponseEntity<Response> getAll(@PathVariable Long categoryId, @RequestParam(value = "sort", required = false) Byte sort) {
         return productService.getAll(categoryId, sort);
     }
 
     @GetMapping(path = "retrieve/{productId}")
     public ResponseEntity<Response> retrieve(@PathVariable Long productId) {
         return productService.retrieve(productId);
+    }
+
+    @GetMapping(path = "most-buy")
+    public ResponseEntity<Response> mostBuy() {
+        return productService.mostBuy();
+    }
+
+    @GetMapping(path = "newest")
+    public ResponseEntity<Response> newest() {
+        return productService.newest();
     }
 
     @PutMapping(path = "edit")

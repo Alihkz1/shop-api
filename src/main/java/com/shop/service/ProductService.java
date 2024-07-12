@@ -187,4 +187,33 @@ public class ProductService {
         }
     }
 
+    public ResponseEntity<Response> mostBuy() {
+        Response response = new Response();
+        try {
+            List<Product> products = productRepository.getMostBuy();
+            Map<String, List<Product>> map = new HashMap<>();
+            map.put("products", products);
+            response.setData(map);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    public ResponseEntity<Response> newest() {
+        Response response = new Response();
+        try {
+            List<Product> products = productRepository.getNewest();
+            Map<String, List<Product>> map = new HashMap<>();
+            map.put("products", products);
+            response.setData(map);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setMessage(e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
 }

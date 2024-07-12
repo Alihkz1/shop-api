@@ -28,6 +28,8 @@ public class SecurityConfig {
                                 "/api/v1/category/list",
                                 "/api/v1/category/light-list",
                                 "/api/v1/product/list/**",
+                                "/api/v1/product/most-buy",
+                                "/api/v1/product/newest",
                                 "/api/v1/product/retrieve/**",
                                 "/api/v1/comment/add",
                                 "/api/v1/order/track/**"

@@ -12,13 +12,10 @@ import java.util.Optional;
 
 @Repository
 public interface ShopCardRepository extends JpaRepository<ShopCard, Long> {
-    @Query(value = "select * from shop_card where user_id = :userId and paid = 0", nativeQuery = true)
+    @Query(value = "select * from shop_card where user_id = :userId and paid = 0 order by shop_card_id desc", nativeQuery = true)
     Optional<List<ShopCard>> findByUserId(Long userId);
 
-    @Query(value = "select * from shop_card where shop_card_id = :cardId", nativeQuery = true)
-    Optional<List<ShopCard>> findByShopCardId(Long cardId);
-
-    @Query(value = "select * from shop_card where order_id = :orderId", nativeQuery = true)
+    @Query(value = "select * from shop_card where order_id = :orderId order by shop_card_id desc", nativeQuery = true)
     Optional<List<ShopCard>> findByOrderId(Long orderId);
 
     @Modifying

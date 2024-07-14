@@ -3,6 +3,7 @@ package com.shop.service;
 import com.shop.command.OrderAddCommand;
 import com.shop.command.OrderChangeStatusCommand;
 import com.shop.command.OrderTrackCodeCommand;
+import com.shop.dto.CardProductIdAmountDto;
 import com.shop.dto.OrderDto;
 import com.shop.dto.OrderListDto;
 import com.shop.dto.OrderProductDto;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class OrderService {
@@ -203,8 +205,12 @@ public class OrderService {
     }
 
     private void updateUserOrdersByUserId(Long userId, Long orderId) {
-        Long newOrderPrice = 0L;
-        userRepository.updateUserOrdersByUserId(userId, newOrderPrice);
+        AtomicReference<Long> newOrderPrice = new AtomicReference<>(0L);
+        List<CardProductIdAmountDto> productsOInfo = shopCardRepository.findProductIdAndAmountByOrderId(orderId);
+        productsOInfo.forEach(product -> {
+            newOrderPrice.set(newOrderPrice.get() + product.getPrice() * product.getAmount());
+        });
+        userRepository.updateUserOrdersByUserId(userId, newOrderPrice.get());
     }
 
     private void smsAdminForNewOrder() {

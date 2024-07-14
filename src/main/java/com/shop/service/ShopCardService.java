@@ -3,6 +3,8 @@ package com.shop.service;
 import com.shop.command.ShopCardModifyCommand;
 import com.shop.dto.ProductDto;
 import com.shop.dto.ShopCardDto;
+import com.shop.model.Product;
+import com.shop.model.ProductSize;
 import com.shop.model.ShopCard;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
@@ -32,6 +34,7 @@ public class ShopCardService {
         Response response = new Response();
         Map<String, List<ShopCard>> map = new HashMap<>();
         try {
+            /*todo: if product deleted then should not include here!*/
             Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(userId);
             if (userShopCards.isEmpty()) {
                 response.setMessage("no data for this user!");
@@ -59,9 +62,12 @@ public class ShopCardService {
                     ShopCardDto shopCardDto = new ShopCardDto();
                     ProductDto productDto = new ProductDto();
                     shopCardDto.setShopCard(shopCard);
-                    /*todo: code below if not found check*/
-                    productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
-                    productDto.setProductSize(sizeRepository.findByProductId(shopCard.getProductId()).get());
+                    Optional<Product> product = productRepository.findByProductId(shopCard.getProductId());
+                    if (product.isPresent()) {
+                        productDto.setProduct(product.get());
+                        List<ProductSize> sizes = sizeRepository.findByProductId(shopCard.getProductId()).get();
+                        productDto.setProductSize(sizes);
+                    } else return;
                     shopCardDto.setProduct(productDto);
                     list.add(shopCardDto);
                 });

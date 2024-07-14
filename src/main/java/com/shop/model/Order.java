@@ -27,6 +27,8 @@ public class Order {
 
     private String receiverEmail;
 
+    private String username;
+
     private Long postalCode;
 
     private String trackCode;

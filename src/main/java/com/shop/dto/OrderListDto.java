@@ -8,6 +8,9 @@ public interface OrderListDto {
     @JsonProperty("orderId")
     Long getOrderId();
 
+    @JsonProperty("username")
+    String getUsername();
+
     @JsonProperty("shopCardId")
     Long getShopCardId();
 

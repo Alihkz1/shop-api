@@ -33,7 +33,7 @@ public class OrderController {
 
     @GetMapping(path = "track/{orderCode}")
     public ResponseEntity<Response> track(@PathVariable String orderCode) {
-        return orderService.track(orderCode);
+        return orderService.trackByOrderCode(orderCode);
     }
 
     @GetMapping(path = "admin-list")
@@ -48,6 +48,6 @@ public class OrderController {
 
     @PutMapping(path = "track-code")
     public ResponseEntity<Response> trackCode(@RequestBody OrderTrackCodeCommand command) {
-        return orderService.submitTrackCode(command);
+        return orderService.submitPostTrackCodeByAdmin(command);
     }
 }

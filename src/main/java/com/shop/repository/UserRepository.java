@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     public Optional<User> findByEmail(String email);
+
     public Optional<User> findByPhone(String phone);
 
     public Optional<User> findByUserId(Long userId);
@@ -24,5 +25,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "update users set login_count = login_count + 1 where user_id = :userId", nativeQuery = true)
     void updateLoginCountByUserId(Long userId);
 
-
+    @Transactional
+    @Modifying
+    @Query(value = "update users set order_count = order_count + 1, total_buy = total_buy + :newOrderPrice where user_id = :userId", nativeQuery = true)
+    void updateUserOrdersByUserId(Long userId, Long newOrderPrice);
 }

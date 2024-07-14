@@ -33,10 +33,16 @@ public class User {
 
     private Long loginCount;
 
+    private Long orderCount;
+
+    private Long totalBuy;
+
     @PrePersist
     private void init() {
         this.role = Role.USER;
         this.loginCount = 0L;
+        this.orderCount = 0L;
+        this.totalBuy = 0L;
     }
 
 }

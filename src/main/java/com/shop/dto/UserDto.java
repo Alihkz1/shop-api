@@ -11,6 +11,8 @@ public record UserDto(
         String phone,
         String email,
         Role role,
-        Long loginCount
+        Long loginCount,
+        Long orderCount,
+        Long totalBuy
 ) {
 }

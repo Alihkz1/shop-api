@@ -8,12 +8,8 @@ import com.shop.dto.OrderListDto;
 import com.shop.dto.OrderProductDto;
 import com.shop.model.Order;
 import com.shop.model.Product;
-import com.shop.model.ProductSize;
 import com.shop.model.ShopCard;
-import com.shop.repository.OrderRepository;
-import com.shop.repository.ProductRepository;
-import com.shop.repository.ProductSizeRepository;
-import com.shop.repository.ShopCardRepository;
+import com.shop.repository.*;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.OrderStatus;
 import org.springframework.core.env.Environment;
@@ -31,47 +27,33 @@ public class OrderService {
 
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
+    private final UserRepository userRepository;
     private final Environment environment;
 
-    public OrderService(OrderRepository repository, ShopCardService shopCardService, ProductRepository productRepository,
-                        Environment environment, ShopCardRepository shopCardRepository, ProductSizeRepository sizeRepository) {
+    public OrderService(OrderRepository repository, ShopCardService shopCardService, ProductRepository productRepository, Environment environment, ShopCardRepository shopCardRepository, ProductSizeRepository sizeRepository, UserRepository userRepository) {
         this.orderRepository = repository;
         this.shopCardService = shopCardService;
         this.productRepository = productRepository;
         this.environment = environment;
         this.shopCardRepository = shopCardRepository;
         this.sizeRepository = sizeRepository;
+        this.userRepository = userRepository;
     }
 
     public ResponseEntity<Response> add(OrderAddCommand command) {
-        /*todo: increase products buyCount*/
         Response response = new Response();
         try {
             Order order = orderRepository.save(command.toEntity());
             shopCardService.payShopCards(order.getOrderId(), order.getUserId());
             decreaseProductsAmount(order.getOrderId());
             increaseProductsBuyCount(order.getOrderId());
+            updateUserOrdersByUserId(order.getUserId(), order.getOrderId());
             smsAdminForNewOrder();
         } catch (Exception e) {
             response.setMessage(e.getMessage());
             response.setSuccess(false);
         }
         return ResponseEntity.ok(response);
-    }
-
-    private void smsAdminForNewOrder() {
-//        try {
-//            KavenegarApi api = new KavenegarApi(environment.getProperty("kavehNegarApiKey"));
-//            SendResult result = api.send(
-//                    environment.getProperty("kavehNegarSender"),
-//                    environment.getProperty("adminPhoneNumber"),
-//                    "Hi Kiwi"
-//            );
-//        } catch (HttpException ex) {
-//            System.out.print("HttpException  : " + ex.getMessage());
-//        } catch (ApiException ex) {
-//            System.out.print("ApiException : " + ex.getMessage());
-//        }
     }
 
     public ResponseEntity<Response> getAll(Long userId, Byte status) {
@@ -106,7 +88,7 @@ public class OrderService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Response> track(String orderCode) {
+    public ResponseEntity<Response> trackByOrderCode(String orderCode) {
         Response response = new Response();
         Optional<OrderListDto> order = orderRepository.findByCode(orderCode);
         if (order.isEmpty()) {
@@ -133,7 +115,7 @@ public class OrderService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Response> submitTrackCode(OrderTrackCodeCommand command) {
+    public ResponseEntity<Response> submitPostTrackCodeByAdmin(OrderTrackCodeCommand command) {
         Response response = new Response();
         Optional<Order> order = orderRepository.findByOrderId(command.getOrderId());
         /*todo: Sms trackCode to order.get().getReceiverPhone() */
@@ -218,5 +200,25 @@ public class OrderService {
             Product product = productRepository.findByProductId(shopCard.getProductId()).get();
             productRepository.increaseProductBuyCount(product.getProductId(), shopCard.getAmount());
         });
+    }
+
+    private void updateUserOrdersByUserId(Long userId, Long orderId) {
+        Long newOrderPrice = 0L;
+        userRepository.updateUserOrdersByUserId(userId, newOrderPrice);
+    }
+
+    private void smsAdminForNewOrder() {
+//        try {
+//            KavenegarApi api = new KavenegarApi(environment.getProperty("kavehNegarApiKey"));
+//            SendResult result = api.send(
+//                    environment.getProperty("kavehNegarSender"),
+//                    environment.getProperty("adminPhoneNumber"),
+//                    "Hi Kiwi"
+//            );
+//        } catch (HttpException ex) {
+//            System.out.print("HttpException  : " + ex.getMessage());
+//        } catch (ApiException ex) {
+//            System.out.print("ApiException : " + ex.getMessage());
+//        }
     }
 }

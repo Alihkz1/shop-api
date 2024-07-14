@@ -86,7 +86,7 @@ public class UserService {
                 Map<String, Object> extraClaims = new HashMap<>();
                 extraClaims.put("userId", userInDB.getUserId());
                 var token = jwtService.generateToken(userInDB, extraClaims);
-
+                userRepository.updateLoginCountByUserId(userInDB.getUserId());
                 AuthDto authDto = AuthDto.builder().token(token).user(userDtoMapper.apply(userInDB)).build();
                 response.setData(authDto);
             } else {

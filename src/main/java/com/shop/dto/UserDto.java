@@ -10,6 +10,7 @@ public record UserDto(
         String name,
         String phone,
         String email,
-        Role role
+        Role role,
+        Long loginCount
 ) {
 }

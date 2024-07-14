@@ -31,9 +31,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private Long loginCount;
+
     @PrePersist
     private void init() {
         this.role = Role.USER;
+        this.loginCount = 0L;
     }
 
 }

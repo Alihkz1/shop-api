@@ -56,8 +56,6 @@ public class OrderService {
             response.setMessage(e.getMessage());
             response.setSuccess(false);
         }
-
-        response.setData(orderRepository.getOrderCodeByShopCardId(command.getShopCardId()));
         return ResponseEntity.ok(response);
     }
 

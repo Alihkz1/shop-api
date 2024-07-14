@@ -7,8 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderAddCommand {
-    private Long shopCardId;
-
     private Long userId;
 
     private String receiverName;
@@ -26,7 +24,6 @@ public class OrderAddCommand {
     public Order toEntity() {
         return Order.builder()
                 .userId(userId)
-                .shopCardId(shopCardId)
                 .receiverName(receiverName)
                 .receiverEmail(receiverEmail)
                 .receiverPhone(receiverPhone)

@@ -19,9 +19,6 @@ public class Order {
     private Long orderId;
 
     @Column(nullable = false)
-    private Long shopCardId;
-
-    @Column(nullable = false)
     private Long userId;
 
     private String receiverName;

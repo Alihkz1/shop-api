@@ -11,9 +11,6 @@ public interface OrderListDto {
     @JsonProperty("username")
     String getUsername();
 
-    @JsonProperty("shopCardId")
-    Long getShopCardId();
-
     @JsonProperty("userId")
     Long getUserId();
 
@@ -44,8 +41,8 @@ public interface OrderListDto {
     @JsonProperty("date")
     Long getDate();
 
-    @JsonProperty("paid")
-    Byte getPaid();
+    @JsonProperty("paidAmount")
+    Long getPaidAmount();
 
     @JsonProperty("code")
     String getCode();

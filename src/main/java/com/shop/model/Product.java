@@ -1,10 +1,7 @@
 package com.shop.model;
 
-import com.shop.shared.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Date;
 
 @Entity
 @Table(name = "product")

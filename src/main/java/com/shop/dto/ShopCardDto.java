@@ -1,8 +1,6 @@
 package com.shop.dto;
 
-import com.shop.model.Product;
 import com.shop.model.ShopCard;
-import com.shop.shared.enums.ShopCardStatus;
 import lombok.Getter;
 import lombok.Setter;
 

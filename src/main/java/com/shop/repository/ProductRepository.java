@@ -42,7 +42,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Modifying
     @Transactional
     @Query(value = "update product set amount = amount - :lostAmount where product_id = :productId", nativeQuery = true)
-    void reduceProductAmount(Long productId, Long lostAmount);
+    void decreaseProductAmount(Long productId, Long lostAmount);
 
     @Modifying
     @Transactional

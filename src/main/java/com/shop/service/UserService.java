@@ -6,7 +6,6 @@ import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
 import com.shop.config.JWTService;
 import com.shop.dto.AuthDto;
-import com.shop.dto.UserDto;
 import com.shop.dto.UserDtoMapper;
 import com.shop.model.User;
 import com.shop.repository.UserRepository;

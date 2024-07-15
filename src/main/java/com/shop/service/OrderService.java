@@ -72,8 +72,11 @@ public class OrderService {
                 Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(userOrder.getOrderId());
                 orderShopCards.get().forEach(shopCard -> {
                     OrderProductDto productDto = new OrderProductDto();
-                    productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
-                    productDto.setSize(shopCard.getSize());
+                    Optional<Product> product = productRepository.findByProductId(shopCard.getProductId());
+                    if (product.isPresent()) {
+                        productDto.setProduct(product.get());
+                        productDto.setSize(shopCard.getSize());
+                    } else return;
                     productDto.setAmount(shopCard.getAmount());
                     products.add(productDto);
                 });
@@ -89,6 +92,44 @@ public class OrderService {
         }
         return ResponseEntity.ok(response);
     }
+
+    public ResponseEntity<Response> adminList(Byte status) {
+        Response response = new Response();
+        try {
+            Optional<List<OrderListDto>> usersOrders;
+            Map<String, List<OrderDto>> map = new HashMap<>();
+            List<OrderDto> allOrders = new ArrayList<>();
+
+            if (status != null) usersOrders = orderRepository.adminList(status);
+            else usersOrders = orderRepository.adminList();
+
+            usersOrders.get().forEach(userOrder -> {
+                OrderDto orderDto = new OrderDto();
+                List<OrderProductDto> products = new ArrayList<>();
+                Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(userOrder.getOrderId());
+                orderShopCards.get().forEach(shopCard -> {
+                    OrderProductDto productDto = new OrderProductDto();
+                    Optional<Product> product = productRepository.findByProductId(shopCard.getProductId());
+                    if (product.isPresent()) {
+                        productDto.setProduct(product.get());
+                        productDto.setSize(shopCard.getSize());
+                    } else return;
+                    productDto.setAmount(shopCard.getAmount());
+                    products.add(productDto);
+                });
+                orderDto.setProducts(products);
+                orderDto.setOrder(userOrder);
+                allOrders.add(orderDto);
+            });
+            map.put("allOrders", allOrders);
+            response.setData(map);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+            response.setSuccess(false);
+        }
+        return ResponseEntity.ok(response);
+    }
+
 
     public ResponseEntity<Response> trackByOrderCode(String orderCode) {
         Response response = new Response();
@@ -132,40 +173,6 @@ public class OrderService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Response> adminList(Byte status) {
-        Response response = new Response();
-        try {
-            Optional<List<OrderListDto>> usersOrders;
-            Map<String, List<OrderDto>> map = new HashMap<>();
-            List<OrderDto> allOrders = new ArrayList<>();
-
-            if (status != null) usersOrders = orderRepository.adminList(status);
-            else usersOrders = orderRepository.adminList();
-
-            usersOrders.get().forEach(userOrder -> {
-                OrderDto orderDto = new OrderDto();
-                List<OrderProductDto> products = new ArrayList<>();
-                Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(userOrder.getOrderId());
-                orderShopCards.get().forEach(shopCard -> {
-                    OrderProductDto productDto = new OrderProductDto();
-                    productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
-                    productDto.setSize(shopCard.getSize());
-                    productDto.setAmount(shopCard.getAmount());
-                    products.add(productDto);
-                });
-                orderDto.setProducts(products);
-                orderDto.setOrder(userOrder);
-                allOrders.add(orderDto);
-            });
-            map.put("allOrders", allOrders);
-            response.setData(map);
-        } catch (Exception e) {
-            response.setMessage(e.getMessage());
-            response.setSuccess(false);
-        }
-        return ResponseEntity.ok(response);
-    }
-
     public ResponseEntity<Response> changeStatus(OrderChangeStatusCommand command) {
         Response response = new Response();
         Optional<Order> order = orderRepository.findByOrderId(command.getOrderId());
@@ -191,7 +198,7 @@ public class OrderService {
             if (shopCard.getSize() != null) {
                 sizeRepository.reduceAmountByProductIdAndSize(product.getProductId(), shopCard.getSize(), shopCard.getAmount());
             } else {
-                productRepository.reduceProductAmount(product.getProductId(), shopCard.getAmount());
+                productRepository.decreaseProductAmount(product.getProductId(), shopCard.getAmount());
             }
         });
     }

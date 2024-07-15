@@ -2,7 +2,6 @@ package com.shop.config;
 
 import com.shop.model.User;
 import com.shop.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

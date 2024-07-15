@@ -19,6 +19,8 @@ public class OrderAddCommand {
 
     private Long postalCode;
 
+    private Long paidAmount;
+
     private String address;
 
     private String description;
@@ -27,6 +29,7 @@ public class OrderAddCommand {
         return Order.builder()
                 .userId(userId)
                 .username(username)
+                .paidAmount(paidAmount)
                 .receiverName(receiverName)
                 .receiverEmail(receiverEmail)
                 .receiverPhone(receiverPhone)

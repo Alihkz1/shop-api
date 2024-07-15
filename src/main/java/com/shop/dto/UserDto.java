@@ -1,9 +1,6 @@
 package com.shop.dto;
 
 import com.shop.shared.enums.Role;
-import lombok.Getter;
-import lombok.Setter;
-
 
 public record UserDto(
         Long userId,

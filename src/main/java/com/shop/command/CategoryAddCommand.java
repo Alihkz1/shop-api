@@ -1,8 +1,6 @@
 package com.shop.command;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.model.Category;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

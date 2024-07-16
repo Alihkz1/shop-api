@@ -2,6 +2,7 @@ package com.shop.service;
 
 import com.shop.command.CategoryAddCommand;
 import com.shop.command.CategoryEditCommand;
+import com.shop.dto.CategoryLightListDto;
 import com.shop.dto.CategoryListDto;
 import com.shop.dto.ProductDto;
 import com.shop.model.Category;
@@ -33,8 +34,8 @@ public class CategoryService {
 
     public ResponseEntity<Response> lightList() {
         Response response = new Response();
-        Map<String, List<Category>> map = new HashMap<>();
-        map.put("categories", categoryRepository.getAll());
+        Map<String, List<CategoryLightListDto>> map = new HashMap<>();
+        map.put("categories", categoryRepository.lightList());
         response.setData(map);
         return ResponseEntity.ok(response);
     }

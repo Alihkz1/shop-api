@@ -19,6 +19,8 @@ public class ProductEditCommand {
 
     private String imageUrl;
 
+    private Byte primaryImageIndex;
+
     private String description;
 
     private String size;
@@ -31,6 +33,7 @@ public class ProductEditCommand {
                 .title(title)
                 .amount(amount)
                 .imageUrl(imageUrl)
+                .primaryImageIndex(primaryImageIndex)
                 .description(description)
                 .build();
     }

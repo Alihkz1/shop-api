@@ -28,6 +28,8 @@ public class Product {
     @Column(length = 10000000)
     private String imageUrl;
 
+    private Byte primaryImageIndex;
+
     @Column(length = 2000)
     private String description;
 

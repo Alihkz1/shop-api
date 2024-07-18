@@ -17,6 +17,8 @@ public class ProductAddCommand {
 
     private String imageUrl;
 
+    private Byte primaryImageIndex;
+
     private String description;
 
     private String size;
@@ -29,6 +31,7 @@ public class ProductAddCommand {
                 .title(title)
                 .amount(amount)
                 .imageUrl(imageUrl)
+                .primaryImageIndex(primaryImageIndex)
                 .description(description)
                 .build();
     }

@@ -76,6 +76,9 @@ public class ProductService {
                 if (command.getImageUrl() != null && !command.getImageUrl().isEmpty()) {
                     product.get().setImageUrl(command.getImageUrl());
                 }
+                if (command.getPrimaryImageIndex() != null) {
+                    product.get().setPrimaryImageIndex(command.getPrimaryImageIndex());
+                }
                 if (command.getCategoryId() != null) {
                     product.get().setCategoryId(command.getCategoryId());
                 }
@@ -106,6 +109,7 @@ public class ProductService {
         try {
             List<ProductSize> sizes = objectMapper.readValue(command.getSize(), new TypeReference<List<ProductSize>>() {
             });
+            if(command.getPrimaryImageIndex() == null) command.setPrimaryImageIndex((byte) 0);
             Product savedProduct = productRepository.save(command.toEntity());
 
             sizes.forEach(productSize -> productSize.setProductId(savedProduct.getProductId()));

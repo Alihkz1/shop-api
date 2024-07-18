@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -29,4 +30,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query(value = "update users set order_count = order_count + 1, total_buy = total_buy + :newOrderPrice where user_id = :userId", nativeQuery = true)
     void updateUserOrdersByUserId(Long userId, Long newOrderPrice);
+
+    @Query(value = "select * from users order by user_id desc", nativeQuery = true)
+    List<User> getAll();
+
 }

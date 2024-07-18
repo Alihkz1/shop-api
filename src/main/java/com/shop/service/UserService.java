@@ -124,7 +124,7 @@ public class UserService {
         /*todo: create dto*/
         Response response = new Response();
         Map<String, List<User>> map = new HashMap<>();
-        map.put("users", userRepository.findAll());
+        map.put("users", userRepository.getAll());
         response.setData(map);
         return ResponseEntity.ok(response);
     }

@@ -57,17 +57,29 @@ public class UserService {
                 return ResponseEntity.badRequest().body(response);
             } else {
                 userRepository.save(command.toEntity(passwordEncoder.encode(command.getPassword())));
-                response.setSuccess(true);
-                HashMap<String, User> data = new HashMap();
-                data.put("user", userRepository.findByEmail(command.getEmail()).get());
-                response.setData(data);
-                return ResponseEntity.ok(response);
+                UserLoginCommand loginCommand = UserLoginCommand.builder()
+                        .emailOrPhone(command.getEmail())
+                        .password(passwordEncoder.encode(command.getPassword()))
+                        .build();
+                return ResponseEntity.ok(loginAfterSignup(loginCommand));
             }
         } catch (Exception e) {
             response.setSuccess(false);
             response.setMessage(e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
+    }
+
+    public Response<AuthDto> loginAfterSignup(UserLoginCommand command) {
+        Response response = new Response();
+        User userInDB = userRepository.login(command.getEmailOrPhone());
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", userInDB.getUserId());
+        var token = jwtService.generateToken(userInDB, extraClaims);
+        userRepository.updateLoginCountByUserId(userInDB.getUserId());
+        AuthDto authDto = AuthDto.builder().token(token).user(userDtoMapper.apply(userInDB)).build();
+        response.setData(authDto);
+        return response;
     }
 
     public ResponseEntity<Response<AuthDto>> login(UserLoginCommand command) {

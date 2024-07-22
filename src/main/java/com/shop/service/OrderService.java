@@ -47,8 +47,7 @@ public class OrderService {
         try {
             Order order = orderRepository.save(command.toEntity());
             shopCardService.payShopCards(order.getOrderId(), order.getUserId());
-            decreaseProductsAmount(order.getOrderId());
-            increaseProductsBuyCount(order.getOrderId());
+            modifyProductsAfterOrder(order.getOrderId());
             updateUserOrdersByUserId(order.getUserId(), order.getOrderId());
             smsAdminForNewOrder();
         } catch (Exception e) {
@@ -191,10 +190,11 @@ public class OrderService {
         return ResponseEntity.ok(response);
     }
 
-    private void decreaseProductsAmount(Long orderId) {
+    private void modifyProductsAfterOrder(Long orderId) {
         List<ShopCard> orderShopCards = shopCardRepository.findByOrderId(orderId).get();
         orderShopCards.forEach(shopCard -> {
             Product product = productRepository.findByProductId(shopCard.getProductId()).get();
+            productRepository.increaseProductBuyCount(product.getProductId(), shopCard.getAmount());
             if (shopCard.getSize() != null) {
                 sizeRepository.reduceAmountByProductIdAndSize(product.getProductId(), shopCard.getSize(), shopCard.getAmount());
             } else {
@@ -202,15 +202,7 @@ public class OrderService {
             }
         });
     }
-
-    private void increaseProductsBuyCount(Long orderId) {
-        List<ShopCard> orderShopCards = shopCardRepository.findByOrderId(orderId).get();
-        orderShopCards.forEach(shopCard -> {
-            Product product = productRepository.findByProductId(shopCard.getProductId()).get();
-            productRepository.increaseProductBuyCount(product.getProductId(), shopCard.getAmount());
-        });
-    }
-
+    
     private void updateUserOrdersByUserId(Long userId, Long orderId) {
         AtomicReference<Long> newOrderPrice = new AtomicReference<>(0L);
         List<CardProductIdAmountDto> productsOInfo = shopCardRepository.findProductIdAndAmountByOrderId(orderId);

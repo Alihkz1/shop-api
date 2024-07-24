@@ -23,6 +23,8 @@ public class Product {
 
     private Long amount;
 
+    private Long likes;
+
     private Long buyCount;
 
     @Column(length = 10000000)
@@ -36,6 +38,7 @@ public class Product {
     @PrePersist
     public void init() {
         this.buyCount = 0L;
+        this.likes = 0L;
     }
 
 }

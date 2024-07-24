@@ -21,4 +21,8 @@ public class BaseService {
         return ResponseEntity.ok(response);
     }
 
+    public ResponseEntity<Response> errorResponse() {
+        return errorResponse(null);
+    }
+
 }

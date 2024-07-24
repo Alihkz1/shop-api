@@ -60,4 +60,14 @@ public class ProductController {
     public ResponseEntity<Response> amountCheck(@RequestParam("ids") List<Long> productIds) {
         return productService.amountCheck(productIds);
     }
+
+    @PutMapping(path = "like/{productId}")
+    public ResponseEntity<Response> like(@PathVariable Long productId) {
+        return productService.like(productId);
+    }
+
+    @PutMapping(path = "remove-like/{productId}")
+    public ResponseEntity<Response> removeLike(@PathVariable Long productId) {
+        return productService.removeLike(productId);
+    }
 }

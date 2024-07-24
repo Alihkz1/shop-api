@@ -49,6 +49,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "update product set buy_count = buy_count + :buyCount where product_id = :productId", nativeQuery = true)
     void increaseProductBuyCount(Long productId, Long buyCount);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update product set likes = likes + 1 where product_id = :productId", nativeQuery = true)
+    void like(Long productId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update product set likes = likes - 1 where product_id = :productId", nativeQuery = true)
+    void removeLike(Long productId);
+
+
     @Query(value = "select * from product" +
             " order by buy_count desc limit 5", nativeQuery = true)
     List<Product> getMostBuy();

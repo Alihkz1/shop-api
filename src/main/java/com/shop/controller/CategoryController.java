@@ -21,7 +21,7 @@ public class CategoryController {
     }
 
     @GetMapping(path = "list")
-    public ResponseEntity<Response<CategoryListDto>> list() {
+    public ResponseEntity<Response> list() {
         return categoryService.list();
     }
 

@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping(path = "login")
-    public ResponseEntity<Response<AuthDto>> login(@RequestBody UserLoginCommand command) {
+    public ResponseEntity<Response> login(@RequestBody UserLoginCommand command) {
         return userService.login(command);
     }
 

@@ -11,6 +11,7 @@ import com.shop.model.ProductSize;
 import com.shop.repository.CategoryRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
+import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class CategoryService {
+public class CategoryService extends BaseService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
@@ -33,15 +34,12 @@ public class CategoryService {
     }
 
     public ResponseEntity<Response> lightList() {
-        Response response = new Response();
         Map<String, List<CategoryLightListDto>> map = new HashMap<>();
         map.put("categories", categoryRepository.lightList());
-        response.setData(map);
-        return ResponseEntity.ok(response);
+        return successResponse(map);
     }
 
-    public ResponseEntity<Response<CategoryListDto>> list() {
-        Response response = new Response();
+    public ResponseEntity<Response> list() {
         List<CategoryListDto> finalDto = new ArrayList<>();
         categoryRepository.findAll().stream().forEach((category -> {
             CategoryListDto dto = new CategoryListDto();
@@ -68,12 +66,10 @@ public class CategoryService {
 
         Map<String, List<CategoryListDto>> map = new HashMap<>();
         map.put("categories", sorted);
-        response.setData(map);
-        return ResponseEntity.ok(response);
+        return successResponse(map);
     }
 
     public ResponseEntity<Response> edit(CategoryEditCommand command) {
-        Response response = new Response();
         Optional<Category> category = categoryRepository.findByCategoryId(command.getCategoryId());
 
         if (category.isPresent()) {
@@ -84,37 +80,29 @@ public class CategoryService {
                 category.get().setImageUrl(command.getImageUrl());
             }
             categoryRepository.save(category.get());
-            return ResponseEntity.ok(response);
+            return successResponse();
         } else {
-            response.setMessage("wrong categoryId");
-            response.setSuccess(false);
-            return ResponseEntity.ok(response);
+            return errorResponse("wrong categoryId");
         }
     }
 
     public ResponseEntity<Response> add(CategoryAddCommand command) {
-        Response response = new Response();
         try {
             categoryRepository.save(command.toEntity());
-            return ResponseEntity.ok(response);
+            return successResponse();
         } catch (Exception e) {
-            response.setSuccess(false);
-            response.setMessage(e.getMessage());
-            return ResponseEntity.ok(response);
+            return errorResponse(e.getMessage());
         }
     }
 
     public ResponseEntity<Response> deleteById(Long categoryId) {
-        Response response = new Response();
         try {
             /*todo: delete sizes */
             productRepository.deleteByCategoryId(categoryId);
             categoryRepository.deleteById(categoryId);
-            return ResponseEntity.ok(response);
+            return successResponse();
         } catch (Exception e) {
-            response.setSuccess(false);
-            response.setMessage(e.getMessage());
-            return ResponseEntity.ok(response);
+            return errorResponse(e.getMessage());
         }
     }
 }

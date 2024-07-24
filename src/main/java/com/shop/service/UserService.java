@@ -9,6 +9,7 @@ import com.shop.dto.AuthDto;
 import com.shop.dto.UserDtoMapper;
 import com.shop.model.User;
 import com.shop.repository.UserRepository;
+import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService extends BaseService {
 
 
     private final UserRepository userRepository;
@@ -43,74 +44,56 @@ public class UserService {
     }
 
     public ResponseEntity<Response> signUp(UserSignUpCommand command) {
-        Response response = new Response();
         try {
             Optional<User> existByEmail = userRepository.findByEmail(command.getEmail());
             Optional<User> existByPhone = userRepository.findByPhone(command.getPhone());
             if (existByEmail.isPresent()) {
-                response.setSuccess(false);
-                response.setMessage("ایمیل وارد شده قبلا قبت نام کرده است");
-                return ResponseEntity.badRequest().body(response);
+                return errorResponse("ایمیل وارد شده قبلا قبت نام کرده است");
             } else if (existByPhone.isPresent()) {
-                response.setSuccess(false);
-                response.setMessage("تلفن همراه وارد شده قبلا ثبت نام کرده است");
-                return ResponseEntity.badRequest().body(response);
+                return errorResponse("تلفن همراه وارد شده قبلا ثبت نام کرده است");
             } else {
                 userRepository.save(command.toEntity(passwordEncoder.encode(command.getPassword())));
                 UserLoginCommand loginCommand = UserLoginCommand.builder()
                         .emailOrPhone(command.getEmail())
                         .password(passwordEncoder.encode(command.getPassword()))
                         .build();
-                return ResponseEntity.ok(loginAfterSignup(loginCommand));
+                return successResponse(loginAfterSignup(loginCommand));
             }
         } catch (Exception e) {
-            response.setSuccess(false);
-            response.setMessage(e.getMessage());
-            return ResponseEntity.internalServerError().body(response);
+            return errorResponse(e.getMessage());
         }
     }
 
-    public Response<AuthDto> loginAfterSignup(UserLoginCommand command) {
-        Response response = new Response();
+    public AuthDto loginAfterSignup(UserLoginCommand command) {
         User userInDB = userRepository.login(command.getEmailOrPhone());
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("userId", userInDB.getUserId());
         var token = jwtService.generateToken(userInDB, extraClaims);
         userRepository.updateLoginCountByUserId(userInDB.getUserId());
         AuthDto authDto = AuthDto.builder().token(token).user(userDtoMapper.apply(userInDB)).build();
-        response.setData(authDto);
-        return response;
+        return authDto;
     }
 
-    public ResponseEntity<Response<AuthDto>> login(UserLoginCommand command) {
-        Response response = new Response();
+    public ResponseEntity<Response> login(UserLoginCommand command) {
         User userInDB = userRepository.login(command.getEmailOrPhone());
-
         if (userInDB == null) {
-            response.setSuccess(false);
-            response.setMessage("ایمیل یا شماره همراه اشتباه است");
-            return ResponseEntity.ok(response);
+            return errorResponse("ایمیل یا شماره همراه اشتباه است");
         } else {
             boolean passwordMatches = passwordEncoder.matches(command.getPassword(), userInDB.getPassword());
-
             if (passwordMatches) {
                 Map<String, Object> extraClaims = new HashMap<>();
                 extraClaims.put("userId", userInDB.getUserId());
                 var token = jwtService.generateToken(userInDB, extraClaims);
                 userRepository.updateLoginCountByUserId(userInDB.getUserId());
                 AuthDto authDto = AuthDto.builder().token(token).user(userDtoMapper.apply(userInDB)).build();
-                response.setData(authDto);
+                return successResponse(authDto);
             } else {
-                response.setSuccess(false);
-                response.setMessage("incorrect password!");
+                return errorResponse("incorrect password!");
             }
         }
-
-        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response> edit(UserEditCommand command) {
-        Response response = new Response();
         Optional<User> user = userRepository.findByUserId(command.getUserId());
 
         if (user.isPresent()) {
@@ -124,58 +107,44 @@ public class UserService {
                 user.get().setPhone(command.getPhone());
             }
             userRepository.save(user.get());
-            return ResponseEntity.ok(response);
+            return successResponse();
         } else {
-            response.setMessage("wrong userId");
-            response.setSuccess(false);
-            return ResponseEntity.ok(response);
+            return errorResponse("wrong userId");
         }
     }
 
     public ResponseEntity<Response> getAll() {
         /*todo: create dto*/
-        Response response = new Response();
         Map<String, List<User>> map = new HashMap<>();
         map.put("users", userRepository.getAll());
-        response.setData(map);
-        return ResponseEntity.ok(response);
+        return successResponse(map);
     }
 
     public ResponseEntity<Response> getById(Long userId) {
         /*todo: create dto*/
-        Response response = new Response();
         Map<String, User> map = new HashMap<>();
         Optional<User> user = userRepository.findByUserId(userId);
-        if (user.isPresent()) {
-            map.put("user", user.get());
-            response.setData(map);
-        } else {
-            response.setMessage("user not found! wrong userId.");
-        }
-        return ResponseEntity.ok(response);
+        map.put("user", user.get());
+        return successResponse(map);
     }
 
     public ResponseEntity<Response> deleteById(Long userId) {
-        Response response = new Response();
         try {
             userRepository.deleteById(userId);
+            return successResponse();
         } catch (Exception e) {
-            response.setMessage(e.getMessage());
-            response.setSuccess(false);
+            return errorResponse(e.getMessage());
         }
-        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response> changePassowrd(ChangePasswordCommand command) {
-        Response response = new Response();
         Optional<User> user = userRepository.findByUserId(command.getUserId());
         if (user.isEmpty()) {
-            response.setSuccess(false);
-            response.setMessage("no users found!");
+            return errorResponse("no users found!");
         } else {
             user.get().setPassword(passwordEncoder.encode(command.getNewPassword()));
             userRepository.save(user.get());
+            return successResponse();
         }
-        return ResponseEntity.ok(response);
     }
 }

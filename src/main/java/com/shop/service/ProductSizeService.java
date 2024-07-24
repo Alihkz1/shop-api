@@ -1,13 +1,14 @@
 package com.shop.service;
 
 import com.shop.repository.ProductSizeRepository;
+import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ProductSizeService {
+public class ProductSizeService extends BaseService {
     private final ProductSizeRepository repository;
 
     @Autowired
@@ -16,14 +17,11 @@ public class ProductSizeService {
     }
 
     public ResponseEntity<Response> deleteById(Long sizeId) {
-        Response response = new Response();
         try {
             repository.deleteById(sizeId);
-            return ResponseEntity.ok(response);
+            return successResponse();
         } catch (Exception e) {
-            response.setSuccess(false);
-            response.setMessage(e.getMessage());
-            return ResponseEntity.ok(response);
+            return errorResponse(e.getMessage());
         }
     }
 }

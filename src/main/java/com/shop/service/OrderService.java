@@ -11,6 +11,7 @@ import com.shop.model.Order;
 import com.shop.model.Product;
 import com.shop.model.ShopCard;
 import com.shop.repository.*;
+import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.OrderStatus;
 import org.springframework.core.env.Environment;
@@ -21,12 +22,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
-public class OrderService {
+public class OrderService extends BaseService {
     private final OrderRepository orderRepository;
     private final ShopCardService shopCardService;
-
     private final ShopCardRepository shopCardRepository;
-
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
     private final UserRepository userRepository;
@@ -43,99 +42,82 @@ public class OrderService {
     }
 
     public ResponseEntity<Response> add(OrderAddCommand command) {
-        Response response = new Response();
         try {
             Order order = orderRepository.save(command.toEntity());
             shopCardService.payShopCards(order.getOrderId(), order.getUserId());
             modifyProductsAfterOrder(order.getOrderId());
             updateUserOrdersByUserId(order.getUserId(), order.getOrderId());
             smsAdminForNewOrder();
+            return successResponse();
         } catch (Exception e) {
-            response.setMessage(e.getMessage());
-            response.setSuccess(false);
+            return errorResponse(e.getMessage());
         }
-        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response> getAll(Long userId, Byte status) {
-        Response response = new Response();
-        List<OrderDto> userAllOrders = new ArrayList<>();
         try {
-            Optional<List<OrderListDto>> userOrders;
-            Map<String, List<OrderDto>> map = new HashMap<>();
-            if (status == null) userOrders = orderRepository.findByUserId(userId);
-            else userOrders = orderRepository.findByUserId(userId, status);
-            userOrders.get().forEach(userOrder -> {
+            List<OrderDto> userAllOrders = new ArrayList<>();
+            Optional<List<OrderListDto>> userOrders = status == null ? orderRepository.findByUserId(userId) : orderRepository.findByUserId(userId, status);
+            userOrders.ifPresent(orders -> orders.forEach(userOrder -> {
                 OrderDto orderDto = new OrderDto();
                 List<OrderProductDto> products = new ArrayList<>();
                 Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(userOrder.getOrderId());
-                orderShopCards.get().forEach(shopCard -> {
+                orderShopCards.ifPresent(shopCards -> shopCards.forEach(shopCard -> {
                     OrderProductDto productDto = new OrderProductDto();
                     Optional<Product> product = productRepository.findByProductId(shopCard.getProductId());
-                    if (product.isPresent()) {
-                        productDto.setProduct(product.get());
+                    product.ifPresent(p -> {
+                        productDto.setProduct(p);
                         productDto.setSize(shopCard.getSize());
-                    } else return;
-                    productDto.setAmount(shopCard.getAmount());
-                    products.add(productDto);
-                });
+                        productDto.setAmount(shopCard.getAmount());
+                        products.add(productDto);
+                    });
+                }));
                 orderDto.setProducts(products);
                 orderDto.setOrder(userOrder);
                 userAllOrders.add(orderDto);
-            });
+            }));
+            Map<String, List<OrderDto>> map = new HashMap<>();
             map.put("userAllOrders", userAllOrders);
-            response.setData(map);
+            return successResponse(map);
         } catch (Exception e) {
-            response.setMessage(e.getMessage());
-            response.setSuccess(false);
+            return errorResponse(e.getMessage());
         }
-        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response> adminList(Byte status) {
-        Response response = new Response();
         try {
-            Optional<List<OrderListDto>> usersOrders;
-            Map<String, List<OrderDto>> map = new HashMap<>();
             List<OrderDto> allOrders = new ArrayList<>();
-
-            if (status != null) usersOrders = orderRepository.adminList(status);
-            else usersOrders = orderRepository.adminList();
-
-            usersOrders.get().forEach(userOrder -> {
+            Optional<List<OrderListDto>> usersOrders = status != null ? orderRepository.adminList(status) : orderRepository.adminList();
+            usersOrders.ifPresent(orders -> orders.forEach(userOrder -> {
                 OrderDto orderDto = new OrderDto();
                 List<OrderProductDto> products = new ArrayList<>();
                 Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(userOrder.getOrderId());
-                orderShopCards.get().forEach(shopCard -> {
+                orderShopCards.ifPresent(shopCards -> shopCards.forEach(shopCard -> {
                     OrderProductDto productDto = new OrderProductDto();
                     Optional<Product> product = productRepository.findByProductId(shopCard.getProductId());
-                    if (product.isPresent()) {
-                        productDto.setProduct(product.get());
+                    product.ifPresent(p -> {
+                        productDto.setProduct(p);
                         productDto.setSize(shopCard.getSize());
-                    } else return;
-                    productDto.setAmount(shopCard.getAmount());
-                    products.add(productDto);
-                });
+                        productDto.setAmount(shopCard.getAmount());
+                        products.add(productDto);
+                    });
+                }));
                 orderDto.setProducts(products);
                 orderDto.setOrder(userOrder);
                 allOrders.add(orderDto);
-            });
+            }));
+            Map<String, List<OrderDto>> map = new HashMap<>();
             map.put("allOrders", allOrders);
-            response.setData(map);
+            return successResponse(map);
         } catch (Exception e) {
-            response.setMessage(e.getMessage());
-            response.setSuccess(false);
+            return errorResponse(e.getMessage());
         }
-        return ResponseEntity.ok(response);
     }
 
-
     public ResponseEntity<Response> trackByOrderCode(String orderCode) {
-        Response response = new Response();
         Optional<OrderListDto> order = orderRepository.findByCode(orderCode);
         if (order.isEmpty()) {
-            response.setMessage("wrong orderCode!");
-            response.setSuccess(false);
+            return errorResponse("wrong orderCode!");
         } else {
             Map<String, OrderDto> map = new HashMap<>();
             OrderDto orderDto = new OrderDto();
@@ -143,72 +125,64 @@ public class OrderService {
             orderDto.setOrder(order.get());
             Long orderId = orderRepository.getOrderIdByOrderCode(orderCode);
             Optional<List<ShopCard>> orderShopCards = shopCardRepository.findByOrderId(orderId);
-            orderShopCards.get().forEach(shopCard -> {
+            orderShopCards.ifPresent(shopCards -> shopCards.forEach(shopCard -> {
                 OrderProductDto productDto = new OrderProductDto();
-                productDto.setProduct(productRepository.findByProductId(shopCard.getProductId()).get());
-                productDto.setSize(shopCard.getSize());
-                productDto.setAmount(shopCard.getAmount());
-                products.add(productDto);
-            });
+                Optional<Product> product = productRepository.findByProductId(shopCard.getProductId());
+                product.ifPresent(p -> {
+                    productDto.setProduct(p);
+                    productDto.setSize(shopCard.getSize());
+                    productDto.setAmount(shopCard.getAmount());
+                    products.add(productDto);
+                });
+            }));
             orderDto.setProducts(products);
             map.put("order", orderDto);
-            response.setData(map);
+            return successResponse(map);
         }
-        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response> submitPostTrackCodeByAdmin(OrderTrackCodeCommand command) {
-        Response response = new Response();
         Optional<Order> order = orderRepository.findByOrderId(command.getOrderId());
-        /*todo: Sms trackCode to order.get().getReceiverPhone() */
         if (order.isEmpty()) {
-            response.setMessage("wrong orderCode!");
-            response.setSuccess(false);
+            return errorResponse("wrong orderCode!");
         } else {
             order.get().setTrackCode(command.getTrackCode());
             order.get().setStatus(OrderStatus.SENT_VIA_POST);
             orderRepository.save(order.get());
+            return successResponse();
         }
-        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<Response> changeStatus(OrderChangeStatusCommand command) {
-        Response response = new Response();
         Optional<Order> order = orderRepository.findByOrderId(command.getOrderId());
-        try {
-            if (order.isPresent()) {
-                order.get().setStatus(command.getOrderStatus());
-                orderRepository.save(order.get());
-            } else {
-                response.setSuccess(false);
-                response.setMessage("wrong orderId!");
-            }
-        } catch (Exception e) {
-            response.setSuccess(false);
-            response.setMessage(e.getMessage());
+        if (order.isPresent()) {
+            order.get().setStatus(command.getOrderStatus());
+            orderRepository.save(order.get());
+            return successResponse();
+        } else {
+            return errorResponse("wrong orderId!");
         }
-        return ResponseEntity.ok(response);
     }
 
     private void modifyProductsAfterOrder(Long orderId) {
-        List<ShopCard> orderShopCards = shopCardRepository.findByOrderId(orderId).get();
+        List<ShopCard> orderShopCards = shopCardRepository.findByOrderId(orderId).orElse(Collections.emptyList());
         orderShopCards.forEach(shopCard -> {
-            Product product = productRepository.findByProductId(shopCard.getProductId()).get();
-            productRepository.increaseProductBuyCount(product.getProductId(), shopCard.getAmount());
-            if (shopCard.getSize() != null) {
-                sizeRepository.reduceAmountByProductIdAndSize(product.getProductId(), shopCard.getSize(), shopCard.getAmount());
-            } else {
-                productRepository.decreaseProductAmount(product.getProductId(), shopCard.getAmount());
-            }
+            Optional<Product> productOptional = productRepository.findByProductId(shopCard.getProductId());
+            productOptional.ifPresent(product -> {
+                productRepository.increaseProductBuyCount(product.getProductId(), shopCard.getAmount());
+                if (shopCard.getSize() != null) {
+                    sizeRepository.reduceAmountByProductIdAndSize(product.getProductId(), shopCard.getSize(), shopCard.getAmount());
+                } else {
+                    productRepository.decreaseProductAmount(product.getProductId(), shopCard.getAmount());
+                }
+            });
         });
     }
-    
+
     private void updateUserOrdersByUserId(Long userId, Long orderId) {
         AtomicReference<Long> newOrderPrice = new AtomicReference<>(0L);
         List<CardProductIdAmountDto> productsOInfo = shopCardRepository.findProductIdAndAmountByOrderId(orderId);
-        productsOInfo.forEach(product -> {
-            newOrderPrice.set(newOrderPrice.get() + product.getPrice() * product.getAmount());
-        });
+        productsOInfo.forEach(product -> newOrderPrice.updateAndGet(v -> v + product.getPrice() * product.getAmount()));
         userRepository.updateUserOrdersByUserId(userId, newOrderPrice.get());
     }
 

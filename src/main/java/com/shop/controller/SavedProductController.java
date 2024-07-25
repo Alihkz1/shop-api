@@ -1,6 +1,6 @@
 package com.shop.controller;
 
-import com.shop.command.SavedProductAddCommand;
+import com.shop.command.SavedProductCrudCommand;
 import com.shop.service.SavedProductService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +25,20 @@ public class SavedProductController {
     }
 
     @PostMapping(path = "add")
-    public ResponseEntity<Response> add(SavedProductAddCommand command) {
+    public ResponseEntity<Response> add(@RequestBody SavedProductCrudCommand command) {
         return service.add(command);
     }
 
-    @DeleteMapping(path = "delete/{id}")
-    public ResponseEntity<Response> add(Long id) {
-        return service.deleteById(id);
+    @DeleteMapping(path = "delete")
+    public ResponseEntity<Response> delete(@RequestBody SavedProductCrudCommand command) {
+        return service.delete(command);
+    }
+
+    @GetMapping(path = "is-saved")
+    public ResponseEntity<Response> isSaved(@RequestParam(value = "userId") Long userId, @RequestParam(value = "productId") Long productId) {
+        SavedProductCrudCommand command = new SavedProductCrudCommand();
+        command.setUserId(userId);
+        command.setProductId(productId);
+        return service.isSaved(command);
     }
 }

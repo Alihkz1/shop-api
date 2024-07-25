@@ -61,11 +61,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 
     @Query(value = "select * from product" +
-            " order by buy_count desc limit 5", nativeQuery = true)
+            " order by buy_count desc limit 3", nativeQuery = true)
     List<Product> getMostBuy();
 
     @Query(value = "select * from product" +
-            " order by product_id desc limit 5", nativeQuery = true)
+            " order by product_id desc limit 3", nativeQuery = true)
     List<Product> getNewest();
 
 }

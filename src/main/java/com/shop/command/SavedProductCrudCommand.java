@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SavedProductAddCommand {
+public class SavedProductCrudCommand {
     private Long userId;
     private Long productId;
 

@@ -1,6 +1,7 @@
 package com.shop.service;
 
-import com.shop.command.SavedProductAddCommand;
+import com.shop.command.SavedProductCrudCommand;
+import com.shop.dto.ProductDto;
 import com.shop.model.SavedProduct;
 import com.shop.repository.SavedProductRepository;
 import com.shop.shared.classes.BaseService;
@@ -18,20 +19,29 @@ import java.util.Optional;
 public class SavedProductService extends BaseService {
 
     private final SavedProductRepository repository;
+    private final ProductService productService;
 
     @Autowired
-    public SavedProductService(SavedProductRepository repository) {
+    public SavedProductService(
+            SavedProductRepository repository,
+            ProductService productService) {
         this.repository = repository;
+        this.productService = productService;
     }
 
     public ResponseEntity<Response> getAll(Long userId) {
         Optional<List<SavedProduct>> userSavedItems = repository.findByUserId(userId);
-        Map map = new HashMap<>();
-        map.put("items", userSavedItems);
+        Map<String, List<ProductDto>> map = new HashMap<>();
+        List<Long> productIds = userSavedItems.get().stream()
+                .map(SavedProduct::getProductId)
+                .toList();
+        List<ProductDto> products =
+                productService.listByIds(productIds);
+        map.put("products", products);
         return successResponse(map);
     }
 
-    public ResponseEntity<Response> add(SavedProductAddCommand command) {
+    public ResponseEntity<Response> add(SavedProductCrudCommand command) {
         try {
             repository.save(command.toEntity());
             return successResponse();
@@ -40,12 +50,19 @@ public class SavedProductService extends BaseService {
         }
     }
 
-    public ResponseEntity<Response> deleteById(Long id) {
+    public ResponseEntity<Response> delete(SavedProductCrudCommand command) {
         try {
-            repository.deleteById(id);
+            repository.deleteSaved(command.getUserId(), command.getProductId());
             return successResponse();
         } catch (Exception e) {
             return errorResponse(e.getMessage());
         }
+    }
+
+    public ResponseEntity<Response> isSaved(SavedProductCrudCommand command) {
+        Optional<SavedProduct> item = repository.findByUserIdAndProductId(command.getUserId(), command.getProductId());
+        if (item.isPresent()) {
+            return successResponse(item.get());
+        } else return successResponse();
     }
 }

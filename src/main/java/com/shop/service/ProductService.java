@@ -34,7 +34,7 @@ public class ProductService extends BaseService {
 
     public ResponseEntity<Response> getAll(Long categoryId, Byte sort) {
         try {
-            List<Product> products = new ArrayList<>();
+            List<Product> products;
             switch (Optional.ofNullable(sort).orElse((byte) 0)) {
                 case 1:
                     products = productRepository.getAllExpensive(categoryId);
@@ -65,6 +65,25 @@ public class ProductService extends BaseService {
         } catch (Exception e) {
             return errorResponse(e.getMessage());
         }
+    }
+
+    public List<ProductDto> listByIds(List<Long> productIds) {
+        List<Product> products = new ArrayList<>();
+
+        productIds.forEach(id -> {
+            products.add(productRepository.findByProductId(id).get());
+        });
+
+        List<ProductDto> dto = new ArrayList<>();
+        for (Product product : products) {
+            ProductDto productDto = new ProductDto();
+            productDto.setProduct(product);
+            Optional<List<ProductSize>> productSizes = sizeRepository.findByProductId(product.getProductId());
+            productDto.setProductSize(productSizes.orElse(Collections.emptyList()));
+            dto.add(productDto);
+        }
+
+        return dto;
     }
 
     public ResponseEntity<Response> edit(ProductEditCommand command) {

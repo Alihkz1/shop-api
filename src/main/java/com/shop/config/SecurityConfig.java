@@ -33,6 +33,8 @@ public class SecurityConfig {
                                 "/api/v1/product/most-buy",
                                 "/api/v1/product/newest",
                                 "/api/v1/product/retrieve/**",
+                                "/api/v1/product/like/**",
+                                "/api/v1/product/remove-like/**",
                                 "/api/v1/comment/add",
                                 "/api/v1/order/track/**"
                                 )

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,6 @@ import java.util.Map;
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final MyUserDetailService myUserDetailsService;
-
     private final JWTService jwtService;
 
     @Override
@@ -38,22 +38,31 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
 
         jwtToken = authHeaderValue.substring(7);
-        userEmail = jwtService.extractEmail(jwtToken);
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.myUserDetailsService.loadUserByUsername(userEmail);
-            if (jwtService.isTokenValid(jwtToken, userDetails)) {
-                Map<String, Object> tokenDetails = new HashMap<>();
-                tokenDetails.put("userId", jwtService.extractUserId(jwtToken));
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                token.setDetails(
-                        tokenDetails
-                );
-                SecurityContextHolder.getContext().setAuthentication(token);
+        try {
+            userEmail = jwtService.extractEmail(jwtToken);
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.myUserDetailsService.loadUserByUsername(userEmail);
+                if (jwtService.isTokenValid(jwtToken, userDetails)) {
+                    Map<String, Object> tokenDetails = new HashMap<>();
+                    tokenDetails.put("userId", jwtService.extractUserId(jwtToken));
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(tokenDetails);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is invalid");
+                    return;
+                }
             }
+        } catch (ExpiredJwtException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is expired");
+            return;
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is invalid");
+            return;
         }
         filterChain.doFilter(request, response);
     }

@@ -46,7 +46,7 @@ public class SavedProductService extends BaseService {
             repository.save(command.toEntity());
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -55,7 +55,7 @@ public class SavedProductService extends BaseService {
             repository.deleteSaved(command.getUserId(), command.getProductId());
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 

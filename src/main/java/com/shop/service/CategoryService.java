@@ -14,6 +14,7 @@ import com.shop.repository.ProductSizeRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -82,7 +83,7 @@ public class CategoryService extends BaseService {
             categoryRepository.save(category.get());
             return successResponse();
         } else {
-            return errorResponse("wrong categoryId");
+            return badRequestResponse("دسته بندی یافت نشد");
         }
     }
 
@@ -91,7 +92,7 @@ public class CategoryService extends BaseService {
             categoryRepository.save(command.toEntity());
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -102,7 +103,7 @@ public class CategoryService extends BaseService {
             categoryRepository.deleteById(categoryId);
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 }

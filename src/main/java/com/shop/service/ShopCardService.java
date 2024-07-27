@@ -41,7 +41,7 @@ public class ShopCardService extends BaseService {
             return successResponse(map);
 
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -68,7 +68,7 @@ public class ShopCardService extends BaseService {
             return successResponse(map);
 
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ public class ShopCardService extends BaseService {
             Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(userId);
             return successResponse(userShopCards.get().size());
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -90,7 +90,7 @@ public class ShopCardService extends BaseService {
             map.put("card", card);
             return successResponse(map);
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -102,7 +102,7 @@ public class ShopCardService extends BaseService {
             map.put("cards", saved);
             return successResponse(map);
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -110,7 +110,7 @@ public class ShopCardService extends BaseService {
         try {
             shopCardRepository.deleteById(shopCardId);
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
         return successResponse();
     }

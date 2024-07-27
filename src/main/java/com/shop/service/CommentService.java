@@ -9,6 +9,7 @@ import com.shop.repository.UserRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -51,14 +52,14 @@ public class CommentService extends BaseService {
             commentRepository.save(command.toEntity());
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
     public ResponseEntity<Response> edit(CommentEditCommand command) {
         Optional<Comment> commentOptional = commentRepository.findByCommentId(command.getCommentId());
         if (commentOptional.isEmpty()) {
-            return errorResponse("wrong commentId");
+            return badRequestResponse("کامنت یافت نشد");
         } else {
             Comment comment = commentOptional.get();
             if (command.getMessage() != null) {
@@ -77,7 +78,7 @@ public class CommentService extends BaseService {
             commentRepository.deleteById(commentId);
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 }

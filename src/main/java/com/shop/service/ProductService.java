@@ -13,6 +13,7 @@ import com.shop.repository.ProductSizeRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +64,7 @@ public class ProductService extends BaseService {
             map.put("products", dto);
             return successResponse(map);
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -100,10 +101,10 @@ public class ProductService extends BaseService {
                 }
                 return successResponse();
             } else {
-                return errorResponse();
+                return badRequestResponse("محصولی یافت نشد");
             }
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -121,7 +122,7 @@ public class ProductService extends BaseService {
             return successResponse();
 
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -131,7 +132,7 @@ public class ProductService extends BaseService {
             sizeRepository.deleteByProductId(productId);
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -156,7 +157,7 @@ public class ProductService extends BaseService {
             map.put("products", list);
             return successResponse(map);
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -172,10 +173,10 @@ public class ProductService extends BaseService {
                 map.put("product", productDto);
                 return successResponse(map);
             } else {
-                return errorResponse("wrong productId!");
+                return badRequestResponse("محصول یافت نشد");
             }
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -186,7 +187,7 @@ public class ProductService extends BaseService {
             map.put("products", products);
             return successResponse(map);
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -197,7 +198,7 @@ public class ProductService extends BaseService {
             map.put("products", products);
             return successResponse(map);
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -216,7 +217,7 @@ public class ProductService extends BaseService {
             productRepository.like(productId);
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -225,7 +226,7 @@ public class ProductService extends BaseService {
             productRepository.removeLike(productId);
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 }

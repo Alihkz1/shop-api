@@ -15,6 +15,7 @@ import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.OrderStatus;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +51,7 @@ public class OrderService extends BaseService {
             smsAdminForNewOrder();
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -80,7 +81,7 @@ public class OrderService extends BaseService {
             map.put("userAllOrders", userAllOrders);
             return successResponse(map);
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
@@ -110,14 +111,14 @@ public class OrderService extends BaseService {
             map.put("allOrders", allOrders);
             return successResponse(map);
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 
     public ResponseEntity<Response> trackByOrderCode(String orderCode) {
         Optional<OrderListDto> order = orderRepository.findByCode(orderCode);
         if (order.isEmpty()) {
-            return errorResponse("wrong orderCode!");
+            return badRequestResponse("سفارش یافت نشد");
         } else {
             Map<String, OrderDto> map = new HashMap<>();
             OrderDto orderDto = new OrderDto();
@@ -144,7 +145,7 @@ public class OrderService extends BaseService {
     public ResponseEntity<Response> submitPostTrackCodeByAdmin(OrderTrackCodeCommand command) {
         Optional<Order> order = orderRepository.findByOrderId(command.getOrderId());
         if (order.isEmpty()) {
-            return errorResponse("wrong orderCode!");
+            return badRequestResponse("سفارش یافت نشد");
         } else {
             order.get().setTrackCode(command.getTrackCode());
             order.get().setStatus(OrderStatus.SENT_VIA_POST);
@@ -160,7 +161,7 @@ public class OrderService extends BaseService {
             orderRepository.save(order.get());
             return successResponse();
         } else {
-            return errorResponse("wrong orderId!");
+            return badRequestResponse("سفارش یافت نشد");
         }
     }
 

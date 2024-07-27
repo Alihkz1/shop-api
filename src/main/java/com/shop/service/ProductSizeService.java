@@ -21,7 +21,7 @@ public class ProductSizeService extends BaseService {
             repository.deleteById(sizeId);
             return successResponse();
         } catch (Exception e) {
-            return errorResponse(e.getMessage());
+            return serverErrorResponse(e.getMessage());
         }
     }
 }

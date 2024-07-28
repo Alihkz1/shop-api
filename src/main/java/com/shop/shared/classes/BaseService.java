@@ -1,5 +1,6 @@
 package com.shop.shared.classes;
 
+import com.shop.shared.enums.ErrorMessagesEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -22,10 +23,10 @@ public class BaseService {
         return new ResponseEntity<>(response, status);
     }
 
-    public ResponseEntity<Response> badRequestResponse(String message) {
+    public ResponseEntity<Response> badRequestResponse(ErrorMessagesEnum errorEnum) {
         Response response = new Response();
         response.setSuccess(false);
-        response.setMessage(message);
+        response.setMessage(errorEnum.toString());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

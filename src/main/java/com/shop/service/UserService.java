@@ -11,6 +11,7 @@ import com.shop.model.User;
 import com.shop.repository.UserRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.enums.ErrorMessagesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,9 +50,9 @@ public class UserService extends BaseService {
             Optional<User> existByEmail = userRepository.findByEmail(command.getEmail());
             Optional<User> existByPhone = userRepository.findByPhone(command.getPhone());
             if (existByEmail.isPresent()) {
-                return badRequestResponse("ایمیل وارد شده قبلا قبت نام کرده است");
+                return badRequestResponse(ErrorMessagesEnum.EMAIL_ALREADY_REGISTERED);
             } else if (existByPhone.isPresent()) {
-                return badRequestResponse("تلفن همراه وارد شده قبلا ثبت نام کرده است");
+                return badRequestResponse(ErrorMessagesEnum.PHONE_ALREADY_REGISTERED);
             } else {
                 userRepository.save(command.toEntity(passwordEncoder.encode(command.getPassword())));
                 UserLoginCommand loginCommand = UserLoginCommand.builder()
@@ -78,7 +79,7 @@ public class UserService extends BaseService {
     public ResponseEntity<Response> login(UserLoginCommand command) {
         User userInDB = userRepository.login(command.getEmailOrPhone());
         if (userInDB == null) {
-            return badRequestResponse("ایمیل یا شماره همراه اشتباه است");
+            return badRequestResponse(ErrorMessagesEnum.EMAIL_OR_PHONE_INVALID);
         } else {
             boolean passwordMatches = passwordEncoder.matches(command.getPassword(), userInDB.getPassword());
             if (passwordMatches) {
@@ -89,7 +90,7 @@ public class UserService extends BaseService {
                 AuthDto authDto = AuthDto.builder().token(token).user(userDtoMapper.apply(userInDB)).build();
                 return successResponse(authDto);
             } else {
-                return badRequestResponse("پسورد اشتباه است");
+                return badRequestResponse(ErrorMessagesEnum.PASSWORD_INVALID);
             }
         }
     }
@@ -110,7 +111,7 @@ public class UserService extends BaseService {
             userRepository.save(user.get());
             return successResponse();
         } else {
-            return badRequestResponse("کاربر یافت نشد");
+            return badRequestResponse(ErrorMessagesEnum.NO_USERS_FOUND);
         }
     }
 
@@ -141,7 +142,7 @@ public class UserService extends BaseService {
     public ResponseEntity<Response> changePassowrd(ChangePasswordCommand command) {
         Optional<User> user = userRepository.findByUserId(command.getUserId());
         if (user.isEmpty()) {
-            return badRequestResponse("کاربری یافت نشد");
+            return badRequestResponse(ErrorMessagesEnum.NO_USERS_FOUND);
         } else {
             user.get().setPassword(passwordEncoder.encode(command.getNewPassword()));
             userRepository.save(user.get());

@@ -13,8 +13,8 @@ import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.enums.ErrorMessagesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +42,7 @@ public class CategoryService extends BaseService {
 
     public ResponseEntity<Response> list() {
         List<CategoryListDto> finalDto = new ArrayList<>();
-        categoryRepository.findAll().stream().forEach((category -> {
+        categoryRepository.findAll().forEach((category -> {
             CategoryListDto dto = new CategoryListDto();
             dto.setCategoryId(category.getCategoryId());
             dto.setCategoryName(category.getCategoryName());
@@ -50,7 +50,7 @@ public class CategoryService extends BaseService {
             finalDto.add(dto);
         }));
 
-        finalDto.stream().forEach(dto -> {
+        finalDto.forEach(dto -> {
             List<ProductDto> products = new ArrayList<>();
             List<Product> categoryProducts = productRepository.getAll(dto.getCategoryId());
             categoryProducts.forEach(product -> {
@@ -77,13 +77,13 @@ public class CategoryService extends BaseService {
             if (command.getCategoryName() != null) {
                 category.get().setCategoryName(command.getCategoryName());
             }
-            if (command.getImageUrl() != null && !command.getImageUrl().equals("")) {
+            if (command.getImageUrl() != null && !command.getImageUrl().isEmpty()) {
                 category.get().setImageUrl(command.getImageUrl());
             }
             categoryRepository.save(category.get());
             return successResponse();
         } else {
-            return badRequestResponse("دسته بندی یافت نشد");
+            return badRequestResponse(ErrorMessagesEnum.NO_CATEGORIES_FOUND);
         }
     }
 

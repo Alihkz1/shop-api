@@ -8,8 +8,8 @@ import com.shop.repository.CommentRepository;
 import com.shop.repository.UserRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.enums.ErrorMessagesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +59,7 @@ public class CommentService extends BaseService {
     public ResponseEntity<Response> edit(CommentEditCommand command) {
         Optional<Comment> commentOptional = commentRepository.findByCommentId(command.getCommentId());
         if (commentOptional.isEmpty()) {
-            return badRequestResponse("کامنت یافت نشد");
+            return badRequestResponse(ErrorMessagesEnum.NO_COMMENT_FOUND);
         } else {
             Comment comment = commentOptional.get();
             if (command.getMessage() != null) {

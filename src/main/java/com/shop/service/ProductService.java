@@ -12,8 +12,8 @@ import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.enums.ErrorMessagesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -101,7 +101,7 @@ public class ProductService extends BaseService {
                 }
                 return successResponse();
             } else {
-                return badRequestResponse("محصولی یافت نشد");
+                return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
             }
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
@@ -173,7 +173,7 @@ public class ProductService extends BaseService {
                 map.put("product", productDto);
                 return successResponse(map);
             } else {
-                return badRequestResponse("محصول یافت نشد");
+                return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
             }
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());

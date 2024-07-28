@@ -34,7 +34,6 @@ public class ShopCardService extends BaseService {
     public ResponseEntity<Response> getUserCardLight(Long userId) {
         Map<String, List<ShopCard>> map = new HashMap<>();
         try {
-
             /*todo: if product deleted then should not include here!*/
             Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(userId);
             map.put("cards", userShopCards.get());

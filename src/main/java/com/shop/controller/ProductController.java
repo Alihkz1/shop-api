@@ -36,6 +36,12 @@ public class ProductController {
         return productService.mostBuy();
     }
 
+    @GetMapping(path = "search")
+    public ResponseEntity<Response> searchByName(@RequestParam(value = "q") String searchQuery) {
+        return productService.searchByName(searchQuery);
+    }
+
+
     @GetMapping(path = "newest")
     public ResponseEntity<Response> newest() {
         return productService.newest();

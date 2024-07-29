@@ -229,4 +229,16 @@ public class ProductService extends BaseService {
             return serverErrorResponse(e.getMessage());
         }
     }
+
+    public ResponseEntity<Response> searchByName(String searchQuery) {
+        Map<String, List<Product>> map = new HashMap<>();
+        try {
+            List<Product> products = productRepository.searchByName(searchQuery);
+            map.put("products", products);
+            return successResponse(map);
+        } catch (Exception e) {
+            return serverErrorResponse(e.getMessage());
+        }
+
+    }
 }

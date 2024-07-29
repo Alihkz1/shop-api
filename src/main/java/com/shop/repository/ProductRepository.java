@@ -25,6 +25,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> getAll(Long categoryId);
 
     @Query(value = "select * from product" +
+            " where title like %:searchQuery%" +
+            " order by product_id desc", nativeQuery = true)
+    List<Product> searchByName(String searchQuery);
+
+    @Query(value = "select * from product" +
             " where category_id = :categoryId" +
             " order by price desc", nativeQuery = true)
     List<Product> getAllExpensive(Long categoryId);

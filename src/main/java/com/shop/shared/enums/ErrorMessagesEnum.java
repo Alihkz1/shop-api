@@ -11,6 +11,14 @@ public enum ErrorMessagesEnum {
     PASSWORD_INVALID("پسوورد اشتباه است"),
     NO_USERS_FOUND("کاربری یافت نشد");
 
-    ErrorMessagesEnum(String status) {
+
+    private final String message;
+
+    ErrorMessagesEnum(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

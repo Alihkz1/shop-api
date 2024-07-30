@@ -4,32 +4,29 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-
 @Entity
-@Table(name = "comment")
+@Table(name = "errorLog")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Comment {
+public class ErrorLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long logId;
 
-    private Long userId;
-
-    @Column(length = 10000)
+    @Column(length = 10000, nullable = false)
     private String message;
-
-    private Boolean read;
 
     @Column(nullable = false)
     private Long date;
 
+    @Column(nullable = false)
+    private Integer status;
+
     @PrePersist
     public void init() {
         this.date = new Date().getTime();
-        this.read = false;
     }
 }

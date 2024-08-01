@@ -25,6 +25,8 @@ public class ProductEditCommand {
 
     private String size;
 
+    private String about;
+
     public Product toEntity() {
         return Product.
                 builder()

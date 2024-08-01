@@ -6,8 +6,12 @@ import com.shop.command.ProductAddCommand;
 import com.shop.command.ProductEditCommand;
 import com.shop.dto.ProductAmountCheckDto;
 import com.shop.dto.ProductDto;
+import com.shop.dto.ProductRetrieveDto;
+import com.shop.dto.ProductRetrieveDto2;
 import com.shop.model.Product;
+import com.shop.model.ProductAbout;
 import com.shop.model.ProductSize;
+import com.shop.repository.ProductAboutRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
 import com.shop.shared.classes.BaseService;
@@ -24,13 +28,20 @@ public class ProductService extends BaseService {
 
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
+    private final ProductAboutRepository aboutRepository;
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, ProductSizeRepository sizeRepository, ObjectMapper objectMapper) {
+    public ProductService(
+            ObjectMapper objectMapper,
+            ProductRepository productRepository,
+            ProductSizeRepository sizeRepository,
+            ProductAboutRepository aboutRepository
+    ) {
         this.productRepository = productRepository;
         this.sizeRepository = sizeRepository;
         this.objectMapper = objectMapper;
+        this.aboutRepository = aboutRepository;
     }
 
     public ResponseEntity<Response> getAll(Long categoryId, Byte sort) {
@@ -96,8 +107,12 @@ public class ProductService extends BaseService {
                 if (command.getSize() != null) {
                     List<ProductSize> sizes = objectMapper.readValue(command.getSize(), new TypeReference<List<ProductSize>>() {
                     });
+                    List<ProductAbout> abouts = objectMapper.readValue(command.getAbout(), new TypeReference<>() {
+                    });
                     sizes.forEach(productSize -> productSize.setProductId(command.getProductId()));
                     sizeRepository.saveAll(sizes);
+                    abouts.forEach(productAbout -> productAbout.setProductId(command.getProductId()));
+                    aboutRepository.saveAll(abouts);
                 }
                 return successResponse();
             } else {
@@ -111,13 +126,18 @@ public class ProductService extends BaseService {
     public ResponseEntity<Response> add(ProductAddCommand command) {
         try {
 
-            List<ProductSize> sizes = objectMapper.readValue(command.getSize(), new TypeReference<List<ProductSize>>() {
+            List<ProductSize> sizes = objectMapper.readValue(command.getSize(), new TypeReference<>() {
+            });
+            List<ProductAbout> abouts = objectMapper.readValue(command.getAbout(), new TypeReference<>() {
             });
             if (command.getPrimaryImageIndex() == null) command.setPrimaryImageIndex((byte) 0);
             Product savedProduct = productRepository.save(command.toEntity());
 
             sizes.forEach(productSize -> productSize.setProductId(savedProduct.getProductId()));
             sizeRepository.saveAll(sizes);
+
+            abouts.forEach(productAbout -> productAbout.setProductId(savedProduct.getProductId()));
+            aboutRepository.saveAll(abouts);
 
             return successResponse();
 
@@ -163,14 +183,14 @@ public class ProductService extends BaseService {
 
     public ResponseEntity<Response> retrieve(Long productId) {
         try {
-            Optional<Product> product = productRepository.findByProductId(productId);
+            Optional<ProductRetrieveDto> product = productRepository.retrieve(productId);
             if (product.isPresent()) {
-                ProductDto productDto = new ProductDto();
-                productDto.setProduct(product.get());
+                ProductRetrieveDto2 dto2 = new ProductRetrieveDto2();
+                dto2.setProduct(product.get());
                 Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
-                productDto.setProductSize(sizes.orElse(Collections.emptyList()));
-                Map<String, ProductDto> map = new HashMap<>();
-                map.put("product", productDto);
+                dto2.setProductSize(sizes.orElse(Collections.emptyList()));
+                Map<String, ProductRetrieveDto2> map = new HashMap<>();
+                map.put("product", dto2);
                 return successResponse(map);
             } else {
                 return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);

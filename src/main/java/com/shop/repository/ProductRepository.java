@@ -1,5 +1,6 @@
 package com.shop.repository;
 
+import com.shop.dto.ProductRetrieveDto;
 import com.shop.model.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +24,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             " where category_id = :categoryId" +
             " order by product_id asc", nativeQuery = true)
     List<Product> getAll(Long categoryId);
+
+    @Query(value = "select p.*, c.category_name from product p " +
+            "join category c on p.category_id = c.category_id " +
+            "where product_id = :productId" , nativeQuery = true)
+    Optional<ProductRetrieveDto> retrieve(Long productId);
 
     @Query(value = "select * from product" +
             " where title like %:searchQuery%" +

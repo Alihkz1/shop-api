@@ -19,5 +19,5 @@ public class ProductAbout {
 
     private String key;
 
-    private Long value;
+    private String value;
 }

@@ -67,7 +67,9 @@ public class ProductService extends BaseService {
                 ProductDto productDto = new ProductDto();
                 productDto.setProduct(product);
                 Optional<List<ProductSize>> productSizes = sizeRepository.findByProductId(product.getProductId());
+                Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(product.getProductId());
                 productDto.setProductSize(productSizes.orElse(Collections.emptyList()));
+                productDto.setProductAbout(abouts.orElse(Collections.emptyList()));
                 dto.add(productDto);
             }
 
@@ -87,11 +89,14 @@ public class ProductService extends BaseService {
         });
 
         List<ProductDto> dto = new ArrayList<>();
+
         for (Product product : products) {
             ProductDto productDto = new ProductDto();
             productDto.setProduct(product);
             Optional<List<ProductSize>> productSizes = sizeRepository.findByProductId(product.getProductId());
+            Optional<List<ProductAbout>> productAbouts = aboutRepository.findByProductId(product.getProductId());
             productDto.setProductSize(productSizes.orElse(Collections.emptyList()));
+            productDto.setProductAbout(productAbouts.orElse(Collections.emptyList()));
             dto.add(productDto);
         }
 
@@ -188,7 +193,9 @@ public class ProductService extends BaseService {
                 ProductRetrieveDto2 dto2 = new ProductRetrieveDto2();
                 dto2.setProduct(product.get());
                 Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
+                Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(productId);
                 dto2.setProductSize(sizes.orElse(Collections.emptyList()));
+                dto2.setProductAbout(abouts.orElse(Collections.emptyList()));
                 Map<String, ProductRetrieveDto2> map = new HashMap<>();
                 map.put("product", dto2);
                 return successResponse(map);

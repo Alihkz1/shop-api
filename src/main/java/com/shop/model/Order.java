@@ -31,7 +31,7 @@ public class Order {
 
     private Long postalCode;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private Long paidAmount;
 
     private String trackCode;

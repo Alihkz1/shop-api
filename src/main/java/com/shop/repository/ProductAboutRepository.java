@@ -12,11 +12,6 @@ import java.util.Optional;
 public interface ProductAboutRepository extends JpaRepository<ProductAbout, Long> {
     @Modifying
     @Transactional
-    @Query(value = "delete from product_about where product_id = :productId", nativeQuery = true)
-    void deleteByProductId(Long productId);
-
-    @Modifying
-    @Transactional
     @Query(value = "delete from product_about where id = :aboutId", nativeQuery = true)
     void deleteById(Long aboutId);
 

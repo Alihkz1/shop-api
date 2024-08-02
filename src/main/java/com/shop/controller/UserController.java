@@ -4,7 +4,6 @@ import com.shop.command.ChangePasswordCommand;
 import com.shop.command.UserEditCommand;
 import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
-import com.shop.dto.AuthDto;
 import com.shop.service.UserService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;

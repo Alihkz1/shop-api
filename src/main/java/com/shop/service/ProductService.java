@@ -14,6 +14,7 @@ import com.shop.model.ProductSize;
 import com.shop.repository.ProductAboutRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
+import com.shop.repository.UserProductSearchRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.ErrorMessagesEnum;
@@ -29,6 +30,7 @@ public class ProductService extends BaseService {
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
     private final ProductAboutRepository aboutRepository;
+    private final UserProductSearchService userProductSearchService;
     private final ObjectMapper objectMapper;
 
     @Autowired
@@ -36,12 +38,14 @@ public class ProductService extends BaseService {
             ObjectMapper objectMapper,
             ProductRepository productRepository,
             ProductSizeRepository sizeRepository,
-            ProductAboutRepository aboutRepository
+            ProductAboutRepository aboutRepository,
+            UserProductSearchService userProductSearchService
     ) {
         this.productRepository = productRepository;
         this.sizeRepository = sizeRepository;
         this.objectMapper = objectMapper;
         this.aboutRepository = aboutRepository;
+        this.userProductSearchService = userProductSearchService;
     }
 
     public ResponseEntity<Response> getAll(Long categoryId, Byte sort) {
@@ -257,7 +261,10 @@ public class ProductService extends BaseService {
         }
     }
 
-    public ResponseEntity<Response> searchByName(String searchQuery) {
+    public ResponseEntity<Response> searchByName(String searchQuery, Long userId) {
+        if (userId != null) {
+            userProductSearchService.save(searchQuery, userId);
+        }
         Map<String, List<Product>> map = new HashMap<>();
         try {
             List<Product> products = productRepository.searchByName(searchQuery);

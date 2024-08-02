@@ -37,10 +37,9 @@ public class ProductController {
     }
 
     @GetMapping(path = "search")
-    public ResponseEntity<Response> searchByName(@RequestParam(value = "q") String searchQuery) {
-        return productService.searchByName(searchQuery);
+    public ResponseEntity<Response> searchByName(@RequestParam(value = "q") String searchQuery, @RequestParam(value = "u", required = false) Long userId) {
+        return productService.searchByName(searchQuery, userId);
     }
-
 
     @GetMapping(path = "newest")
     public ResponseEntity<Response> newest() {

@@ -23,6 +23,8 @@ public class UserProductSearchService extends BaseService {
     }
 
     public void save(String searchQuery, Long userId) {
+        Optional<UserProductSearch> findBySearch = repository.findBySearch(userId, searchQuery);
+        if (findBySearch.isPresent()) return;
         UserProductSearch model = new UserProductSearch();
         model.setSearch(searchQuery);
         model.setUserId(userId);
@@ -36,5 +38,14 @@ public class UserProductSearchService extends BaseService {
             map.put("history", userSearchList.get());
             return successResponse(map);
         } else return successResponse();
+    }
+
+    public ResponseEntity<Response> deleteById(Long searchId) {
+        try {
+            repository.deleteById(searchId);
+            return successResponse();
+        } catch (Exception e) {
+            return serverErrorResponse(e.getMessage());
+        }
     }
 }

@@ -139,7 +139,7 @@ public class UserService extends BaseService {
         }
     }
 
-    public ResponseEntity<Response> changePassowrd(ChangePasswordCommand command) {
+    public ResponseEntity<Response> changePassword(ChangePasswordCommand command) {
         Optional<User> user = userRepository.findByUserId(command.getUserId());
         if (user.isEmpty()) {
             return badRequestResponse(ErrorMessagesEnum.NO_USERS_FOUND);

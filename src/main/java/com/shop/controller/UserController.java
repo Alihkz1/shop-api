@@ -53,6 +53,6 @@ public class UserController {
 
     @PutMapping(path = "change-password")
     public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordCommand command) {
-        return userService.changePassowrd(command);
+        return userService.changePassword(command);
     }
 }

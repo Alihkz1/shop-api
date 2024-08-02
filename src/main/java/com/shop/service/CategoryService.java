@@ -17,6 +17,7 @@ import com.shop.shared.enums.ErrorMessagesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,6 +71,7 @@ public class CategoryService extends BaseService {
         return successResponse(map);
     }
 
+    @Transactional
     public ResponseEntity<Response> edit(CategoryEditCommand command) {
         Optional<Category> category = categoryRepository.findByCategoryId(command.getCategoryId());
 
@@ -96,6 +98,7 @@ public class CategoryService extends BaseService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Response> deleteById(Long categoryId) {
         try {
             /*todo: delete sizes */

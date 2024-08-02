@@ -18,6 +18,7 @@ import com.shop.shared.enums.OrderStatus;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -42,6 +43,7 @@ public class OrderService extends BaseService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public ResponseEntity<Response> add(OrderAddCommand command) {
         try {
             Order order = orderRepository.save(command.toEntity());
@@ -165,7 +167,8 @@ public class OrderService extends BaseService {
         }
     }
 
-    private void modifyProductsAfterOrder(Long orderId) {
+    @Transactional
+    protected void modifyProductsAfterOrder(Long orderId) {
         List<ShopCard> orderShopCards = shopCardRepository.findByOrderId(orderId).orElse(Collections.emptyList());
         orderShopCards.forEach(shopCard -> {
             Optional<Product> productOptional = productRepository.findByProductId(shopCard.getProductId());

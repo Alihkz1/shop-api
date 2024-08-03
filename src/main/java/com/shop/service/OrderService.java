@@ -33,7 +33,15 @@ public class OrderService extends BaseService {
     private final UserRepository userRepository;
     private final Environment environment;
 
-    public OrderService(OrderRepository repository, ShopCardService shopCardService, ProductRepository productRepository, Environment environment, ShopCardRepository shopCardRepository, ProductSizeRepository sizeRepository, UserRepository userRepository) {
+    public OrderService(
+            Environment environment,
+            OrderRepository repository,
+            ShopCardService shopCardService,
+            ProductRepository productRepository,
+            ShopCardRepository shopCardRepository,
+            ProductSizeRepository sizeRepository,
+            UserRepository userRepository
+    ) {
         this.orderRepository = repository;
         this.shopCardService = shopCardService;
         this.productRepository = productRepository;

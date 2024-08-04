@@ -8,6 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class OrderDto {
-    OrderListDto order;
+    OrderList order;
     List<OrderProductDto> products;
 }

@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Component
 @Builder
-public class Response<T> {
+public class Response {
     private boolean success = true;
     private String message = "";
-    private T data;
+    private Object data;
 
-    public Response(T data) {
+    public Response(Object data) {
         this.data = data;
     }
 }

@@ -14,6 +14,10 @@ public class BaseService {
     @Autowired
     private final ErrorLogRepository errorLogRepository;
 
+//    protected <T> ResponseEntity<Response<T>> successResponse(T data) {
+//        return new ResponseEntity<>(Response.<T>builder().data(data).success(true).build(), HttpStatus.OK);
+//    }
+
     protected ResponseEntity<Response> successResponse(Object data) {
         return new ResponseEntity<>(Response.builder().data(data).success(true).build(), HttpStatus.OK);
     }

@@ -1,5 +1,6 @@
 package com.shop.service;
 
+import com.shop.dto.UserProductSearchDto;
 import com.shop.model.UserProductSearch;
 import com.shop.repository.UserProductSearchRepository;
 import com.shop.shared.classes.BaseService;
@@ -9,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -35,9 +34,7 @@ public class UserProductSearchService extends BaseService {
     public ResponseEntity<Response> getByUserId() {
         Optional<List<UserProductSearch>> userSearchList = repository.findByUserId(UserThread.getUserId());
         if (userSearchList.isPresent()) {
-            Map<String, List<UserProductSearch>> map = new HashMap<>();
-            map.put("history", userSearchList.get());
-            return successResponse(map);
+            return successResponse(new UserProductSearchDto(userSearchList.get()));
         } else return successResponse();
     }
 

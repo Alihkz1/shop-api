@@ -7,6 +7,8 @@ import com.shop.command.UserSignUpCommand;
 import com.shop.config.JWTService;
 import com.shop.dto.AuthDto;
 import com.shop.dto.UserDtoMapper;
+import com.shop.dto.UserListDto;
+import com.shop.dto.UserRetrieveDto;
 import com.shop.model.User;
 import com.shop.repository.UserRepository;
 import com.shop.shared.classes.BaseService;
@@ -14,13 +16,11 @@ import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
 import com.shop.shared.enums.ErrorMessagesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -69,11 +69,8 @@ public class UserService extends BaseService {
 
     public AuthDto loginAfterSignup(UserLoginCommand command) {
         User userInDB = userRepository.login(command.getEmailOrPhone());
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("userId", userInDB.getUserId());
-        var token = jwtService.generateToken(userInDB, extraClaims);
         userRepository.updateLoginCountByUserId(userInDB.getUserId());
-        AuthDto authDto = AuthDto.builder().token(token).user(userDtoMapper.apply(userInDB)).build();
+        AuthDto authDto = AuthDto.builder().token(generateToken(userInDB)).user(userDtoMapper.apply(userInDB)).build();
         return authDto;
     }
 
@@ -84,16 +81,19 @@ public class UserService extends BaseService {
         } else {
             boolean passwordMatches = passwordEncoder.matches(command.getPassword(), userInDB.getPassword());
             if (passwordMatches) {
-                Map<String, Object> extraClaims = new HashMap<>();
-                extraClaims.put("userId", userInDB.getUserId());
-                var token = jwtService.generateToken(userInDB, extraClaims);
                 userRepository.updateLoginCountByUserId(userInDB.getUserId());
-                AuthDto authDto = AuthDto.builder().token(token).user(userDtoMapper.apply(userInDB)).build();
+                AuthDto authDto = AuthDto.builder().token(generateToken(userInDB)).user(userDtoMapper.apply(userInDB)).build();
                 return successResponse(authDto);
             } else {
                 return badRequestResponse(ErrorMessagesEnum.PASSWORD_INVALID);
             }
         }
+    }
+
+    private String generateToken(User user) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", user.getUserId());
+        return jwtService.generateToken(user, extraClaims);
     }
 
     public ResponseEntity<Response> edit(UserEditCommand command) {
@@ -117,18 +117,11 @@ public class UserService extends BaseService {
     }
 
     public ResponseEntity<Response> getAll() {
-        /*todo: create dto*/
-        Map<String, List<User>> map = new HashMap<>();
-        map.put("users", userRepository.getAll());
-        return successResponse(map);
+        return successResponse(new UserListDto(userRepository.getAll()));
     }
 
     public ResponseEntity<Response> getById() {
-        /*todo: create dto*/
-        Map<String, User> map = new HashMap<>();
-        Optional<User> user = userRepository.findByUserId(UserThread.getUserId());
-        map.put("user", user.get());
-        return successResponse(map);
+        return successResponse(new UserRetrieveDto(userRepository.findByUserId(UserThread.getUserId()).get()));
     }
 
     public ResponseEntity<Response> deleteById(Long userId) {

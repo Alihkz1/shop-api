@@ -1,8 +1,7 @@
 package com.shop.service;
 
 import com.shop.command.ShopCardModifyCommand;
-import com.shop.dto.ProductDto;
-import com.shop.dto.ShopCardDto;
+import com.shop.dto.*;
 import com.shop.model.Product;
 import com.shop.model.ProductSize;
 import com.shop.model.ShopCard;
@@ -33,12 +32,10 @@ public class ShopCardService extends BaseService {
     }
 
     public ResponseEntity<Response> getUserCardLight() {
-        Map<String, List<ShopCard>> map = new HashMap<>();
         try {
             /*todo: if product deleted then should not include here!*/
             Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
-            map.put("cards", userShopCards.get());
-            return successResponse(map);
+            return successResponse(new ShopCardLightListDto(userShopCards.get()));
 
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
@@ -46,7 +43,6 @@ public class ShopCardService extends BaseService {
     }
 
     public ResponseEntity<Response> getUserCard() {
-        Map<String, List<ShopCardDto>> map = new HashMap<>();
         try {
             Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
             List<ShopCardDto> list = new ArrayList<>();
@@ -63,15 +59,11 @@ public class ShopCardService extends BaseService {
                 shopCardDto.setProduct(productDto);
                 list.add(shopCardDto);
             });
-
-            map.put("cards", list);
-            return successResponse(map);
-
+            return successResponse(new ShopCardListDto(list));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }
     }
-
 
     public ResponseEntity<Response> getUserCardLength() {
         try {
@@ -82,25 +74,20 @@ public class ShopCardService extends BaseService {
         }
     }
 
-
     public ResponseEntity<Response> modify(ShopCardModifyCommand command) {
-        Map<String, ShopCard> map = new HashMap<>();
         try {
             ShopCard card = shopCardRepository.save(command.toEntity());
-            map.put("card", card);
-            return successResponse(map);
+            return successResponse(new ShopCardModifyDto(card));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }
     }
 
     public ResponseEntity<Response> modifyAll(List<ShopCardModifyCommand> list) {
-        Map<String, List<ShopCard>> map = new HashMap<>();
         try {
             List<ShopCard> cards = list.stream().map(ShopCardModifyCommand::toEntity).toList();
             List<ShopCard> saved = shopCardRepository.saveAll(cards);
-            map.put("cards", saved);
-            return successResponse(map);
+            return successResponse(new ShopCardModifyAllDto(saved));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }

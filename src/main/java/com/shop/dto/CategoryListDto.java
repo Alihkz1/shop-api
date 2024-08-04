@@ -1,19 +1,12 @@
 package com.shop.dto;
 
-import com.shop.model.Product;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.List;
 
-@Getter
-@Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class CategoryListDto {
-    private Long categoryId;
-
-    private String categoryName;
-
-    private String imageUrl;
-
-    private List<ProductDto> products;
+    private List<CategoryList> categories;
 }

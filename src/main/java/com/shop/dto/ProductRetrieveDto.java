@@ -1,39 +1,16 @@
 package com.shop.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.shop.model.ProductAbout;
+import com.shop.model.ProductSize;
+import lombok.Getter;
+import lombok.Setter;
 
-public interface ProductRetrieveDto {
-    @JsonProperty("productId")
-    Long getProductId();
+import java.util.List;
 
-    @JsonProperty("categoryId")
-    Long getCategoryId();
-
-    @JsonProperty("price")
-    Long getPrice();
-
-    @JsonProperty("title")
-    String getTitle();
-
-    @JsonProperty("amount")
-    Long getAmount();
-
-    @JsonProperty("likes")
-    Long getLikes();
-
-    @JsonProperty("buyCount")
-    Long getBuyCount();
-
-    @JsonProperty("imageUrl")
-    String getImageUrl();
-
-    @JsonProperty("primaryImageIndex")
-    Byte getPrimaryImageIndex();
-
-    @JsonProperty("description")
-    String getDescription();
-
-    @JsonProperty("categoryName")
-    String getCategoryName();
-
+@Getter
+@Setter
+public class ProductRetrieveDto {
+    ProductRetrieve product;
+    List<ProductSize> productSize;
+    List<ProductAbout> productAbout;
 }

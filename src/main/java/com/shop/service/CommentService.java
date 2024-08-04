@@ -3,6 +3,8 @@ package com.shop.service;
 import com.shop.command.CommentAddCommand;
 import com.shop.command.CommentEditCommand;
 import com.shop.dto.CommentDto;
+import com.shop.dto.CommentListDto;
+import com.shop.dto.UserCommentDto;
 import com.shop.model.Comment;
 import com.shop.repository.CommentRepository;
 import com.shop.repository.UserRepository;
@@ -36,16 +38,12 @@ public class CommentService extends BaseService {
             dto.setUser(userRepository.findByUserId(comment.getUserId()));
             dtoList.add(dto);
         });
-        Map<String, List<CommentDto>> map = new HashMap<>();
-        map.put("comments", dtoList);
-        return successResponse(map);
+        return successResponse(new CommentListDto(dtoList));
     }
 
     public ResponseEntity<Response> getUserAllComments(Long userId) {
         List<Comment> comments = commentRepository.getUserAllComments(userId);
-        Map<String, List<Comment>> map = new HashMap<>();
-        map.put("userComments", comments);
-        return successResponse(map);
+        return successResponse(new UserCommentDto(comments));
     }
 
     public ResponseEntity<Response> add(CommentAddCommand command) {

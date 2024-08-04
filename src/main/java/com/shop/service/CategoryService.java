@@ -2,9 +2,7 @@ package com.shop.service;
 
 import com.shop.command.CategoryAddCommand;
 import com.shop.command.CategoryEditCommand;
-import com.shop.dto.CategoryLightListDto;
-import com.shop.dto.CategoryListDto;
-import com.shop.dto.ProductDto;
+import com.shop.dto.*;
 import com.shop.model.Category;
 import com.shop.model.Product;
 import com.shop.model.ProductSize;
@@ -29,22 +27,25 @@ public class CategoryService extends BaseService {
     private final ProductSizeRepository sizeRepository;
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository, ProductRepository productRepository, ProductSizeRepository sizeRepository) {
+    public CategoryService(
+            CategoryRepository categoryRepository,
+            ProductRepository productRepository,
+            ProductSizeRepository sizeRepository
+    ) {
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
         this.sizeRepository = sizeRepository;
     }
 
     public ResponseEntity<Response> lightList() {
-        Map<String, List<CategoryLightListDto>> map = new HashMap<>();
-        map.put("categories", categoryRepository.lightList());
-        return successResponse(map);
+        List<CategoryLightList> list = categoryRepository.lightList();
+        return successResponse(new CategoryLightListDto(list));
     }
 
     public ResponseEntity<Response> list() {
-        List<CategoryListDto> finalDto = new ArrayList<>();
+        List<CategoryList> finalDto = new ArrayList<>();
         categoryRepository.findAll().forEach((category -> {
-            CategoryListDto dto = new CategoryListDto();
+            CategoryList dto = new CategoryList();
             dto.setCategoryId(category.getCategoryId());
             dto.setCategoryName(category.getCategoryName());
             dto.setImageUrl(category.getImageUrl());
@@ -64,11 +65,9 @@ public class CategoryService extends BaseService {
             dto.setProducts(products);
         });
 
-        List<CategoryListDto> sorted = finalDto.stream().sorted(Comparator.comparing(CategoryListDto::getCategoryId)).collect(Collectors.toList());
+        List<CategoryList> sorted = finalDto.stream().sorted(Comparator.comparing(CategoryList::getCategoryId)).collect(Collectors.toList());
 
-        Map<String, List<CategoryListDto>> map = new HashMap<>();
-        map.put("categories", sorted);
-        return successResponse(map);
+        return successResponse(new CategoryListDto(sorted));
     }
 
     @Transactional

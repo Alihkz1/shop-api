@@ -2,6 +2,7 @@ package com.shop.service;
 
 import com.shop.command.SavedProductCrudCommand;
 import com.shop.dto.ProductDto;
+import com.shop.dto.SavedProductListDto;
 import com.shop.model.SavedProduct;
 import com.shop.repository.SavedProductRepository;
 import com.shop.shared.classes.BaseService;
@@ -11,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -32,14 +31,11 @@ public class SavedProductService extends BaseService {
 
     public ResponseEntity<Response> getAll() {
         Optional<List<SavedProduct>> userSavedItems = repository.findByUserId(UserThread.getUserId());
-        Map<String, List<ProductDto>> map = new HashMap<>();
         List<Long> productIds = userSavedItems.get().stream()
                 .map(SavedProduct::getProductId)
                 .toList();
-        List<ProductDto> products =
-                productService.listByIds(productIds);
-        map.put("products", products);
-        return successResponse(map);
+        List<ProductDto> products = productService.listByIds(productIds);
+        return successResponse(new SavedProductListDto(products));
     }
 
     public ResponseEntity<Response> add(SavedProductCrudCommand command) {

@@ -15,9 +15,7 @@ public class BaseService {
     private final ErrorLogRepository errorLogRepository;
 
     protected ResponseEntity<Response> successResponse(Object data) {
-        Response response = new Response();
-        response.setData(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(Response.builder().data(data).build(), HttpStatus.OK);
     }
 
     protected ResponseEntity<Response> successResponse() {
@@ -26,27 +24,26 @@ public class BaseService {
 
     public ResponseEntity<Response> errorResponse(String message, HttpStatus status) {
         logError(message, Integer.valueOf(String.valueOf(status)));
-        Response response = new Response();
-        response.setSuccess(false);
-        response.setMessage(message);
-        return new ResponseEntity<>(response, status);
+        return new ResponseEntity<>(
+                Response.builder().success(false).message(message).build(),
+                status
+        );
     }
 
     public ResponseEntity<Response> badRequestResponse(ErrorMessagesEnum errorEnum) {
         logError(errorEnum.getMessage(), 400);
-        Response response = new Response();
-        response.setSuccess(false);
-        response.setMessage(errorEnum.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+                Response.builder().success(false).message(errorEnum.getMessage()).build(),
+                HttpStatus.BAD_REQUEST
+        );
     }
-
 
     public ResponseEntity<Response> serverErrorResponse(String message) {
         logError(message, 500);
-        Response response = new Response();
-        response.setSuccess(false);
-        response.setMessage(message);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(
+                Response.builder().success(false).message(message).build(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 
     private void logError(String message, Integer status) {
@@ -54,6 +51,7 @@ public class BaseService {
                 .message(message)
                 .status(status)
                 .build();
+        assert errorLogRepository != null;
         errorLogRepository.save(errorLog);
     }
 }

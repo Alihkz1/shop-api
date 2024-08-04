@@ -3,10 +3,7 @@ package com.shop.service;
 import com.shop.command.OrderAddCommand;
 import com.shop.command.OrderChangeStatusCommand;
 import com.shop.command.OrderTrackCodeCommand;
-import com.shop.dto.CardProductIdAmountDto;
-import com.shop.dto.OrderDto;
-import com.shop.dto.OrderListDto;
-import com.shop.dto.OrderProductDto;
+import com.shop.dto.*;
 import com.shop.model.Order;
 import com.shop.model.Product;
 import com.shop.model.ShopCard;
@@ -87,9 +84,7 @@ public class OrderService extends BaseService {
                 orderDto.setOrder(userOrder);
                 userAllOrders.add(orderDto);
             }));
-            Map<String, List<OrderDto>> map = new HashMap<>();
-            map.put("userAllOrders", userAllOrders);
-            return successResponse(map);
+            return successResponse(new OrdersDto(userAllOrders));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }
@@ -117,9 +112,7 @@ public class OrderService extends BaseService {
                 orderDto.setOrder(userOrder);
                 allOrders.add(orderDto);
             }));
-            Map<String, List<OrderDto>> map = new HashMap<>();
-            map.put("allOrders", allOrders);
-            return successResponse(map);
+            return successResponse(new OrdersDto(allOrders));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }
@@ -130,7 +123,6 @@ public class OrderService extends BaseService {
         if (order.isEmpty()) {
             return badRequestResponse(ErrorMessagesEnum.NO_ORDER_FOUND);
         } else {
-            Map<String, OrderDto> map = new HashMap<>();
             OrderDto orderDto = new OrderDto();
             List<OrderProductDto> products = new ArrayList<>();
             orderDto.setOrder(order.get());
@@ -147,8 +139,7 @@ public class OrderService extends BaseService {
                 });
             }));
             orderDto.setProducts(products);
-            map.put("order", orderDto);
-            return successResponse(map);
+            return successResponse(new OrderRetrieveDto(orderDto));
         }
     }
 

@@ -1,6 +1,6 @@
 package com.shop.repository;
 
-import com.shop.dto.CategoryLightListDto;
+import com.shop.dto.CategoryLightList;
 import com.shop.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,5 +21,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "LEFT JOIN product p ON c.category_id = p.category_id " +
             "GROUP BY c.category_id " +
             "ORDER BY c.category_id ASC", nativeQuery = true)
-    List<CategoryLightListDto> lightList();
+    List<CategoryLightList> lightList();
 }

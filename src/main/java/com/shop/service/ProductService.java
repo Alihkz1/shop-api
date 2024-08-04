@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.command.ProductAddCommand;
 import com.shop.command.ProductEditCommand;
-import com.shop.dto.ProductAmountCheckDto;
-import com.shop.dto.ProductDto;
-import com.shop.dto.ProductRetrieveDto;
-import com.shop.dto.ProductRetrieveDto2;
+import com.shop.dto.*;
 import com.shop.model.Product;
 import com.shop.model.ProductAbout;
 import com.shop.model.ProductSize;
@@ -64,7 +61,6 @@ public class ProductService extends BaseService {
                     products = productRepository.getAll(categoryId);
                     break;
             }
-
             List<ProductDto> dto = new ArrayList<>();
             for (Product product : products) {
                 ProductDto productDto = new ProductDto();
@@ -75,10 +71,7 @@ public class ProductService extends BaseService {
                 productDto.setProductAbout(abouts.orElse(Collections.emptyList()));
                 dto.add(productDto);
             }
-
-            Map<String, List<ProductDto>> map = new HashMap<>();
-            map.put("products", dto);
-            return successResponse(map);
+            return successResponse(new ProductListDto(dto));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }
@@ -180,10 +173,7 @@ public class ProductService extends BaseService {
                     list.add(dto);
                 }
             }
-
-            Map<String, List<ProductAmountCheckDto>> map = new HashMap<>();
-            map.put("products", list);
-            return successResponse(map);
+            return successResponse(new ProductAmountCheckListDto(list));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }
@@ -191,17 +181,15 @@ public class ProductService extends BaseService {
 
     public ResponseEntity<Response> retrieve(Long productId) {
         try {
-            Optional<ProductRetrieveDto> product = productRepository.retrieve(productId);
+            Optional<ProductRetrieve> product = productRepository.retrieve(productId);
             if (product.isPresent()) {
-                ProductRetrieveDto2 dto2 = new ProductRetrieveDto2();
-                dto2.setProduct(product.get());
+                ProductRetrieveDto dto = new ProductRetrieveDto();
+                dto.setProduct(product.get());
                 Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
                 Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(productId);
-                dto2.setProductSize(sizes.orElse(Collections.emptyList()));
-                dto2.setProductAbout(abouts.orElse(Collections.emptyList()));
-                Map<String, ProductRetrieveDto2> map = new HashMap<>();
-                map.put("product", dto2);
-                return successResponse(map);
+                dto.setProductSize(sizes.orElse(Collections.emptyList()));
+                dto.setProductAbout(abouts.orElse(Collections.emptyList()));
+                return successResponse(new ProductRetrieveFinalDto(dto));
             } else {
                 return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
             }
@@ -213,9 +201,7 @@ public class ProductService extends BaseService {
     public ResponseEntity<Response> mostBuy() {
         try {
             List<Product> products = productRepository.getMostBuy();
-            Map<String, List<Product>> map = new HashMap<>();
-            map.put("products", products);
-            return successResponse(map);
+            return successResponse(new ProductSearchDto(products));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }
@@ -224,9 +210,7 @@ public class ProductService extends BaseService {
     public ResponseEntity<Response> newest() {
         try {
             List<Product> products = productRepository.getNewest();
-            Map<String, List<Product>> map = new HashMap<>();
-            map.put("products", products);
-            return successResponse(map);
+            return successResponse(new ProductSearchDto(products));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }
@@ -261,14 +245,10 @@ public class ProductService extends BaseService {
     }
 
     public ResponseEntity<Response> searchByName(String searchQuery, Long userId) {
-        if (userId != null) {
-            userProductSearchService.save(searchQuery, userId);
-        }
-        Map<String, List<Product>> map = new HashMap<>();
+        if (userId != null) userProductSearchService.save(searchQuery, userId);
         try {
             List<Product> products = productRepository.searchByName(searchQuery);
-            map.put("products", products);
-            return successResponse(map);
+            return successResponse(new ProductSearchDto(products));
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }

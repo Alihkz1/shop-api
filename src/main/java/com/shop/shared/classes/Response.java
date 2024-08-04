@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 @Component
+@Builder
 public class Response<T> {
     private boolean success = true;
     private String message = "";

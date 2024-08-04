@@ -1,11 +1,11 @@
 package com.shop.dto;
 
+import com.shop.model.Comment;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-
 @AllArgsConstructor
-public class CategoryLightListDto {
-    List<CategoryLightList> categories;
+public class UserCommentDto {
+    private List<Comment> userComments;
 }

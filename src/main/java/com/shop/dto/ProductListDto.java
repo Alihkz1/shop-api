@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-
 @AllArgsConstructor
-public class CategoryLightListDto {
-    List<CategoryLightList> categories;
+public class ProductListDto {
+    private List<ProductDto> products;
 }

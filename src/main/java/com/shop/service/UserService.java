@@ -11,6 +11,7 @@ import com.shop.model.User;
 import com.shop.repository.UserRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.classes.UserThread;
 import com.shop.shared.enums.ErrorMessagesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -122,10 +123,10 @@ public class UserService extends BaseService {
         return successResponse(map);
     }
 
-    public ResponseEntity<Response> getById(Long userId) {
+    public ResponseEntity<Response> getById() {
         /*todo: create dto*/
         Map<String, User> map = new HashMap<>();
-        Optional<User> user = userRepository.findByUserId(userId);
+        Optional<User> user = userRepository.findByUserId(UserThread.getUserId());
         map.put("user", user.get());
         return successResponse(map);
     }

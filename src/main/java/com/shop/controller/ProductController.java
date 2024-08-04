@@ -7,6 +7,7 @@ import com.shop.query.ProductGetAllQuery;
 import com.shop.query.ProductSearchQuery;
 import com.shop.service.ProductService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.classes.UserThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class ProductController {
 
     @GetMapping(path = "search")
     public ResponseEntity<Response> searchByName(@ModelAttribute ProductSearchQuery query) {
-        return productService.searchByName(query.getQ(), query.getU());
+        return productService.searchByName(query.getQ(), UserThread.getUserId());
     }
 
     @GetMapping(path = "newest")

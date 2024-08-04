@@ -41,9 +41,9 @@ public class UserController {
         return userService.getAll();
     }
 
-    @GetMapping(path = "retrieve/{userId}")
-    public ResponseEntity<Response> getById(@PathVariable Long userId) {
-        return userService.getById(userId);
+    @GetMapping(path = "retrieve")
+    public ResponseEntity<Response> getById() {
+        return userService.getById();
     }
 
     @DeleteMapping(path = "delete/{userId}")

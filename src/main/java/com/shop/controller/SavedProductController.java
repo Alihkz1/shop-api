@@ -19,9 +19,9 @@ public class SavedProductController {
         this.service = service;
     }
 
-    @GetMapping(path = "{userId}")
-    public ResponseEntity<Response> getAll(@PathVariable Long userId) {
-        return service.getAll(userId);
+    @GetMapping()
+    public ResponseEntity<Response> getAll() {
+        return service.getAll();
     }
 
     @PostMapping(path = "add")

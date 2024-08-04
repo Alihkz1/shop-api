@@ -7,6 +7,7 @@ import com.shop.query.OrderAdminListQuery;
 import com.shop.query.OrderGetAllQuery;
 import com.shop.service.OrderService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.classes.UserThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class OrderController {
 
     @GetMapping(path = "list")
     public ResponseEntity<Response> getAll(@ModelAttribute OrderGetAllQuery query) {
-        return orderService.getAll(query.getUserId(), query.getStatus());
+        return orderService.getAll(UserThread.getUserId(), query.getStatus());
     }
 
     @GetMapping(path = "track/{orderCode}")

@@ -1,6 +1,5 @@
 package com.shop.query;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +8,5 @@ import lombok.Setter;
 @Setter
 public class ProductSearchQuery {
     @NotNull
-    private String q; /* search query*/
-    @Nullable
-    private Long u; /* userId */
+    private String q;
 }

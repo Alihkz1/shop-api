@@ -17,9 +17,9 @@ public class UserProductSearchController {
         this.service = service;
     }
 
-    @GetMapping(path = "{userId}")
-    public ResponseEntity<Response> getById(@PathVariable Long userId) {
-        return service.getByUserId(userId);
+    @GetMapping()
+    public ResponseEntity<Response> getById() {
+        return service.getByUserId();
     }
 
     @DeleteMapping(path = "delete/{id}")

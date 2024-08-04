@@ -6,6 +6,7 @@ import com.shop.model.SavedProduct;
 import com.shop.repository.SavedProductRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.classes.UserThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,8 @@ public class SavedProductService extends BaseService {
         this.productService = productService;
     }
 
-    public ResponseEntity<Response> getAll(Long userId) {
-        Optional<List<SavedProduct>> userSavedItems = repository.findByUserId(userId);
+    public ResponseEntity<Response> getAll() {
+        Optional<List<SavedProduct>> userSavedItems = repository.findByUserId(UserThread.getUserId());
         Map<String, List<ProductDto>> map = new HashMap<>();
         List<Long> productIds = userSavedItems.get().stream()
                 .map(SavedProduct::getProductId)

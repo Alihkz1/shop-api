@@ -22,8 +22,8 @@ public class UserProductSearchController {
         return service.getByUserId();
     }
 
-    @DeleteMapping(path = "delete/{id}")
-    public ResponseEntity<Response> deleteById(@PathVariable Long id) {
-        return service.deleteById(id);
+    @DeleteMapping(path = "delete/{searchId}")
+    public ResponseEntity<Response> deleteById(@PathVariable Long searchId) {
+        return service.deleteById(searchId);
     }
 }

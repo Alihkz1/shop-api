@@ -17,6 +17,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
+    @Column(nullable = true)
     private Long userId;
 
     @Column(length = 10000)

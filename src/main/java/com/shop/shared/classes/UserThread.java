@@ -14,6 +14,6 @@ public class UserThread {
     }
 
     public static Long getUserId() {
-        return user.get().getUserId();
+        return user.get() != null ? user.get().getUserId() : null;
     }
 }

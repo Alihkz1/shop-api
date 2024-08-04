@@ -8,6 +8,7 @@ import com.shop.repository.CommentRepository;
 import com.shop.repository.UserRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.classes.UserThread;
 import com.shop.shared.enums.ErrorMessagesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +50,7 @@ public class CommentService extends BaseService {
 
     public ResponseEntity<Response> add(CommentAddCommand command) {
         try {
-            commentRepository.save(command.toEntity());
+            commentRepository.save(command.toEntity(UserThread.getUserId()));
             return successResponse();
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());

@@ -20,19 +20,19 @@ public class ShopCardController {
         this.shopCardService = shopCardService;
     }
 
-    @GetMapping("light/{userId}")
-    public ResponseEntity<Response> getUserCardLight(@PathVariable Long userId) {
-        return shopCardService.getUserCardLight(userId);
+    @GetMapping("light")
+    public ResponseEntity<Response> getUserCardLight() {
+        return shopCardService.getUserCardLight();
     }
 
-    @GetMapping("user/{userId}")
-    public ResponseEntity<Response> getUserCard(@PathVariable Long userId) {
-        return shopCardService.getUserCard(userId);
+    @GetMapping("user")
+    public ResponseEntity<Response> getUserCard() {
+        return shopCardService.getUserCard();
     }
 
-    @GetMapping("length/{userId}")
-    public ResponseEntity<Response> getUserCardLength(@PathVariable Long userId) {
-        return shopCardService.getUserCardLength(userId);
+    @GetMapping("length")
+    public ResponseEntity<Response> getUserCardLength() {
+        return shopCardService.getUserCardLength();
     }
 
     @PostMapping("modify")

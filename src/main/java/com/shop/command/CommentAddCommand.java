@@ -10,10 +10,10 @@ public class CommentAddCommand {
     private Long userId;
     private String message;
 
-    public Comment toEntity() {
+    public Comment toEntity(Long userId) {
         return Comment.builder()
-                .userId(userId)
                 .message(message)
+                .userId(userId)
                 .read(false)
                 .build();
     }

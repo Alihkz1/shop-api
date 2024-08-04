@@ -25,6 +25,9 @@ public class ErrorLog {
     @Column(nullable = false)
     private Integer status;
 
+//    @Column(nullable = false)
+    private String url;
+
     @PrePersist
     public void init() {
         this.date = new Date().getTime();

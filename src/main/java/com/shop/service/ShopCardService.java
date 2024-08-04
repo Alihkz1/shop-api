@@ -11,6 +11,7 @@ import com.shop.repository.ProductSizeRepository;
 import com.shop.repository.ShopCardRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
+import com.shop.shared.classes.UserThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,11 @@ public class ShopCardService extends BaseService {
         this.sizeRepository = sizeRepository;
     }
 
-    public ResponseEntity<Response> getUserCardLight(Long userId) {
+    public ResponseEntity<Response> getUserCardLight() {
         Map<String, List<ShopCard>> map = new HashMap<>();
         try {
             /*todo: if product deleted then should not include here!*/
-            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(userId);
+            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
             map.put("cards", userShopCards.get());
             return successResponse(map);
 
@@ -44,10 +45,10 @@ public class ShopCardService extends BaseService {
         }
     }
 
-    public ResponseEntity<Response> getUserCard(Long userId) {
+    public ResponseEntity<Response> getUserCard() {
         Map<String, List<ShopCardDto>> map = new HashMap<>();
         try {
-            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(userId);
+            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
             List<ShopCardDto> list = new ArrayList<>();
             userShopCards.get().forEach(shopCard -> {
                 ShopCardDto shopCardDto = new ShopCardDto();
@@ -72,9 +73,9 @@ public class ShopCardService extends BaseService {
     }
 
 
-    public ResponseEntity<Response> getUserCardLength(Long userId) {
+    public ResponseEntity<Response> getUserCardLength() {
         try {
-            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(userId);
+            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
             return successResponse(userShopCards.get().size());
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());

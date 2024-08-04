@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -78,5 +79,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "select * from product" +
             " order by product_id desc limit 3", nativeQuery = true)
     List<Product> getNewest();
-
 }

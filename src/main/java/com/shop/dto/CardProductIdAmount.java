@@ -1,7 +1,7 @@
 package com.shop.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public interface CardProductIdAmountDto {
+public interface CardProductIdAmount {
     @JsonProperty("productId")
     Long getProductId();
 

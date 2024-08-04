@@ -15,7 +15,7 @@ public class BaseService {
     private final ErrorLogRepository errorLogRepository;
 
     protected ResponseEntity<Response> successResponse(Object data) {
-        return new ResponseEntity<>(Response.builder().data(data).build(), HttpStatus.OK);
+        return new ResponseEntity<>(Response.builder().data(data).success(true).build(), HttpStatus.OK);
     }
 
     protected ResponseEntity<Response> successResponse() {

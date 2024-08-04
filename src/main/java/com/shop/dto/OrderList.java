@@ -1,9 +1,8 @@
 package com.shop.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
 
-public interface OrderListDto {
+public interface OrderList {
 
     @JsonProperty("orderId")
     Long getOrderId();

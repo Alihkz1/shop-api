@@ -1,6 +1,6 @@
 package com.shop.repository;
 
-import com.shop.dto.CardProductIdAmountDto;
+import com.shop.dto.CardProductIdAmount;
 import com.shop.model.ShopCard;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,5 +27,5 @@ public interface ShopCardRepository extends JpaRepository<ShopCard, Long> {
     @Query(value = "select s.product_id, s.amount, p.price from shop_card s " +
             "join product p on s.product_id = p.product_id " +
             "where s.order_id = :orderId order by shop_card_id desc", nativeQuery = true)
-    List<CardProductIdAmountDto> findProductIdAndAmountByOrderId(Long orderId);
+    List<CardProductIdAmount> findProductIdAndAmountByOrderId(Long orderId);
 }

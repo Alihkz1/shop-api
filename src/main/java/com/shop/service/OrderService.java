@@ -65,7 +65,7 @@ public class OrderService extends BaseService {
     public ResponseEntity<Response> getAll(Long userId, Byte status) {
         try {
             List<OrderDto> userAllOrders = new ArrayList<>();
-            Optional<List<OrderListDto>> userOrders = status == null ? orderRepository.findByUserId(userId) : orderRepository.findByUserId(userId, status);
+            Optional<List<OrderList>> userOrders = status == null ? orderRepository.findByUserId(userId) : orderRepository.findByUserId(userId, status);
             userOrders.ifPresent(orders -> orders.forEach(userOrder -> {
                 OrderDto orderDto = new OrderDto();
                 List<OrderProductDto> products = new ArrayList<>();
@@ -93,7 +93,7 @@ public class OrderService extends BaseService {
     public ResponseEntity<Response> adminList(Byte status) {
         try {
             List<OrderDto> allOrders = new ArrayList<>();
-            Optional<List<OrderListDto>> usersOrders = status != null ? orderRepository.adminList(status) : orderRepository.adminList();
+            Optional<List<OrderList>> usersOrders = status != null ? orderRepository.adminList(status) : orderRepository.adminList();
             usersOrders.ifPresent(orders -> orders.forEach(userOrder -> {
                 OrderDto orderDto = new OrderDto();
                 List<OrderProductDto> products = new ArrayList<>();
@@ -119,7 +119,7 @@ public class OrderService extends BaseService {
     }
 
     public ResponseEntity<Response> trackByOrderCode(String orderCode) {
-        Optional<OrderListDto> order = orderRepository.findByCode(orderCode);
+        Optional<OrderList> order = orderRepository.findByCode(orderCode);
         if (order.isEmpty()) {
             return badRequestResponse(ErrorMessagesEnum.NO_ORDER_FOUND);
         } else {
@@ -184,7 +184,7 @@ public class OrderService extends BaseService {
 
     private void updateUserOrdersByUserId(Long userId, Long orderId) {
         AtomicReference<Long> newOrderPrice = new AtomicReference<>(0L);
-        List<CardProductIdAmountDto> productsOInfo = shopCardRepository.findProductIdAndAmountByOrderId(orderId);
+        List<CardProductIdAmount> productsOInfo = shopCardRepository.findProductIdAndAmountByOrderId(orderId);
         productsOInfo.forEach(product -> newOrderPrice.updateAndGet(v -> v + product.getPrice() * product.getAmount()));
         userRepository.updateUserOrdersByUserId(userId, newOrderPrice.get());
     }

@@ -35,10 +35,7 @@ public class SavedProductController {
     }
 
     @GetMapping(path = "is-saved")
-    public ResponseEntity<Response> isSaved(@RequestParam(value = "userId") Long userId, @RequestParam(value = "productId") Long productId) {
-        SavedProductCrudCommand command = new SavedProductCrudCommand();
-        command.setUserId(userId);
-        command.setProductId(productId);
+    public ResponseEntity<Response> isSaved(@ModelAttribute SavedProductCrudCommand command) {
         return service.isSaved(command);
     }
 }

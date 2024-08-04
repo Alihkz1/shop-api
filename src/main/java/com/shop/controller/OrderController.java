@@ -3,6 +3,8 @@ package com.shop.controller;
 import com.shop.command.OrderAddCommand;
 import com.shop.command.OrderChangeStatusCommand;
 import com.shop.command.OrderTrackCodeCommand;
+import com.shop.query.OrderAdminListQuery;
+import com.shop.query.OrderGetAllQuery;
 import com.shop.service.OrderService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +28,9 @@ public class OrderController {
         return orderService.add(command);
     }
 
-    @GetMapping(path = "list/{userId}")
-    public ResponseEntity<Response> getAll(@PathVariable Long userId, @RequestParam(value = "status", required = false) Byte status) {
-        return orderService.getAll(userId, status);
+    @GetMapping(path = "list")
+    public ResponseEntity<Response> getAll(@ModelAttribute OrderGetAllQuery query) {
+        return orderService.getAll(query.getUserId(), query.getStatus());
     }
 
     @GetMapping(path = "track/{orderCode}")
@@ -37,8 +39,8 @@ public class OrderController {
     }
 
     @GetMapping(path = "admin-list")
-    public ResponseEntity<Response> adminList(@RequestParam(value = "status", required = false) Byte status) {
-        return orderService.adminList(status);
+    public ResponseEntity<Response> adminList(@ModelAttribute OrderAdminListQuery query) {
+        return orderService.adminList(query.getStatus());
     }
 
     @PutMapping(path = "change-status")

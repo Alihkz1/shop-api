@@ -2,13 +2,14 @@ package com.shop.controller;
 
 import com.shop.command.ProductAddCommand;
 import com.shop.command.ProductEditCommand;
+import com.shop.query.ProductAmountCheckQuery;
+import com.shop.query.ProductGetAllQuery;
+import com.shop.query.ProductSearchQuery;
 import com.shop.service.ProductService;
 import com.shop.shared.classes.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController()
 @RequestMapping("api/v1/product")
@@ -21,9 +22,9 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping(path = "list/{categoryId}")
-    public ResponseEntity<Response> getAll(@PathVariable Long categoryId, @RequestParam(value = "sort", required = false) Byte sort) {
-        return productService.getAll(categoryId, sort);
+    @GetMapping(path = "list")
+    public ResponseEntity<Response> getAll(@ModelAttribute ProductGetAllQuery query) {
+        return productService.getAll(query.getCategoryId(), query.getSort());
     }
 
     @GetMapping(path = "retrieve/{productId}")
@@ -37,8 +38,8 @@ public class ProductController {
     }
 
     @GetMapping(path = "search")
-    public ResponseEntity<Response> searchByName(@RequestParam(value = "q") String searchQuery, @RequestParam(value = "u", required = false) Long userId) {
-        return productService.searchByName(searchQuery, userId);
+    public ResponseEntity<Response> searchByName(@ModelAttribute ProductSearchQuery query) {
+        return productService.searchByName(query.getQ(), query.getU());
     }
 
     @GetMapping(path = "newest")
@@ -62,8 +63,8 @@ public class ProductController {
     }
 
     @GetMapping(path = "amount-check")
-    public ResponseEntity<Response> amountCheck(@RequestParam("ids") List<Long> productIds) {
-        return productService.amountCheck(productIds);
+    public ResponseEntity<Response> amountCheck(@ModelAttribute ProductAmountCheckQuery query) {
+        return productService.amountCheck(query.getIds());
     }
 
     @PutMapping(path = "like/{productId}")

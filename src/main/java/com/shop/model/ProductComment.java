@@ -1,5 +1,6 @@
 package com.shop.model;
 
+import com.shop.shared.enums.ShopCardStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,8 +29,13 @@ public class ProductComment {
     @Column(nullable = false)
     private Long date;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private ShopCardStatus state;
+
     @PrePersist
     public void init() {
         this.date = new Date().getTime();
+        this.state = ShopCardStatus.NOT_PAID;
     }
 }

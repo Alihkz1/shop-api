@@ -10,6 +10,7 @@ import com.shop.dto.UserDtoMapper;
 import com.shop.dto.UserListDto;
 import com.shop.dto.UserRetrieveDto;
 import com.shop.model.User;
+import com.shop.repository.CommentRepository;
 import com.shop.repository.UserRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,7 @@ public class UserService extends BaseService {
 
 
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final UserDtoMapper userDtoMapper;
@@ -38,10 +41,12 @@ public class UserService extends BaseService {
             JWTService jwtService,
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            UserDtoMapper userDtoMapper
+            UserDtoMapper userDtoMapper,
+            CommentRepository commentRepository
     ) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
         this.passwordEncoder = passwordEncoder;
         this.userDtoMapper = userDtoMapper;
     }
@@ -124,9 +129,17 @@ public class UserService extends BaseService {
         return successResponse(new UserRetrieveDto(userRepository.findByUserId(UserThread.getUserId()).get()));
     }
 
+    @Transactional
     public ResponseEntity<Response> deleteById(Long userId) {
         try {
+            /*delete order*/
+            /*delete card*/
+            /*delete search*/
+            /*delete saved*/
+            /*delete productComment*/
+            /*delete comment*/
             userRepository.deleteById(userId);
+            commentRepository.deleteByUserId(userId);
             return successResponse();
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());

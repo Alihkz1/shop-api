@@ -65,6 +65,9 @@ public class ProductService extends BaseService {
             List<ProductDto> dto = new ArrayList<>();
             for (Product product : products) {
                 ProductDto productDto = new ProductDto();
+//                if (product.getOffPercent() > 0) {
+//                    product.setPrice(product.getPrice() - (product.getPrice() * product.getOffPercent() / 100));
+//                }
                 productDto.setProduct(product);
                 Optional<List<ProductSize>> productSizes = sizeRepository.findByProductId(product.getProductId());
                 Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(product.getProductId());
@@ -73,6 +76,25 @@ public class ProductService extends BaseService {
                 dto.add(productDto);
             }
             return successResponse(new ProductListDto(dto));
+        } catch (Exception e) {
+            return serverErrorResponse(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<Response> retrieve(Long productId) {
+        try {
+            Optional<ProductRetrieve> product = productRepository.retrieve(productId);
+            if (product.isPresent()) {
+                ProductRetrieveDto dto = new ProductRetrieveDto();
+                dto.setProduct(product.get());
+                Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
+                Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(productId);
+                dto.setProductSize(sizes.orElse(Collections.emptyList()));
+                dto.setProductAbout(abouts.orElse(Collections.emptyList()));
+                return successResponse(new ProductRetrieveFinalDto(dto));
+            } else {
+                return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
+            }
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }
@@ -175,25 +197,6 @@ public class ProductService extends BaseService {
                 }
             }
             return successResponse(new ProductAmountCheckListDto(list));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
-    }
-
-    public ResponseEntity<Response> retrieve(Long productId) {
-        try {
-            Optional<ProductRetrieve> product = productRepository.retrieve(productId);
-            if (product.isPresent()) {
-                ProductRetrieveDto dto = new ProductRetrieveDto();
-                dto.setProduct(product.get());
-                Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
-                Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(productId);
-                dto.setProductSize(sizes.orElse(Collections.emptyList()));
-                dto.setProductAbout(abouts.orElse(Collections.emptyList()));
-                return successResponse(new ProductRetrieveFinalDto(dto));
-            } else {
-                return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
-            }
         } catch (Exception e) {
             return serverErrorResponse(e.getMessage());
         }

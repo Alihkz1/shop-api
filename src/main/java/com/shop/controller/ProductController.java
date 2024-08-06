@@ -38,14 +38,14 @@ public class ProductController {
         return productService.mostBuy();
     }
 
-    @GetMapping(path = "search")
-    public ResponseEntity<Response> searchByName(@ModelAttribute ProductSearchQuery query) {
-        return productService.searchByName(query.getQ(), UserThread.getUserId());
-    }
-
     @GetMapping(path = "newest")
     public ResponseEntity<Response> newest() {
         return productService.newest();
+    }
+
+    @GetMapping(path = "search")
+    public ResponseEntity<Response> searchByName(@ModelAttribute ProductSearchQuery query) {
+        return productService.searchByName(query.getQ(), UserThread.getUserId());
     }
 
     @PutMapping(path = "edit")

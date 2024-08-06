@@ -25,7 +25,7 @@ public interface ProductRetrieve {
     Long getBuyCount();
 
     @JsonProperty("offPercent")
-    Byte getBuyOffPercent();
+    Byte getOffPercent();
 
     @JsonProperty("imageUrl")
     String getImageUrl();

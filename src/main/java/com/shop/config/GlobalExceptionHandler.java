@@ -2,6 +2,7 @@ package com.shop.config;
 
 import com.shop.model.ErrorLog;
 import com.shop.repository.ErrorLogRepository;
+import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,25 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Response> handleException(HttpServletRequest request, Exception ex) {
-        String requestUrl = request.getRequestURL().toString();
+        String url = request.getRequestURL().toString();
         String message = ex.getMessage();
-        Integer status = HttpStatus.INTERNAL_SERVER_ERROR.value();
-
-        logError(requestUrl, message, status);
-
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        logError(url, message, status.value());
         return new ResponseEntity<>(
                 Response.builder().success(false).message(message).build(),
-                HttpStatus.INTERNAL_SERVER_ERROR
+                status
+        );
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Response> handleBadRequestException(HttpServletRequest request, BadRequestException ex) {
+        String url = request.getRequestURL().toString();
+        String message = ex.getMessage();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        logError(url, message, status.value());
+        return new ResponseEntity<>(
+                Response.builder().success(false).message(message).build(),
+                status
         );
     }
 

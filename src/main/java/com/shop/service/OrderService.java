@@ -8,6 +8,7 @@ import com.shop.model.Order;
 import com.shop.model.Product;
 import com.shop.model.ShopCard;
 import com.shop.repository.*;
+import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.ErrorMessagesEnum;
@@ -109,7 +110,7 @@ public class OrderService extends BaseService {
     public ResponseEntity<Response> trackByOrderCode(String orderCode) {
         Optional<OrderList> order = orderRepository.findByCode(orderCode);
         if (order.isEmpty()) {
-            return badRequestResponse(ErrorMessagesEnum.NO_ORDER_FOUND);
+            throw new BadRequestException(ErrorMessagesEnum.NO_ORDER_FOUND.getMessage());
         } else {
             OrderDto orderDto = new OrderDto();
             List<OrderProductDto> products = new ArrayList<>();
@@ -134,7 +135,7 @@ public class OrderService extends BaseService {
     public ResponseEntity<Response> submitPostTrackCodeByAdmin(OrderTrackCodeCommand command) {
         Optional<Order> order = orderRepository.findByOrderId(command.getOrderId());
         if (order.isEmpty()) {
-            return badRequestResponse(ErrorMessagesEnum.NO_ORDER_FOUND);
+            throw new BadRequestException(ErrorMessagesEnum.NO_ORDER_FOUND.getMessage());
         } else {
             order.get().setTrackCode(command.getTrackCode());
             order.get().setStatus(OrderStatus.SENT_VIA_POST);
@@ -150,7 +151,7 @@ public class OrderService extends BaseService {
             orderRepository.save(order.get());
             return successResponse();
         } else {
-            return badRequestResponse(ErrorMessagesEnum.NO_ORDER_FOUND);
+            throw new BadRequestException(ErrorMessagesEnum.NO_ORDER_FOUND.getMessage());
         }
     }
 

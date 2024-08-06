@@ -12,6 +12,7 @@ import com.shop.model.ProductSize;
 import com.shop.repository.ProductAboutRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
+import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.ErrorMessagesEnum;
@@ -88,7 +89,7 @@ public class ProductService extends BaseService {
             dto.setProductAbout(abouts.orElse(Collections.emptyList()));
             return successResponse(new ProductRetrieveFinalDto(dto));
         } else {
-            return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
+            throw new BadRequestException(ErrorMessagesEnum.NO_PRODUCTS_FOUND.getMessage());
         }
     }
 
@@ -132,7 +133,7 @@ public class ProductService extends BaseService {
                 }
                 return successResponse();
             } else {
-                return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
+                throw new BadRequestException(ErrorMessagesEnum.NO_PRODUCTS_FOUND.getMessage());
             }
         } catch (Exception e) {
             return null;

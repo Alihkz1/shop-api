@@ -8,6 +8,7 @@ import com.shop.dto.UserCommentDto;
 import com.shop.model.Comment;
 import com.shop.repository.CommentRepository;
 import com.shop.repository.UserRepository;
+import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
@@ -54,7 +55,7 @@ public class CommentService extends BaseService {
     public ResponseEntity<Response> edit(CommentEditCommand command) {
         Optional<Comment> commentOptional = commentRepository.findByCommentId(command.getCommentId());
         if (commentOptional.isEmpty()) {
-            return badRequestResponse(ErrorMessagesEnum.NO_COMMENT_FOUND);
+            throw new BadRequestException(ErrorMessagesEnum.NO_COMMENT_FOUND.getMessage());
         } else {
             Comment comment = commentOptional.get();
             if (command.getMessage() != null) {

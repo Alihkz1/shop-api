@@ -9,6 +9,7 @@ import com.shop.model.ProductSize;
 import com.shop.repository.CategoryRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
+import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.ErrorMessagesEnum;
@@ -84,7 +85,7 @@ public class CategoryService extends BaseService {
             categoryRepository.save(category.get());
             return successResponse();
         } else {
-            return badRequestResponse(ErrorMessagesEnum.NO_CATEGORIES_FOUND);
+            throw new BadRequestException(ErrorMessagesEnum.NO_CATEGORIES_FOUND.getMessage());
         }
     }
 

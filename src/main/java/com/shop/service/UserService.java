@@ -11,6 +11,7 @@ import com.shop.dto.UserListDto;
 import com.shop.dto.UserRetrieveDto;
 import com.shop.model.User;
 import com.shop.repository.*;
+import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
@@ -72,9 +73,9 @@ public class UserService extends BaseService {
         Optional<User> existByEmail = userRepository.findByEmail(command.getEmail());
         Optional<User> existByPhone = userRepository.findByPhone(command.getPhone());
         if (existByEmail.isPresent()) {
-            return badRequestResponse(ErrorMessagesEnum.EMAIL_ALREADY_REGISTERED);
+            throw new BadRequestException(ErrorMessagesEnum.EMAIL_ALREADY_REGISTERED.getMessage());
         } else if (existByPhone.isPresent()) {
-            return badRequestResponse(ErrorMessagesEnum.PHONE_ALREADY_REGISTERED);
+            throw new BadRequestException(ErrorMessagesEnum.PHONE_ALREADY_REGISTERED.getMessage());
         } else {
             userRepository.save(command.toEntity(passwordEncoder.encode(command.getPassword())));
             UserLoginCommand loginCommand = UserLoginCommand.builder()
@@ -95,7 +96,7 @@ public class UserService extends BaseService {
     public ResponseEntity<Response> login(UserLoginCommand command) {
         User userInDB = userRepository.login(command.getEmailOrPhone());
         if (userInDB == null) {
-            return badRequestResponse(ErrorMessagesEnum.EMAIL_OR_PHONE_INVALID);
+            throw new BadRequestException(ErrorMessagesEnum.EMAIL_OR_PHONE_INVALID.getMessage());
         } else {
             boolean passwordMatches = passwordEncoder.matches(command.getPassword(), userInDB.getPassword());
             if (passwordMatches) {
@@ -103,7 +104,7 @@ public class UserService extends BaseService {
                 AuthDto authDto = AuthDto.builder().token(generateToken(userInDB)).user(userDtoMapper.apply(userInDB)).build();
                 return successResponse(authDto);
             } else {
-                return badRequestResponse(ErrorMessagesEnum.PASSWORD_INVALID);
+                throw new BadRequestException(ErrorMessagesEnum.PASSWORD_INVALID.getMessage());
             }
         }
     }
@@ -130,7 +131,7 @@ public class UserService extends BaseService {
             userRepository.save(user.get());
             return successResponse();
         } else {
-            return badRequestResponse(ErrorMessagesEnum.NO_USERS_FOUND);
+            throw new BadRequestException(ErrorMessagesEnum.NO_USERS_FOUND.getMessage());
         }
     }
 
@@ -157,7 +158,7 @@ public class UserService extends BaseService {
     public ResponseEntity<Response> changePassword(ChangePasswordCommand command) {
         Optional<User> user = userRepository.findByUserId(command.getUserId());
         if (user.isEmpty()) {
-            return badRequestResponse(ErrorMessagesEnum.NO_USERS_FOUND);
+            throw new BadRequestException(ErrorMessagesEnum.NO_USERS_FOUND.getMessage());
         } else {
             user.get().setPassword(passwordEncoder.encode(command.getNewPassword()));
             userRepository.save(user.get());

@@ -3,7 +3,9 @@ package com.shop.repository;
 import com.shop.dto.OrderList;
 import com.shop.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,4 +37,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query(value = "select order_id from orders where code = :orderCode", nativeQuery = true)
     Long getOrderIdByOrderCode(String orderCode);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from orders where user_id = :userId", nativeQuery = true)
+    void deleteByUserId(Long userId);
 }

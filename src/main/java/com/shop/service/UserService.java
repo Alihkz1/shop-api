@@ -10,8 +10,7 @@ import com.shop.dto.UserDtoMapper;
 import com.shop.dto.UserListDto;
 import com.shop.dto.UserRetrieveDto;
 import com.shop.model.User;
-import com.shop.repository.CommentRepository;
-import com.shop.repository.UserRepository;
+import com.shop.repository.*;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
@@ -31,24 +30,42 @@ public class UserService extends BaseService {
 
 
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
     private final CommentRepository commentRepository;
+    private final ShopCardRepository shopCardRepository;
+    private final SavedProductRepository savedProductRepository;
+    private final ProductCommentRepository productCommentRepository;
+    private final UserProductSearchRepository userProductSearchRepository;
+
     private final JWTService jwtService;
-    private final PasswordEncoder passwordEncoder;
     private final UserDtoMapper userDtoMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(
             JWTService jwtService,
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
             UserDtoMapper userDtoMapper,
-            CommentRepository commentRepository
+            PasswordEncoder passwordEncoder,
+
+            UserRepository userRepository,
+            OrderRepository orderRepository,
+            CommentRepository commentRepository,
+            ShopCardRepository shopCardRepository,
+            SavedProductRepository savedProductRepository,
+            ProductCommentRepository productCommentRepository,
+            UserProductSearchRepository userProductSearchRepository
     ) {
         this.jwtService = jwtService;
-        this.userRepository = userRepository;
-        this.commentRepository = commentRepository;
-        this.passwordEncoder = passwordEncoder;
         this.userDtoMapper = userDtoMapper;
+        this.passwordEncoder = passwordEncoder;
+
+        this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
+        this.commentRepository = commentRepository;
+        this.shopCardRepository = shopCardRepository;
+        this.savedProductRepository = savedProductRepository;
+        this.productCommentRepository = productCommentRepository;
+        this.userProductSearchRepository = userProductSearchRepository;
     }
 
     public ResponseEntity<Response> signUp(UserSignUpCommand command) {
@@ -132,12 +149,11 @@ public class UserService extends BaseService {
     @Transactional
     public ResponseEntity<Response> deleteById(Long userId) {
         try {
-            /*delete order*/
-            /*delete card*/
-            /*delete search*/
-            /*delete saved*/
-            /*delete productComment*/
-            /*delete comment*/
+            orderRepository.deleteByUserId(userId);
+            shopCardRepository.deleteByUserId(userId);
+            userProductSearchRepository.deleteByUserId(userId);
+            savedProductRepository.deleteByUserId(userId);
+            productCommentRepository.deleteByUserId(userId);
             userRepository.deleteById(userId);
             commentRepository.deleteByUserId(userId);
             return successResponse();

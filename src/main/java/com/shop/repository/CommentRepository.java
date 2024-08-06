@@ -21,5 +21,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Modifying
     @Transactional
     @Query(value = "delete from comment where user_id = :userId", nativeQuery = true)
-    List<Comment> deleteByUserId(Long userId);
+    void deleteByUserId(Long userId);
 }

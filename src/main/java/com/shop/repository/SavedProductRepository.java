@@ -23,4 +23,8 @@ public interface SavedProductRepository extends JpaRepository<SavedProduct, Long
     @Query(value = "select * from saved_product where user_id = :userId and product_id = :productId",nativeQuery = true)
     Optional<SavedProduct> findByUserIdAndProductId(Long userId, Long productId);
 
+    @Modifying
+    @Transactional
+    @Query(value = "delete from saved_product where user_id = :userId", nativeQuery = true)
+    void deleteByUserId(Long userId);
 }

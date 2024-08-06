@@ -28,4 +28,9 @@ public interface ShopCardRepository extends JpaRepository<ShopCard, Long> {
             "join product p on s.product_id = p.product_id " +
             "where s.order_id = :orderId order by shop_card_id desc", nativeQuery = true)
     List<CardProductIdAmount> findProductIdAndAmountByOrderId(Long orderId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from shop_card where user_id = :userId", nativeQuery = true)
+    void deleteByUserId(Long userId);
 }

@@ -23,4 +23,9 @@ public interface ProductCommentRepository extends JpaRepository<ProductComment, 
             " where product_id = :productId"
             , nativeQuery = true)
     Optional<List<ProductComment>> getByProductId(Long productId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from product_comment where user_id = :userId", nativeQuery = true)
+    void deleteByUserId(Long userId);
 }

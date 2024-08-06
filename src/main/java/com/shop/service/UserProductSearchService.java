@@ -2,6 +2,7 @@ package com.shop.service;
 
 import com.shop.dto.UserProductSearchDto;
 import com.shop.model.Product;
+import com.shop.model.User;
 import com.shop.model.UserProductSearch;
 import com.shop.repository.ProductCacheRepository;
 import com.shop.repository.UserProductSearchRepository;
@@ -34,7 +35,7 @@ public class UserProductSearchService extends BaseService {
         if (findBySearch.isPresent()) return;
         UserProductSearch model = new UserProductSearch();
         model.setSearch(searchQuery);
-        model.setUserId(userId);
+        model.setUser(new User(userId));
         repository.save(model);
     }
 

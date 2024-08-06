@@ -1,5 +1,7 @@
 package com.shop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +17,15 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    private Long categoryId;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @JsonProperty("categoryId")
+    public Long getCategoryId() {
+        return category.getCategoryId();
+    }
 
     private Long price;
 
@@ -40,5 +50,4 @@ public class Product {
         this.buyCount = 0L;
         this.likes = 0L;
     }
-
 }

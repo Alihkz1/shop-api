@@ -45,4 +45,7 @@ public class User {
         this.totalBuy = 0L;
     }
 
+    public User(Long userId) {
+        this.userId = userId;
+    }
 }

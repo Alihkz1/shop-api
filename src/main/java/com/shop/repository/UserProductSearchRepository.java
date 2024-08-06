@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserProductSearchRepository extends JpaRepository<UserProductSearch, Long> {
+    @Query(value = "select * from user_product_search " +
+            "where user_id = :userId", nativeQuery = true)
     Optional<List<UserProductSearch>> findByUserId(Long userId);
 
     void deleteById(Long itemId);

@@ -1,5 +1,6 @@
 package com.shop.command;
 
+import com.shop.model.Category;
 import com.shop.model.Product;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +29,7 @@ public class ProductAddCommand {
     public Product toEntity() {
         return Product.
                 builder()
-                .categoryId(categoryId)
+                .category(new Category(categoryId))
                 .price(price)
                 .title(title)
                 .amount(amount)

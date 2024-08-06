@@ -20,4 +20,8 @@ public class Category {
 
     @Column(length = 10000000)
     private String imageUrl;
+
+    public Category(Long categoryId) {
+        this.categoryId = categoryId;
+    }
 }

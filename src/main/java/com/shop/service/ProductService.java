@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.command.ProductAddCommand;
 import com.shop.command.ProductEditCommand;
 import com.shop.dto.*;
+import com.shop.model.Category;
 import com.shop.model.Product;
 import com.shop.model.ProductAbout;
 import com.shop.model.ProductSize;
@@ -222,8 +223,10 @@ public class ProductService extends BaseService {
         Optional.ofNullable(command.getAmount()).ifPresent(product::setAmount);
         Optional.ofNullable(command.getImageUrl()).filter(url -> !url.isEmpty()).ifPresent(product::setImageUrl);
         Optional.ofNullable(command.getPrimaryImageIndex()).ifPresent(product::setPrimaryImageIndex);
-        Optional.ofNullable(command.getCategoryId()).ifPresent(product::setCategoryId);
         Optional.ofNullable(command.getDescription()).ifPresent(product::setDescription);
+        if (command.getCategoryId() != null) {
+            product.setCategory(new Category(command.getCategoryId()));
+        }
     }
 
     public ResponseEntity<Response> like(Long productId) {

@@ -26,6 +26,8 @@ public class ProductAddCommand {
 
     private String about;
 
+    private Byte offPercent;
+
     public Product toEntity() {
         return Product.
                 builder()
@@ -33,6 +35,7 @@ public class ProductAddCommand {
                 .price(price)
                 .title(title)
                 .amount(amount)
+                .offPercent(offPercent)
                 .imageUrl(imageUrl)
                 .primaryImageIndex(primaryImageIndex)
                 .description(description)

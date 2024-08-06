@@ -224,6 +224,7 @@ public class ProductService extends BaseService {
         Optional.ofNullable(command.getImageUrl()).filter(url -> !url.isEmpty()).ifPresent(product::setImageUrl);
         Optional.ofNullable(command.getPrimaryImageIndex()).ifPresent(product::setPrimaryImageIndex);
         Optional.ofNullable(command.getDescription()).ifPresent(product::setDescription);
+        Optional.ofNullable(command.getOffPercent()).ifPresent(product::setOffPercent);
         if (command.getCategoryId() != null) {
             product.setCategory(new Category(command.getCategoryId()));
         }

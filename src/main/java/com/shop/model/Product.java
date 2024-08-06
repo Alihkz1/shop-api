@@ -37,6 +37,8 @@ public class Product {
 
     private Long buyCount;
 
+    private Byte offPercent;
+
     @Column(length = 10000000)
     private String imageUrl;
 
@@ -49,5 +51,6 @@ public class Product {
     public void init() {
         this.buyCount = 0L;
         this.likes = 0L;
+        this.offPercent = 0;
     }
 }

@@ -17,6 +17,8 @@ public class ProductEditCommand {
 
     private Long amount;
 
+    private Byte offPercent;
+
     private String imageUrl;
 
     private Byte primaryImageIndex;
@@ -34,6 +36,7 @@ public class ProductEditCommand {
                 .price(price)
                 .title(title)
                 .amount(amount)
+                .offPercent(offPercent)
                 .imageUrl(imageUrl)
                 .primaryImageIndex(primaryImageIndex)
                 .description(description)

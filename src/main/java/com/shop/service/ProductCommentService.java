@@ -19,37 +19,21 @@ public class ProductCommentService extends BaseService {
     }
 
     public ResponseEntity<Response> getByProductId(Long productId) {
-        try {
-            return successResponse(repository.getByProductId(productId));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        return successResponse(repository.getByProductId(productId));
     }
 
     public ResponseEntity<Response> deleteByCommentId(Long commentId) {
-        try {
-            repository.deleteById(commentId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        repository.deleteById(commentId);
+        return successResponse();
     }
 
     public ResponseEntity<Response> acceptByAdmin(Long commentId) {
-        try {
-            repository.acceptByAdmin(commentId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        repository.acceptByAdmin(commentId);
+        return successResponse();
     }
 
     public ResponseEntity<Response> saveComment(SaveProductCommentCommand command) {
-        try {
-            repository.save(command.toEntity());
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        repository.save(command.toEntity());
+        return successResponse();
     }
 }

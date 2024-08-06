@@ -47,11 +47,7 @@ public class UserProductSearchService extends BaseService {
     }
 
     public ResponseEntity<Response> deleteById(Long searchId) {
-        try {
-            repository.deleteById(searchId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        repository.deleteById(searchId);
+        return successResponse();
     }
 }

@@ -69,23 +69,19 @@ public class UserService extends BaseService {
     }
 
     public ResponseEntity<Response> signUp(UserSignUpCommand command) {
-        try {
-            Optional<User> existByEmail = userRepository.findByEmail(command.getEmail());
-            Optional<User> existByPhone = userRepository.findByPhone(command.getPhone());
-            if (existByEmail.isPresent()) {
-                return badRequestResponse(ErrorMessagesEnum.EMAIL_ALREADY_REGISTERED);
-            } else if (existByPhone.isPresent()) {
-                return badRequestResponse(ErrorMessagesEnum.PHONE_ALREADY_REGISTERED);
-            } else {
-                userRepository.save(command.toEntity(passwordEncoder.encode(command.getPassword())));
-                UserLoginCommand loginCommand = UserLoginCommand.builder()
-                        .emailOrPhone(command.getEmail())
-                        .password(passwordEncoder.encode(command.getPassword()))
-                        .build();
-                return successResponse(loginAfterSignup(loginCommand));
-            }
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
+        Optional<User> existByEmail = userRepository.findByEmail(command.getEmail());
+        Optional<User> existByPhone = userRepository.findByPhone(command.getPhone());
+        if (existByEmail.isPresent()) {
+            return badRequestResponse(ErrorMessagesEnum.EMAIL_ALREADY_REGISTERED);
+        } else if (existByPhone.isPresent()) {
+            return badRequestResponse(ErrorMessagesEnum.PHONE_ALREADY_REGISTERED);
+        } else {
+            userRepository.save(command.toEntity(passwordEncoder.encode(command.getPassword())));
+            UserLoginCommand loginCommand = UserLoginCommand.builder()
+                    .emailOrPhone(command.getEmail())
+                    .password(passwordEncoder.encode(command.getPassword()))
+                    .build();
+            return successResponse(loginAfterSignup(loginCommand));
         }
     }
 
@@ -148,18 +144,14 @@ public class UserService extends BaseService {
 
     @Transactional
     public ResponseEntity<Response> deleteById(Long userId) {
-        try {
-            orderRepository.deleteByUserId(userId);
-            shopCardRepository.deleteByUserId(userId);
-            userProductSearchRepository.deleteByUserId(userId);
-            savedProductRepository.deleteByUserId(userId);
-            productCommentRepository.deleteByUserId(userId);
-            userRepository.deleteById(userId);
-            commentRepository.deleteByUserId(userId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        orderRepository.deleteByUserId(userId);
+        shopCardRepository.deleteByUserId(userId);
+        userProductSearchRepository.deleteByUserId(userId);
+        savedProductRepository.deleteByUserId(userId);
+        productCommentRepository.deleteByUserId(userId);
+        userRepository.deleteById(userId);
+        commentRepository.deleteByUserId(userId);
+        return successResponse();
     }
 
     public ResponseEntity<Response> changePassword(ChangePasswordCommand command) {

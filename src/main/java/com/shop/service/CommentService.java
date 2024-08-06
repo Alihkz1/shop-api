@@ -47,12 +47,8 @@ public class CommentService extends BaseService {
     }
 
     public ResponseEntity<Response> add(CommentAddCommand command) {
-        try {
-            commentRepository.save(command.toEntity(UserThread.getUserId()));
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        commentRepository.save(command.toEntity(UserThread.getUserId()));
+        return successResponse();
     }
 
     public ResponseEntity<Response> edit(CommentEditCommand command) {
@@ -73,11 +69,7 @@ public class CommentService extends BaseService {
     }
 
     public ResponseEntity<Response> deleteById(Long commentId) {
-        try {
-            commentRepository.deleteById(commentId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        commentRepository.deleteById(commentId);
+        return successResponse();
     }
 }

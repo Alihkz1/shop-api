@@ -46,57 +46,49 @@ public class ProductService extends BaseService {
     }
 
     public ResponseEntity<Response> getAll(Long categoryId, Byte sort) {
-        try {
-            List<Product> products;
-            switch (Optional.ofNullable(sort).orElse((byte) 0)) {
-                case 1:
-                    products = productRepository.getAllExpensive(categoryId);
-                    break;
-                case 2:
-                    products = productRepository.getAllCheap(categoryId);
-                    break;
-                case 3:
-                    products = productRepository.getAllMostBuy(categoryId);
-                    break;
-                default:
-                    products = productRepository.getAll(categoryId);
-                    break;
-            }
-            List<ProductDto> dto = new ArrayList<>();
-            for (Product product : products) {
-                ProductDto productDto = new ProductDto();
+        List<Product> products;
+        switch (Optional.ofNullable(sort).orElse((byte) 0)) {
+            case 1:
+                products = productRepository.getAllExpensive(categoryId);
+                break;
+            case 2:
+                products = productRepository.getAllCheap(categoryId);
+                break;
+            case 3:
+                products = productRepository.getAllMostBuy(categoryId);
+                break;
+            default:
+                products = productRepository.getAll(categoryId);
+                break;
+        }
+        List<ProductDto> dto = new ArrayList<>();
+        for (Product product : products) {
+            ProductDto productDto = new ProductDto();
 //                if (product.getOffPercent() > 0) {
 //                    product.setPrice(product.getPrice() - (product.getPrice() * product.getOffPercent() / 100));
 //                }
-                productDto.setProduct(product);
-                Optional<List<ProductSize>> productSizes = sizeRepository.findByProductId(product.getProductId());
-                Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(product.getProductId());
-                productDto.setProductSize(productSizes.orElse(Collections.emptyList()));
-                productDto.setProductAbout(abouts.orElse(Collections.emptyList()));
-                dto.add(productDto);
-            }
-            return successResponse(new ProductListDto(dto));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
+            productDto.setProduct(product);
+            Optional<List<ProductSize>> productSizes = sizeRepository.findByProductId(product.getProductId());
+            Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(product.getProductId());
+            productDto.setProductSize(productSizes.orElse(Collections.emptyList()));
+            productDto.setProductAbout(abouts.orElse(Collections.emptyList()));
+            dto.add(productDto);
         }
+        return successResponse(new ProductListDto(dto));
     }
 
     public ResponseEntity<Response> retrieve(Long productId) {
-        try {
-            Optional<ProductRetrieve> product = productRepository.retrieve(productId);
-            if (product.isPresent()) {
-                ProductRetrieveDto dto = new ProductRetrieveDto();
-                dto.setProduct(product.get());
-                Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
-                Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(productId);
-                dto.setProductSize(sizes.orElse(Collections.emptyList()));
-                dto.setProductAbout(abouts.orElse(Collections.emptyList()));
-                return successResponse(new ProductRetrieveFinalDto(dto));
-            } else {
-                return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
-            }
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
+        Optional<ProductRetrieve> product = productRepository.retrieve(productId);
+        if (product.isPresent()) {
+            ProductRetrieveDto dto = new ProductRetrieveDto();
+            dto.setProduct(product.get());
+            Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
+            Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(productId);
+            dto.setProductSize(sizes.orElse(Collections.emptyList()));
+            dto.setProductAbout(abouts.orElse(Collections.emptyList()));
+            return successResponse(new ProductRetrieveFinalDto(dto));
+        } else {
+            return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
         }
     }
 
@@ -143,13 +135,12 @@ public class ProductService extends BaseService {
                 return badRequestResponse(ErrorMessagesEnum.NO_PRODUCTS_FOUND);
             }
         } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
+            return null;
         }
     }
 
     public ResponseEntity<Response> add(ProductAddCommand command) {
         try {
-
             List<ProductSize> sizes = objectMapper.readValue(command.getSize(), new TypeReference<>() {
             });
             List<ProductAbout> abouts = objectMapper.readValue(command.getAbout(), new TypeReference<>() {
@@ -164,60 +155,43 @@ public class ProductService extends BaseService {
             aboutRepository.saveAll(abouts);
 
             return successResponse();
-
         } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
+            return null;
         }
     }
 
     public ResponseEntity<Response> deleteById(Long productId) {
-        try {
-            productRepository.deleteById(productId);
-            sizeRepository.deleteByProductId(productId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        productRepository.deleteById(productId);
+        sizeRepository.deleteByProductId(productId);
+        return successResponse();
     }
 
     public ResponseEntity<Response> amountCheck(List<Long> productIds) {
-        try {
-            List<ProductAmountCheckDto> list = new ArrayList<>();
-            for (Long productId : productIds) {
-                Optional<Product> product = productRepository.findByProductId(productId);
-                if (product.isPresent()) {
-                    ProductAmountCheckDto dto = new ProductAmountCheckDto();
-                    dto.setProductId(productId);
-                    dto.setAmount(product.get().getAmount());
-                    dto.setPrice(product.get().getPrice());
-                    Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
-                    dto.setSizes(sizes.orElse(Collections.emptyList()));
-                    dto.setIsSized(!dto.getSizes().isEmpty());
-                    list.add(dto);
-                }
+        List<ProductAmountCheckDto> list = new ArrayList<>();
+        for (Long productId : productIds) {
+            Optional<Product> product = productRepository.findByProductId(productId);
+            if (product.isPresent()) {
+                ProductAmountCheckDto dto = new ProductAmountCheckDto();
+                dto.setProductId(productId);
+                dto.setAmount(product.get().getAmount());
+                dto.setPrice(product.get().getPrice());
+                Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
+                dto.setSizes(sizes.orElse(Collections.emptyList()));
+                dto.setIsSized(!dto.getSizes().isEmpty());
+                list.add(dto);
             }
-            return successResponse(new ProductAmountCheckListDto(list));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
         }
+        return successResponse(new ProductAmountCheckListDto(list));
     }
 
     public ResponseEntity<Response> mostBuy() {
-        try {
-            List<Product> products = productRepository.getMostBuy();
-            return successResponse(new ProductSearchDto(products));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        List<Product> products = productRepository.getMostBuy();
+        return successResponse(new ProductSearchDto(products));
     }
 
     public ResponseEntity<Response> newest() {
-        try {
-            List<Product> products = productRepository.getNewest();
-            return successResponse(new ProductSearchDto(products));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        List<Product> products = productRepository.getNewest();
+        return successResponse(new ProductSearchDto(products));
     }
 
     private void updateProductDetails(Product product, ProductEditCommand command) {
@@ -234,31 +208,18 @@ public class ProductService extends BaseService {
     }
 
     public ResponseEntity<Response> like(Long productId) {
-        try {
-            productRepository.like(productId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        productRepository.like(productId);
+        return successResponse();
     }
 
     public ResponseEntity<Response> removeLike(Long productId) {
-        try {
-            productRepository.removeLike(productId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        productRepository.removeLike(productId);
+        return successResponse();
     }
 
     public ResponseEntity<Response> searchByName(String searchQuery, Long userId) {
         if (userId != null) userProductSearchService.save(searchQuery, userId);
-        try {
-            List<Product> products = productRepository.searchByName(searchQuery);
-            return successResponse(new ProductSearchDto(products));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
-
+        List<Product> products = productRepository.searchByName(searchQuery);
+        return successResponse(new ProductSearchDto(products));
     }
 }

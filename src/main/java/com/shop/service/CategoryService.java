@@ -89,23 +89,15 @@ public class CategoryService extends BaseService {
     }
 
     public ResponseEntity<Response> add(CategoryAddCommand command) {
-        try {
-            categoryRepository.save(command.toEntity());
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        categoryRepository.save(command.toEntity());
+        return successResponse();
     }
 
     @Transactional
     public ResponseEntity<Response> deleteById(Long categoryId) {
-        try {
-            /*todo: delete sizes */
-            productRepository.deleteByCategoryId(categoryId);
-            categoryRepository.deleteById(categoryId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        /*todo: delete sizes */
+        productRepository.deleteByCategoryId(categoryId);
+        categoryRepository.deleteById(categoryId);
+        return successResponse();
     }
 }

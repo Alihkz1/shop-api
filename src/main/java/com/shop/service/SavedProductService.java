@@ -39,21 +39,13 @@ public class SavedProductService extends BaseService {
     }
 
     public ResponseEntity<Response> add(SavedProductCrudCommand command) {
-        try {
-            repository.save(command.toEntity());
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        repository.save(command.toEntity());
+        return successResponse();
     }
 
     public ResponseEntity<Response> delete(SavedProductCrudCommand command) {
-        try {
-            repository.deleteSaved(command.getUserId(), command.getProductId());
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        repository.deleteSaved(command.getUserId(), command.getProductId());
+        return successResponse();
     }
 
     public ResponseEntity<Response> isSaved(SavedProductCrudCommand command) {

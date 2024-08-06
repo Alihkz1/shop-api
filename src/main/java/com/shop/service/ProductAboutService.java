@@ -17,11 +17,7 @@ public class ProductAboutService extends BaseService {
     }
 
     public ResponseEntity<Response> deleteById(Long aboutId) {
-        try {
-            repository.deleteById(aboutId);
-            return successResponse();
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        repository.deleteById(aboutId);
+        return successResponse();
     }
 }

@@ -32,73 +32,48 @@ public class ShopCardService extends BaseService {
     }
 
     public ResponseEntity<Response> getUserCardLight() {
-        try {
-            /*todo: if product deleted then should not include here!*/
-            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
-            return successResponse(new ShopCardLightListDto(userShopCards.get()));
-
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        /*todo: if product deleted then should not include here!*/
+        Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
+        return successResponse(new ShopCardLightListDto(userShopCards.get()));
     }
 
     public ResponseEntity<Response> getUserCard() {
-        try {
-            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
-            List<ShopCardDto> list = new ArrayList<>();
-            userShopCards.get().forEach(shopCard -> {
-                ShopCardDto shopCardDto = new ShopCardDto();
-                ProductDto productDto = new ProductDto();
-                shopCardDto.setShopCard(shopCard);
-                Optional<Product> product = productRepository.findByProductId(shopCard.getProductId());
-                if (product.isPresent()) {
-                    productDto.setProduct(product.get());
-                    List<ProductSize> sizes = sizeRepository.findByProductId(shopCard.getProductId()).get();
-                    productDto.setProductSize(sizes);
-                } else return;
-                shopCardDto.setProduct(productDto);
-                list.add(shopCardDto);
-            });
-            return successResponse(new ShopCardListDto(list));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
+        List<ShopCardDto> list = new ArrayList<>();
+        userShopCards.get().forEach(shopCard -> {
+            ShopCardDto shopCardDto = new ShopCardDto();
+            ProductDto productDto = new ProductDto();
+            shopCardDto.setShopCard(shopCard);
+            Optional<Product> product = productRepository.findByProductId(shopCard.getProductId());
+            if (product.isPresent()) {
+                productDto.setProduct(product.get());
+                List<ProductSize> sizes = sizeRepository.findByProductId(shopCard.getProductId()).get();
+                productDto.setProductSize(sizes);
+            } else return;
+            shopCardDto.setProduct(productDto);
+            list.add(shopCardDto);
+        });
+        return successResponse(new ShopCardListDto(list));
     }
 
     public ResponseEntity<Response> getUserCardLength() {
-        try {
-            Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
-            return successResponse(userShopCards.get().size());
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        Optional<List<ShopCard>> userShopCards = shopCardRepository.findByUserId(UserThread.getUserId());
+        return successResponse(userShopCards.get().size());
     }
 
     public ResponseEntity<Response> modify(ShopCardModifyCommand command) {
-        try {
-            ShopCard card = shopCardRepository.save(command.toEntity());
-            return successResponse(new ShopCardModifyDto(card));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        ShopCard card = shopCardRepository.save(command.toEntity());
+        return successResponse(new ShopCardModifyDto(card));
     }
 
     public ResponseEntity<Response> modifyAll(List<ShopCardModifyCommand> list) {
-        try {
-            List<ShopCard> cards = list.stream().map(ShopCardModifyCommand::toEntity).toList();
-            List<ShopCard> saved = shopCardRepository.saveAll(cards);
-            return successResponse(new ShopCardModifyAllDto(saved));
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        List<ShopCard> cards = list.stream().map(ShopCardModifyCommand::toEntity).toList();
+        List<ShopCard> saved = shopCardRepository.saveAll(cards);
+        return successResponse(new ShopCardModifyAllDto(saved));
     }
 
     public ResponseEntity<Response> deleteById(Long shopCardId) {
-        try {
-            shopCardRepository.deleteById(shopCardId);
-        } catch (Exception e) {
-            return serverErrorResponse(e.getMessage());
-        }
+        shopCardRepository.deleteById(shopCardId);
         return successResponse();
     }
 

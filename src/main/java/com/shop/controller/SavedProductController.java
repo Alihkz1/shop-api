@@ -3,21 +3,17 @@ package com.shop.controller;
 import com.shop.command.SavedProductCrudCommand;
 import com.shop.service.SavedProductService;
 import com.shop.shared.classes.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("api/v1/saved")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class SavedProductController {
 
     private final SavedProductService service;
-
-    @Autowired
-    SavedProductController(SavedProductService service) {
-        this.service = service;
-    }
 
     @GetMapping()
     public ResponseEntity<Response> getAll() {

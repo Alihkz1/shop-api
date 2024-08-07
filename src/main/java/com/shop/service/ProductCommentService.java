@@ -4,19 +4,15 @@ import com.shop.command.SaveProductCommentCommand;
 import com.shop.repository.ProductCommentRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ProductCommentService extends BaseService {
 
     private final ProductCommentRepository repository;
-
-    @Autowired
-    public ProductCommentService(ProductCommentRepository repository) {
-        this.repository = repository;
-    }
 
     public ResponseEntity<Response> getByProductId(Long productId) {
         return successResponse(repository.getByProductId(productId));

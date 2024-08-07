@@ -13,7 +13,7 @@ import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.ErrorMessagesEnum;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,21 +22,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService extends BaseService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
-
-    @Autowired
-    public CategoryService(
-            CategoryRepository categoryRepository,
-            ProductRepository productRepository,
-            ProductSizeRepository sizeRepository
-    ) {
-        this.categoryRepository = categoryRepository;
-        this.productRepository = productRepository;
-        this.sizeRepository = sizeRepository;
-    }
 
     public ResponseEntity<Response> lightList() {
         List<CategoryLightList> list = categoryRepository.lightList();

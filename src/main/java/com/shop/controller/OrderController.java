@@ -8,21 +8,17 @@ import com.shop.query.OrderGetAllQuery;
 import com.shop.service.OrderService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("api/v1/order")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
-
-    @Autowired
-    OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
 
     @PostMapping(path = "add")
     public ResponseEntity<Response> add(@RequestBody OrderAddCommand command) {

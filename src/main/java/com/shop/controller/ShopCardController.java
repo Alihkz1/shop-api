@@ -3,7 +3,7 @@ package com.shop.controller;
 import com.shop.command.ShopCardModifyCommand;
 import com.shop.service.ShopCardService;
 import com.shop.shared.classes.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,13 +12,10 @@ import java.util.List;
 @RestController()
 @RequestMapping("api/v1/card")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class ShopCardController {
-    private final ShopCardService shopCardService;
 
-    @Autowired
-    public ShopCardController(ShopCardService shopCardService) {
-        this.shopCardService = shopCardService;
-    }
+    private final ShopCardService shopCardService;
 
     @GetMapping("light")
     public ResponseEntity<Response> getUserCardLight() {

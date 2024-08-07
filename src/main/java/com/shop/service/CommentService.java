@@ -13,6 +13,7 @@ import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
 import com.shop.shared.enums.ErrorMessagesEnum;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,15 +21,11 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService extends BaseService {
+
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-
-    @Autowired
-    public CommentService(CommentRepository commentRepository, UserRepository userRepository) {
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-    }
 
     public ResponseEntity<Response> getAll() {
         List<Comment> comments = commentRepository.getAll();

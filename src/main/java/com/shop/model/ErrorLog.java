@@ -25,8 +25,10 @@ public class ErrorLog {
     @Column(nullable = false)
     private Integer status;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String url;
+
+    private Long userId;
 
     @PrePersist
     public void init() {

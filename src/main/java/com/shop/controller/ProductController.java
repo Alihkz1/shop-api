@@ -8,20 +8,17 @@ import com.shop.query.ProductSearchQuery;
 import com.shop.service.ProductService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("api/v1/product")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class ProductController {
-    private final ProductService productService;
 
-    @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    private final ProductService productService;
 
     @GetMapping(path = "list")
     public ResponseEntity<Response> getAll(@ModelAttribute ProductGetAllQuery query) {

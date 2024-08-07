@@ -13,6 +13,7 @@ import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.ErrorMessagesEnum;
 import com.shop.shared.enums.OrderStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService extends BaseService {
+
     private final OrderRepository orderRepository;
     private final ShopCardService shopCardService;
     private final ShopCardRepository shopCardRepository;
@@ -31,23 +34,6 @@ public class OrderService extends BaseService {
     private final UserRepository userRepository;
     private final Environment environment;
 
-    public OrderService(
-            Environment environment,
-            OrderRepository repository,
-            ShopCardService shopCardService,
-            ProductRepository productRepository,
-            ShopCardRepository shopCardRepository,
-            ProductSizeRepository sizeRepository,
-            UserRepository userRepository
-    ) {
-        this.orderRepository = repository;
-        this.shopCardService = shopCardService;
-        this.productRepository = productRepository;
-        this.environment = environment;
-        this.shopCardRepository = shopCardRepository;
-        this.sizeRepository = sizeRepository;
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public ResponseEntity<Response> add(OrderAddCommand command) {

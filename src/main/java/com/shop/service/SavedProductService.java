@@ -8,7 +8,7 @@ import com.shop.repository.SavedProductRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SavedProductService extends BaseService {
 
     private final SavedProductRepository repository;
     private final ProductService productService;
-
-    @Autowired
-    public SavedProductService(
-            SavedProductRepository repository,
-            ProductService productService) {
-        this.repository = repository;
-        this.productService = productService;
-    }
 
     public ResponseEntity<Response> getAll() {
         Optional<List<SavedProduct>> userSavedItems = repository.findByUserId(UserThread.getUserId());

@@ -3,20 +3,17 @@ package com.shop.controller;
 import com.shop.command.SaveProductCommentCommand;
 import com.shop.service.ProductCommentService;
 import com.shop.shared.classes.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("api/v1/product-comment")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class ProductCommentController {
-    private final ProductCommentService service;
 
-    @Autowired
-    public ProductCommentController(ProductCommentService service) {
-        this.service = service;
-    }
+    private final ProductCommentService service;
 
     @GetMapping(path = "{productId}")
     public ResponseEntity<Response> getByProductId(@PathVariable Long productId) {

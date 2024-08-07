@@ -4,20 +4,17 @@ import com.shop.command.CategoryAddCommand;
 import com.shop.command.CategoryEditCommand;
 import com.shop.service.CategoryService;
 import com.shop.shared.classes.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("api/v1/category")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class CategoryController {
-    private final CategoryService categoryService;
 
-    @Autowired
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
+    private final CategoryService categoryService;
 
     @GetMapping(path = "list")
     public ResponseEntity<Response> list() {

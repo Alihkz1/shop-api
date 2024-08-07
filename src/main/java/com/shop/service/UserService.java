@@ -16,7 +16,7 @@ import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
 import com.shop.shared.enums.ErrorMessagesEnum;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService extends BaseService {
 
 
@@ -41,33 +42,6 @@ public class UserService extends BaseService {
     private final JWTService jwtService;
     private final UserDtoMapper userDtoMapper;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserService(
-            JWTService jwtService,
-            UserDtoMapper userDtoMapper,
-            PasswordEncoder passwordEncoder,
-
-            UserRepository userRepository,
-            OrderRepository orderRepository,
-            CommentRepository commentRepository,
-            ShopCardRepository shopCardRepository,
-            SavedProductRepository savedProductRepository,
-            ProductCommentRepository productCommentRepository,
-            UserProductSearchRepository userProductSearchRepository
-    ) {
-        this.jwtService = jwtService;
-        this.userDtoMapper = userDtoMapper;
-        this.passwordEncoder = passwordEncoder;
-
-        this.userRepository = userRepository;
-        this.orderRepository = orderRepository;
-        this.commentRepository = commentRepository;
-        this.shopCardRepository = shopCardRepository;
-        this.savedProductRepository = savedProductRepository;
-        this.productCommentRepository = productCommentRepository;
-        this.userProductSearchRepository = userProductSearchRepository;
-    }
 
     public ResponseEntity<Response> signUp(UserSignUpCommand command) {
         Optional<User> existByEmail = userRepository.findByEmail(command.getEmail());

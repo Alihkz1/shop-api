@@ -4,18 +4,19 @@ import com.shop.model.ErrorLog;
 import com.shop.repository.ErrorLogRepository;
 import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.Response;
+import com.shop.shared.classes.UserThread;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    @Autowired
-    private ErrorLogRepository errorLogRepository;
+    private final ErrorLogRepository errorLogRepository;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Response> handleException(HttpServletRequest request, Exception ex) {
@@ -46,6 +47,7 @@ public class GlobalExceptionHandler {
                 .url(requestUrl)
                 .message(message)
                 .status(status)
+                .userId(UserThread.getUserId())
                 .build();
         errorLogRepository.save(errorLog);
     }

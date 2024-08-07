@@ -3,18 +3,15 @@ package com.shop.service;
 import com.shop.repository.ProductSizeRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository
+@Service
+@RequiredArgsConstructor
 public class ProductSizeService extends BaseService {
-    private final ProductSizeRepository repository;
 
-    @Autowired
-    public ProductSizeService(ProductSizeRepository repository) {
-        this.repository = repository;
-    }
+    private final ProductSizeRepository repository;
 
     public ResponseEntity<Response> deleteById(Long sizeId) {
         repository.deleteById(sizeId);

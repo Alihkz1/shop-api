@@ -16,35 +16,21 @@ import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.ErrorMessagesEnum;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService extends BaseService {
 
+    private final ObjectMapper objectMapper;
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
     private final ProductAboutRepository aboutRepository;
     private final UserProductSearchService userProductSearchService;
-    private final ObjectMapper objectMapper;
-
-    @Autowired
-    public ProductService(
-            ObjectMapper objectMapper,
-            ProductRepository productRepository,
-            ProductSizeRepository sizeRepository,
-            ProductAboutRepository aboutRepository,
-            UserProductSearchService userProductSearchService
-    ) {
-        this.productRepository = productRepository;
-        this.sizeRepository = sizeRepository;
-        this.objectMapper = objectMapper;
-        this.aboutRepository = aboutRepository;
-        this.userProductSearchService = userProductSearchService;
-    }
 
     public ResponseEntity<Response> getAll(Long categoryId, Byte sort) {
         List<Product> products;

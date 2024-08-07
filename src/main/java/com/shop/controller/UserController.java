@@ -6,20 +6,17 @@ import com.shop.command.UserLoginCommand;
 import com.shop.command.UserSignUpCommand;
 import com.shop.service.UserService;
 import com.shop.shared.classes.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("api/v1/user")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     @PostMapping(path = "signup")
     public ResponseEntity<Response> signUp(@RequestBody UserSignUpCommand command) {

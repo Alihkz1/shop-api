@@ -1,0 +1,4 @@
+docker build -t monitoring .
+docker run -t monitoring
+docker compose -f monitoring.yml up
+https://grafana.com/grafana/dashboards/11378-justai-system-monitor/

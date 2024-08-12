@@ -16,6 +16,8 @@ import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.ErrorMessagesEnum;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,8 +33,11 @@ public class ProductService extends BaseService {
     private final ProductSizeRepository sizeRepository;
     private final ProductAboutRepository aboutRepository;
     private final UserProductSearchService userProductSearchService;
+    private final MeterRegistry meterRegistry;
 
     public ResponseEntity<Response> getAll(Long categoryId, Byte sort) {
+        Timer timer = meterRegistry.timer("product-get-all");
+        timer.record(() -> {});
         List<Product> products;
         switch (Optional.ofNullable(sort).orElse((byte) 0)) {
             case 1:

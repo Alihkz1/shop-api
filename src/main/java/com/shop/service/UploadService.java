@@ -5,6 +5,8 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.kavenegar.sdk.excepctions.ApiException;
+import com.shop.shared.Exceptions.BadRequestException;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,10 @@ public class UploadService extends BaseService {
     private AmazonS3 s3Client;
 
     public ResponseEntity<Response> uploadFile(MultipartFile file) {
+        long size_10mb = 10 * 1024 * 1024;
+        if (file.getSize() > size_10mb) {
+            throw new BadRequestException("حجم فایل آپلود شده بیشتر از 10 مگابایت است");
+        }
         this.s3Client = AmazonS3ClientBuilder.standard()
                 .withEndpointConfiguration(new AmazonS3ClientBuilder.EndpointConfiguration(url, "us-east-1"))
                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))

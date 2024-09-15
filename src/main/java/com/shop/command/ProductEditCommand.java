@@ -29,6 +29,8 @@ public class ProductEditCommand {
 
     private String about;
 
+    private String color;
+
     public Product toEntity() {
         return Product.
                 builder()

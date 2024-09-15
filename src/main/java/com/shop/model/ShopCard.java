@@ -24,6 +24,8 @@ public class ShopCard {
 
     private String size;
 
+    private String color;
+
     private Long amount;
 
     private ShopCardStatus paid;

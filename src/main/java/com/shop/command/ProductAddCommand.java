@@ -26,6 +26,8 @@ public class ProductAddCommand {
 
     private String about;
 
+    private String color;
+
     private Byte offPercent;
 
     public Product toEntity() {

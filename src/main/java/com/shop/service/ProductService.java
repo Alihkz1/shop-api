@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.command.ProductAddCommand;
 import com.shop.command.ProductEditCommand;
 import com.shop.dto.*;
-import com.shop.model.Category;
-import com.shop.model.Product;
-import com.shop.model.ProductAbout;
-import com.shop.model.ProductSize;
+import com.shop.model.*;
 import com.shop.repository.ProductAboutRepository;
+import com.shop.repository.ProductColorRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.ProductSizeRepository;
 import com.shop.shared.Exceptions.BadRequestException;
@@ -21,6 +19,7 @@ import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -32,6 +31,7 @@ public class ProductService extends BaseService {
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
     private final ProductAboutRepository aboutRepository;
+    private final ProductColorRepository colorRepository;
     private final UserProductSearchService userProductSearchService;
     private final MeterRegistry meterRegistry;
 
@@ -62,8 +62,10 @@ public class ProductService extends BaseService {
             productDto.setProduct(product);
             Optional<List<ProductSize>> productSizes = sizeRepository.findByProductId(product.getProductId());
             Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(product.getProductId());
+            Optional<List<ProductColor>> colors = colorRepository.findByProductId(product.getProductId());
             productDto.setProductSize(productSizes.orElse(Collections.emptyList()));
             productDto.setProductAbout(abouts.orElse(Collections.emptyList()));
+            productDto.setProductColor(colors.orElse(Collections.emptyList()));
             dto.add(productDto);
         }
         return successResponse(new ProductListDto(dto));
@@ -76,8 +78,10 @@ public class ProductService extends BaseService {
             dto.setProduct(product.get());
             Optional<List<ProductSize>> sizes = sizeRepository.findByProductId(productId);
             Optional<List<ProductAbout>> abouts = aboutRepository.findByProductId(productId);
+            Optional<List<ProductColor>> colors = colorRepository.findByProductId(productId);
             dto.setProductSize(sizes.orElse(Collections.emptyList()));
             dto.setProductAbout(abouts.orElse(Collections.emptyList()));
+            dto.setProductColor(colors.orElse(Collections.emptyList()));
             return successResponse(new ProductRetrieveFinalDto(dto));
         } else {
             throw new BadRequestException(ErrorMessagesEnum.NO_PRODUCTS_FOUND.getMessage());
@@ -98,14 +102,17 @@ public class ProductService extends BaseService {
             productDto.setProduct(product);
             Optional<List<ProductSize>> productSizes = sizeRepository.findByProductId(product.getProductId());
             Optional<List<ProductAbout>> productAbouts = aboutRepository.findByProductId(product.getProductId());
+            Optional<List<ProductColor>> colors = colorRepository.findByProductId(product.getProductId());
             productDto.setProductSize(productSizes.orElse(Collections.emptyList()));
             productDto.setProductAbout(productAbouts.orElse(Collections.emptyList()));
+            productDto.setProductColor(colors.orElse(Collections.emptyList()));
             dto.add(productDto);
         }
 
         return dto;
     }
 
+    @Transactional
     public ResponseEntity<Response> edit(ProductEditCommand command) {
         try {
             Optional<Product> product = productRepository.findByProductId(command.getProductId());
@@ -117,10 +124,14 @@ public class ProductService extends BaseService {
                     });
                     List<ProductAbout> abouts = objectMapper.readValue(command.getAbout(), new TypeReference<>() {
                     });
+                    List<ProductColor> colors = objectMapper.readValue(command.getColor(), new TypeReference<>() {
+                    });
                     sizes.forEach(productSize -> productSize.setProductId(command.getProductId()));
                     sizeRepository.saveAll(sizes);
                     abouts.forEach(productAbout -> productAbout.setProductId(command.getProductId()));
                     aboutRepository.saveAll(abouts);
+                    colors.forEach(productColor -> productColor.setProductId(command.getProductId()));
+                    colorRepository.saveAll(colors);
                 }
                 return successResponse();
             } else {
@@ -131,11 +142,14 @@ public class ProductService extends BaseService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Response> add(ProductAddCommand command) {
         try {
             List<ProductSize> sizes = objectMapper.readValue(command.getSize(), new TypeReference<>() {
             });
             List<ProductAbout> abouts = objectMapper.readValue(command.getAbout(), new TypeReference<>() {
+            });
+            List<ProductColor> colors = objectMapper.readValue(command.getColor(), new TypeReference<>() {
             });
             if (command.getPrimaryImageIndex() == null) command.setPrimaryImageIndex((byte) 0);
             Product savedProduct = productRepository.save(command.toEntity());
@@ -146,12 +160,16 @@ public class ProductService extends BaseService {
             abouts.forEach(productAbout -> productAbout.setProductId(savedProduct.getProductId()));
             aboutRepository.saveAll(abouts);
 
+            colors.forEach(productColor -> productColor.setProductId(savedProduct.getProductId()));
+            colorRepository.saveAll(colors);
+
             return successResponse();
         } catch (Exception e) {
             return null;
         }
     }
 
+    @Transactional
     public ResponseEntity<Response> deleteById(Long productId) {
         productRepository.deleteById(productId);
         sizeRepository.deleteByProductId(productId);
@@ -209,6 +227,7 @@ public class ProductService extends BaseService {
         return successResponse();
     }
 
+    @Transactional
     public ResponseEntity<Response> searchByName(String searchQuery, Long userId) {
         if (userId != null) userProductSearchService.save(searchQuery, userId);
         List<Product> products = productRepository.searchByName(searchQuery);

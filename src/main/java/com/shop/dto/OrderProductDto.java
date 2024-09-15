@@ -10,4 +10,5 @@ public class OrderProductDto {
     private Product product;
     private String size;
     private Long amount;
+    private String color;
 }

@@ -12,6 +12,7 @@ public class ShopCardModifyCommand {
     private Long userId;
     private Long productId;
     private String size;
+    private String color;
     private Long amount;
     private ShopCardStatus paid;
 
@@ -21,6 +22,7 @@ public class ShopCardModifyCommand {
                 .userId(userId)
                 .productId(productId)
                 .size(size)
+                .color(color)
                 .amount(amount)
                 .paid(paid)
                 .build();

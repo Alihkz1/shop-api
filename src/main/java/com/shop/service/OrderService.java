@@ -59,6 +59,7 @@ public class OrderService extends BaseService {
                     productDto.setProduct(p);
                     productDto.setSize(shopCard.getSize());
                     productDto.setAmount(shopCard.getAmount());
+                    productDto.setColor(shopCard.getColor());
                     products.add(productDto);
                 });
             }));
@@ -83,6 +84,7 @@ public class OrderService extends BaseService {
                     productDto.setProduct(p);
                     productDto.setSize(shopCard.getSize());
                     productDto.setAmount(shopCard.getAmount());
+                    productDto.setColor(shopCard.getColor());
                     products.add(productDto);
                 });
             }));
@@ -110,6 +112,7 @@ public class OrderService extends BaseService {
                     productDto.setProduct(p);
                     productDto.setSize(shopCard.getSize());
                     productDto.setAmount(shopCard.getAmount());
+                    productDto.setColor(shopCard.getColor());
                     products.add(productDto);
                 });
             }));

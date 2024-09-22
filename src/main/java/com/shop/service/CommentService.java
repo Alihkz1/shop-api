@@ -14,7 +14,6 @@ import com.shop.shared.classes.Response;
 import com.shop.shared.classes.UserThread;
 import com.shop.shared.enums.ErrorMessagesEnum;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

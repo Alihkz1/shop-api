@@ -14,6 +14,7 @@ import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import com.shop.shared.enums.ErrorMessagesEnum;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +29,18 @@ public class CategoryService extends BaseService {
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
 
-    public ResponseEntity<Response> lightList() {
-        List<CategoryLightList> list = categoryRepository.lightList();
-        return successResponse(new CategoryLightListDto(list));
+    @Cacheable(value = "category-lightlist")
+    public CategoryLightListDto lightList() {
+        List<CategoryLightListClass> list = categoryRepository.lightList()
+                .stream()
+                .map(data -> new CategoryLightListClass(
+                        data.getCategoryId(),
+                        data.getCategoryName(),
+                        data.getImageUrl(),
+                        data.getProductCount())
+                )
+                .collect(Collectors.toList());
+        return new CategoryLightListDto(list);
     }
 
     public ResponseEntity<Response> list() {

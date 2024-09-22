@@ -3,6 +3,7 @@ package com.shop.controller;
 import com.shop.command.CategoryAddCommand;
 import com.shop.command.CategoryEditCommand;
 import com.shop.service.CategoryService;
+import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/category")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-public class CategoryController {
+public class CategoryController extends BaseService {
 
     private final CategoryService categoryService;
 
@@ -23,7 +24,7 @@ public class CategoryController {
 
     @GetMapping(path = "light-list")
     public ResponseEntity<Response> lightList() {
-        return categoryService.lightList();
+        return successResponse(categoryService.lightList());
     }
 
     @PutMapping(path = "edit")

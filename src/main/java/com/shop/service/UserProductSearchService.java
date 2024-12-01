@@ -3,7 +3,7 @@ package com.shop.service;
 import com.shop.dto.UserProductSearchDto;
 import com.shop.model.User;
 import com.shop.model.UserProductSearch;
-import com.shop.repository.ProductCacheRepository;
+//import com.shop.repository.ProductCacheRepository;
 import com.shop.repository.UserProductSearchRepository;
 import com.shop.shared.classes.BaseService;
 import com.shop.shared.classes.Response;
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class UserProductSearchService extends BaseService {
 
     private final UserProductSearchRepository repository;
-    private final ProductCacheRepository cacheRepository;
+//    private final ProductCacheRepository cacheRepository;
 
     public void save(String searchQuery, Long userId) {
         Optional<UserProductSearch> findBySearch = repository.findBySearch(userId, searchQuery);

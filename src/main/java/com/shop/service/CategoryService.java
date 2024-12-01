@@ -29,7 +29,7 @@ public class CategoryService extends BaseService {
     private final ProductRepository productRepository;
     private final ProductSizeRepository sizeRepository;
 
-    @Cacheable(value = "category-lightlist")
+//    @Cacheable(value = "category-lightlist")
     public CategoryLightListDto lightList() {
         List<CategoryLightListClass> list = categoryRepository.lightList()
                 .stream()
